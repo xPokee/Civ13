@@ -1114,7 +1114,6 @@
 #include "maps\nomads\nomads_divide.dmm"
 #include "maps\nomads\nomads_europe.dmm"
 #include "maps\nomads\nomads_extended.dmm"
-#include "maps\nomads\nomads_frozen_wasteland.dmm"
 #include "maps\nomads\nomads_ice_age.dmm"
 #include "maps\nomads\nomads_island.dmm"
 #include "maps\nomads\nomads_jungle.dmm"
