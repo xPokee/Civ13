@@ -379,6 +379,20 @@
 		else
 			return capitalize(pick(first_names_male_russian)) + " " + capitalize(pick(last_names_russian))
 
+/datum/species/proc/get_random_kazakh_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_kazakh)) + " " + capitalize(pick(last_names_kazakh) + "a")
+		else
+			return capitalize(pick(first_names_male_kazakh)) + " " + capitalize(pick(last_names_kazakh))
+
+/datum/species/proc/get_random_tajik_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_tajik)) + " " + capitalize(pick(last_names_tajik) + "a")
+		else
+			return capitalize(pick(first_names_male_tajik)) + " " + capitalize(pick(last_names_tajik))
+
 /datum/species/proc/get_random_ukrainian_name(var/gender)
 	if (!name_language)
 		if (gender == FEMALE)
@@ -561,6 +575,13 @@
 		else
 			return capitalize(pick(first_names_male_oldnorse)) + " " + capitalize(pick(last_names_oldnorse))
 
+/datum/species/proc/get_random_afro_american_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_english)) + " " + capitalize(pick(last_names_afro_american))
+		else
+			return capitalize(pick(first_names_male_afro_american)) + " " + capitalize(pick(last_names_afro_american))
+
 /datum/species/proc/get_random_inuit_name(var/gender)
 	if (!name_language)
 		if (gender == FEMALE)
@@ -574,6 +595,63 @@
 			return capitalize(pick(first_names_female_cherokee))
 		else
 			return capitalize(pick(first_names_male_cherokee))
+
+/datum/species/proc/get_random_iroquois_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_iroquois))
+		else
+			return capitalize(pick(first_names_male_iroquois))
+
+/datum/species/proc/get_random_sioux_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_sioux))
+		else
+			return capitalize(pick(first_names_male_sioux))
+
+/datum/species/proc/get_random_apache_name(var/gender)
+	if (!name_language)
+		return capitalize(pick(first_names_male_apache))
+
+/datum/species/proc/get_random_navajo_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_navajo))
+		else
+			return capitalize(pick(first_names_male_navajo))
+
+/datum/species/proc/get_random_chinook_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_chinook))
+		else
+			return capitalize(pick(first_names_male_chinook))
+
+/datum/species/proc/get_random_comanche_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_comanche))
+		else
+			return capitalize(pick(first_names_male_comanche))
+
+/datum/species/proc/get_random_mayan_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_mayan))
+		else
+			return capitalize(pick(first_names_male_mayan))
+
+/datum/species/proc/get_random_aztec_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_aztec))
+		else
+			return capitalize(pick(first_names_male_aztec))
+
+/datum/species/proc/get_random_hawaiian_name(var/gender)
+	if (!name_language)
+		return capitalize(pick(first_names_male_hawaiian))
 
 /datum/species/proc/get_random_korean_name(var/gender)
 	if (!name_language)
@@ -609,6 +687,41 @@
 			return capitalize(pick(first_names_female_afrikaans)) + " " + capitalize(pick(last_names_afrikaans))
 		else
 			return capitalize(pick(first_names_male_afrikaans)) + " " + capitalize(pick(last_names_afrikaans))
+
+/datum/species/proc/get_random_scots_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_scots)) + " " + capitalize(pick(last_names_scots))
+		else
+			return capitalize(pick(first_names_male_scots)) + " " + capitalize(pick(last_names_scots))
+
+/datum/species/proc/get_random_welsh_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_welsh)) + " " + capitalize(pick(last_names_welsh))
+		else
+			return capitalize(pick(first_names_male_welsh)) + " " + capitalize(pick(last_names_welsh))
+
+/datum/species/proc/get_random_scottishgaelic_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_scottishgaelic)) + " " + capitalize(pick(last_names_scottishgaelic))
+		else
+			return capitalize(pick(first_names_male_scottishgaelic)) + " " + capitalize(pick(last_names_scottishgaelic))
+
+/datum/species/proc/get_random_bluefaction_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_english)) + " " + capitalize(pick(last_names_english))
+		else
+			return capitalize(pick(first_names_male_english)) + " " + capitalize(pick(last_names_english))
+
+/datum/species/proc/get_random_redfaction_name(var/gender)
+	if (!name_language)
+		if (gender == FEMALE)
+			return capitalize(pick(first_names_female_english)) + " " + capitalize(pick(last_names_english))
+		else
+			return capitalize(pick(first_names_male_english)) + " " + capitalize(pick(last_names_english))
 
 /datum/species/proc/create_organs(var/mob/living/human/H) //Handles creation of mob organs.
 

@@ -1,7 +1,7 @@
 /obj/map_metadata/wake_island
 	ID = MAP_WAKE_ISLAND
 	title = "Wake Island"
-	lobby_icon = "icons/lobby/pacific.png"
+	lobby_icon = 'icons/lobby/pacific.png'
 	no_winner ="The battle for the city is still going on."
 	caribbean_blocking_area_types = list(/area/caribbean/no_mans_land/invisible_wall,/area/caribbean/no_mans_land/invisible_wall/one,/area/caribbean/no_mans_land/invisible_wall/two)
 	respawn_delay = 0
@@ -24,7 +24,7 @@
 	faction2 = JAPANESE
 	valid_weather_types = list(WEATHER_NONE, WEATHER_WET)
 	songs = list(
-		"Tokkutai Bushi (Koji Tsuruta):1" = "sound/music/tokkutai_bushi.ogg",)
+		"Tokkutai Bushi (Koji Tsuruta):1" = 'sound/music/tokkutai_bushi.ogg',)
 	gamemode = "Area Control"
 	var/jap_points = 0
 	var/usa_points = 0
@@ -165,7 +165,7 @@
 				world << "<font size=3>The [prev_control] have lost the <b>Village!</b><font>"
 			else
 				world << "<font size=3>The [a3_control] have captured the <b>Village!</b><font>"
-	world << "<big><b>Current Points:</big></b>"
+	world << "<big><b>Current Points:</b></big>"
 	world << "<big>Americans: [usa_points]</big>"
 	world << "<big>Japanese: [jap_points]</big>"
 	spawn(300)

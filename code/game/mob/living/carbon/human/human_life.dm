@@ -39,7 +39,7 @@
 		process_awards()
 	if (transforming)
 		return
-	if (werewolf + gorillaman + orc +goblin + ant + lizard + wolfman + crab > 1)
+	if (werewolf || gorillaman || orc || goblin || ant || lizard || wolfman || crab || droid)
 		werewolf = 0
 		gorillaman = 0
 		orc = 0
@@ -48,6 +48,7 @@
 		lizard = 0
 		wolfman = 0
 		crab = 0
+		droid = 0
 		handle_animalistic("Default")
 
 	if (werewolf)
@@ -66,7 +67,9 @@
 		handle_animalistic("Wolf")
 	else if (crab)
 		handle_animalistic("Crab")
-	else if (!gorillaman && !werewolf && !orc && !goblin && !ant && !lizard && !wolfman && !crab && body_build.name != "Default")
+	else if (droid)
+		handle_animalistic("Droid")
+	else if (!gorillaman && !werewolf && !orc && !goblin && !ant && !lizard && !wolfman && !crab && !droid && body_build.name != "Default")
 		handle_animalistic("Default")
 //	if (prone)
 //		lying = 1
@@ -109,10 +112,17 @@
 		else if (faction_text == map.faction2 && !map.faction2_can_cross_blocks())
 			gib()
 */
-	if (mood > 100)
-		mood = 100
+	if (mood > 120)
+		mood = 120
 	else if (mood < 0)
 		mood = 0
+	//mood natural balancing to neutral
+	if (mood > 50) //moves to 50 if more than 50.
+		mood -= 0.05
+	else if (mood < 40) //moves to 40 if below 40
+		mood += 0.05
+	if (droid)
+		mood = 100
 	if(istype(buckled, /obj/structure/cross))
 		if (stats["stamina"][1] > 0)
 			stats["stamina"][1]-=3
@@ -145,7 +155,7 @@
 			if (istype(r_hand, /obj/item/football))
 				drop_from_inventory(r_hand, loc, TRUE)
 				drop_item()
-	if (map && map.ID == MAP_FOOTBALL_CAMPAIGN && (r_hand || l_hand))
+	if (map && map.ID == MAP_FOOTBALL_CMP && (r_hand || l_hand))
 		var/area/A = get_area(loc)
 		if (!istype(A, /area/caribbean/football/red/goalkeeper) && !istype(A, /area/caribbean/football/blue/goalkeeper))
 			if (istype(l_hand, /obj/item/football))
@@ -174,13 +184,16 @@
 			water_m *= 2.5
 		if (gorillaman)
 			water_m *= 0.2
+		if (droid)
+			food_m *= 0
+			water_m *= 0
 		if (istype(buckled, /obj/structure/cross))
 			food_m *= 1.5
 			water_m *= 5
 
 		if (inducedSSD) //if sleeping in SSD mode = takes ~72 hours to starve
-			nutrition -= ((0.0025) * HUNGER_THIRST_MULTIPLIER * food_m)
-			water -= ((0.0025) * HUNGER_THIRST_MULTIPLIER * water_m)
+			nutrition -= 0
+			water -= 0
 
 		else if (istype(buckled, /obj/structure/bed) && stat == UNCONSCIOUS && !inducedSSD) //if sleeping in a bed (buckled!) takes ~20 hours to starve
 			nutrition -= ((0.01) * HUNGER_THIRST_MULTIPLIER * food_m)
@@ -211,7 +224,7 @@
 				if (ct)
 					mood += 0.12
 				else
-					mood -= 0.8
+					mood -= 0.4
 		else if (find_trait("Introverted"))
 			if (prob(20))
 				var/ct = 0
@@ -221,7 +234,7 @@
 				if (!ct)
 					mood += 0.12
 				else
-					mood -= 0.8
+					mood -= 0.4
 		if (!inducedSSD)
 			mood -= 0.02
 	#undef HUNGER_THIRST_MULTIPLIER
@@ -257,7 +270,7 @@
 			addictions[ad] = 0
 
 //death
-	if (getBrainLoss() > 60 || getTotalDmg() > 150)
+	if (getBrainLoss() > 60)
 		death()
 
 // disease stuff
@@ -546,6 +559,12 @@
 
 
 	if (disease == TRUE)
+		if (droid)
+			disease = FALSE
+			disease_type = "none"
+			disease_progression = 0
+			disease_treatment = 0
+
 		if (disease_type in disease_immunity)
 			disease = FALSE
 			disease_type = "none"
@@ -631,7 +650,8 @@
 			species.handle_npc(src)
 	else if (stat == DEAD)
 		handle_defib_timer()
-	process_roofs()
+	process_turret_roofs()
+	process_vehicle_roofs()
 	process_static_roofs()
 	if (!handle_some_updates())
 		return											//We go ahead and process them 5 times for HUD images and other stuff though.
@@ -929,7 +949,7 @@
 	else				//ALIVE. LIGHTS ARE ON
 		updatehealth()	//TODO
 
-		if (health <= config.health_threshold_dead || (species.has_organ["brain"] && !has_brain()))
+		if ((species.has_organ["brain"] && !has_brain()))
 			death()
 			blinded = TRUE
 			silent = FALSE
@@ -986,11 +1006,15 @@
 		if (resting)
 			dizziness = max(0, dizziness - 15)
 			jitteriness = max(0, jitteriness - 15)
-			adjustHalLoss(-3)
+			//adjustHalLoss(-3)
+			if (halloss >= 3)
+				halloss -= 3
 		else
 			dizziness = max(0, dizziness - 3)
 			jitteriness = max(0, jitteriness - 3)
-			adjustHalLoss(-1)
+			//adjustHalLoss(-1)
+			if (halloss >= 1)
+				halloss -= 1
 
 		//Other
 		handle_statuses()
@@ -1049,6 +1073,11 @@
 	if (!..())
 		return
 
+	if (buckled && istype(buckled, /obj/structure/bed/chair/drivers))
+		hud_used.add_vehicle_hud(src)
+	else
+		hud_used.remove_vehicle_hud(src)
+
 	return TRUE
 
 /mob/living/human/handle_random_events()
@@ -1062,7 +1091,7 @@
 	if (isturf(loc) && rand(1,1000) == 1)
 		var/turf/T = loc
 		if (T.get_lumcount() == 0)
-			playsound_local(src,pick(scarySounds),50, TRUE, -1)*/s
+			playsound_local(src,pick(scarySounds),50, TRUE, -1)*/
 
 /mob/living/human/handle_stomach()
 	spawn(0)
@@ -1340,12 +1369,11 @@
 					Weaken(15)
 
 /mob/living/human/proc/handle_shock()
-	..()
 	if(status_flags & GODMODE)	return FALSE	//godmode
 	if(!can_feel_pain())
 		shock_stage = 0
 		return
-		
+
 	var/traumatic_shock = get_shock()
 	if(traumatic_shock >= max(30, 0.8*shock_stage))
 		shock_stage += 1
@@ -1395,10 +1423,6 @@
 		Weaken(20)
 		if (prob(1))
 			adjustOxyLoss(10)
-	if (getBruteLoss() >= 150)
-		spawn(1200)
-			if (getBruteLoss() >= 150)
-				death()
 
 /mob/living/human/proc/handle_hud_list()
 	if (stat == DEAD)
@@ -1421,9 +1445,7 @@
 			holder2.plane = HUD_PLANE
 			switch (original_job.base_type_flag())
 				if (PIRATES)
-					if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_ROTSTADT || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-						holder2.icon_state = "redmenia"
-					else if (map && !map.battleroyale)
+					if (map && !map.battleroyale)
 						holder2.icon_state = "pirate_basic"
 				if (BRITISH)
 					if (map.ordinal_age >= 4)
@@ -1518,7 +1540,7 @@
 					else
 						holder2.icon_state = "jp_basic"
 				if (RUSSIAN)
-					if (map.ID == MAP_YELTSIN || map.ID == MAP_GROZNY || map.ID == MAP_FACTORY || map.ID == MAP_OPERATION_FALCON || map.ID == MAP_VADSO_CITY)
+					if (map.ID == MAP_YELTSIN || map.ID == MAP_GROZNY || map.ID == MAP_FACTORY || map.ID == MAP_OPERATION_FALCON || map.ID == MAP_VADSO_CITY || map.ID == MAP_CONSTANTINOPOLI)
 						holder2.icon_state = "ru_basic"
 					else if (map.ID == MAP_BANK_ROBBERY)
 						holder2.icon_state = "robbers"
@@ -1570,8 +1592,6 @@
 				if (CIVILIAN)
 					if (map.ID == MAP_CAPITOL_HILL)
 						holder2.icon_state = "civ1"
-					else if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_ROTSTADT || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-						holder2.icon_state = "blugoslavia"
 					else if (original_job_title == "Nomad")
 						holder2.icon_state = ""
 					else if (original_job.is_upa && map.ID != MAP_OCCUPATION)
@@ -1615,6 +1635,15 @@
 						holder2.icon_state = "civ6"
 					else
 						holder2.icon_state = ""
+
+				if (BLUEFACTION)
+					holder2.icon_state = "blugoslavia"
+				if (REDFACTION)
+					holder2.icon_state = "redmenia"
+				if (CAFR)
+					holder2.icon_state = "civ1"
+				if (TSFSR)
+					holder2.icon_state = "sov_basic"
 			holder2.overlays.Cut()
 			if (faction_text == CIVILIAN && map.ID == MAP_GULAG13)
 				switch(original_job_title)
@@ -1633,42 +1662,45 @@
 			if (original_job.uses_squads)
 				if (faction_text == CIVILIAN && map.ID == MAP_OCCUPATION)
 					holder2.icon_state = ""
-				else
-					if(map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT)
-						if(squad == 4)
+
+				if(map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT || map.ID == MAP_BATTLE_SHIPS || map.ID == CAMPAIGN_MAP_LIST_MAPID_OR)
+					switch (squad)
+						if (4)
 							holder2.overlays += icon(holder2.icon,"squad_recon")
 							holder2.overlays += icon(holder2.icon,"i_cpl")
-						else if (squad == 5)
+						if (5)
 							holder2.overlays += icon(holder2.icon,"squad_armoured")
-						else if (squad == 6)
+						if (6)
 							holder2.overlays += icon(holder2.icon,"squad_at")
 							holder2.overlays += icon(holder2.icon,"i_cpl")
-						else if (squad == 7)
+						if (7)
 							holder2.overlays += icon(holder2.icon,"squad_engineer")
 							holder2.overlays += icon(holder2.icon,"i_cpl")
 						else
 							holder2.overlays += icon(holder2.icon,"squad_[squad]")
-						if(findtext(original_job_title,"Private"))
-							holder2.overlays += icon(holder2.icon,"rifleman")
-						if(findtext(original_job_title,"Des. Marksman"))
-							holder2.overlays += icon(holder2.icon,"i_cpl")
-							holder2.overlays += icon(holder2.icon,"designated_marksman")
-						if(findtext(original_job_title,"Machinegunner"))
-							holder2.overlays += icon(holder2.icon,"mg")
-							holder2.overlays += icon(holder2.icon,"i_cpl")
-						if((findtext(original_job_title,"Officer") && !findtext(original_job_title,"Petty Officer")) || findtext(original_job_title,"Ensign"))
-							holder2.overlays += icon(holder2.icon,"i_lt")
-						else if(findtext(original_job_title,"Squadleader") || findtext(original_job_title,"Petty Officer"))
-							holder2.overlays += icon(holder2.icon,"i_sgt")
-						else if(findtext(original_job_title,"Commander") || findtext(original_job_title,"Captain"))
-							holder2.overlays += icon(holder2.icon,"i_cpt")
-						else if(findtext(original_job_title,"Medic"))
-							holder2.overlays += icon(holder2.icon,"i_ssgt")
-						else if(findtext(original_job_title,"Corpsman"))
-							holder2.overlays += icon(holder2.icon,"i_cpl")
-					else
-						holder2.overlays += icon(holder2.icon,"squad_[squad]")
-			if (map.ID != MAP_CAMPAIGN && map.ID != MAP_ROTSTADT)
+
+					if(findtext(original_job_title,"Private"))
+						holder2.overlays += icon(holder2.icon,"rifleman")
+					if(findtext(original_job_title,"Des. Marksman"))
+						holder2.overlays += icon(holder2.icon,"i_cpl")
+						holder2.overlays += icon(holder2.icon,"designated_marksman")
+					if(findtext(original_job_title,"Machinegunner"))
+						holder2.overlays += icon(holder2.icon,"mg")
+						holder2.overlays += icon(holder2.icon,"i_cpl")
+					if((findtext(original_job_title,"Officer") && !findtext(original_job_title,"Petty Officer")) || findtext(original_job_title,"Ensign"))
+						holder2.overlays += icon(holder2.icon,"i_lt")
+					else if(findtext(original_job_title,"Squadleader") || findtext(original_job_title,"Petty Officer"))
+						holder2.overlays += icon(holder2.icon,"i_sgt")
+					else if(findtext(original_job_title,"Commander") || findtext(original_job_title,"Captain"))
+						holder2.overlays += icon(holder2.icon,"i_cpt")
+					else if(findtext(original_job_title,"Medic"))
+						holder2.overlays += icon(holder2.icon,"i_ssgt")
+					else if(findtext(original_job_title,"Corpsman"))
+						holder2.overlays += icon(holder2.icon,"i_cpl")
+				else
+					holder2.overlays += icon(holder2.icon,"squad_[squad]")
+
+			if (map.ID != MAP_CAMPAIGN && map.ID != MAP_ROTSTADT && map.ID != MAP_BATTLE_SHIPS)
 				if (original_job.is_commander || (original_job.is_commander && original_job.is_officer) || original_job.is_vip)
 					if (faction_text == CIVILIAN && map.ID == MAP_OCCUPATION)
 						holder2.icon_state = ""
@@ -1684,9 +1716,9 @@
 						holder2.icon_state = ""
 					else
 						holder2.overlays += icon(holder2.icon,"nco")
-			if (map.ID == MAP_OPERATION_FALCON || map.ID == MAP_VADSO_CITY)
+			if (map.ID == MAP_CAMPAIGN || map.ID == MAP_OPERATION_FALCON || map.ID == MAP_VADSO_CITY || map.ID == CAMPAIGN_MAP_LIST_MAPID_OR)
 				if (original_job.is_commander)
-					world << "<font color='green' size=4>[ckey] is now the <b>[capitalize(lowertext(faction_text))] Army</b> Commander!</font>"
+					to_chat(world, "<font color='green' size=4>[ckey] is now the <b>[capitalize(lowertext(faction_text))] Army</b> Commander!</font>")
 			if (original_job.is_medic)
 				holder2.overlays += icon(holder2.icon,"medic")
 			hud_list[BASE_FACTION] = holder2
@@ -1717,7 +1749,7 @@
 /mob/living/human/handle_fire()
 	if (..())
 		return
-	
+
 	if (prob(10))
 		src << pick(SPAN_DANGER("<big>OH MY GOD I AM ON FIRE!!!</big>"), SPAN_DANGER("<big>PUT IT OUT!!!</big>"), SPAN_DANGER("<big>I AM BURNING ALIVE!!!</big>"), SPAN_DANGER("<big>MY SKIN IS PEELING OFF!!!</big>"))
 		emote("scream")
@@ -1727,7 +1759,7 @@
 
 	if (thermal_protection < 1 && bodytemperature < burn_temperature)
 		bodytemperature += round(BODYTEMP_HEATING_MAX*(1-thermal_protection), TRUE)
-	
+
 	var/species_heat_mod = 1
 
 	var/protected_limbs = get_heat_protection_flags(burn_temperature)
@@ -1775,7 +1807,7 @@
 /mob/living/human/proc/do_rotting()
 	if (map && istype(src, /mob/living/human/corpse))
 		return
-	spawn(600)
+	spawn(600) // 1 minute
 		if (stat == DEAD)
 			spawn(30000)
 				if (stat == DEAD)
@@ -1991,7 +2023,7 @@
 						return
 
 /mob/living/human/proc/instadeath_check()
-	if (getBrainLoss() > 60 || getTotalDmg() > 150)
+	if (getBrainLoss() > 60)
 		death()
 		return
 	else

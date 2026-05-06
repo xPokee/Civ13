@@ -1,12 +1,13 @@
 /obj/map_metadata/bank_robbery
 	ID = MAP_BANK_ROBBERY
 	title = "The Goldstein Bank Heist"
-	lobby_icon = "icons/lobby/bank_robbery.png"
+	lobby_icon = 'icons/lobby/bank_robbery.png'
 	no_winner ="The robbery is still underway."
 	caribbean_blocking_area_types = list(
 		/area/caribbean/no_mans_land/invisible_wall,
 		/area/caribbean/no_mans_land/invisible_wall/inside)
 	respawn_delay = 600 // 1 minute
+	can_spawn_on_base_capture = TRUE
 
 	faction_organization = list(
 		CIVILIAN,
@@ -27,7 +28,7 @@
 	grace_wall_timer = 3000
 	gamemode = "Bank Robbery"
 	songs = list(
-		"George Baker Selection - Little Green Bag:1" = "sound/music/little_green_bag.ogg",)
+		"George Baker Selection - Little Green Bag:1" = 'sound/music/little_green_bag.ogg',)
 
 	var/list/civilians_killed = list(
 		"Police" = 0,
@@ -136,7 +137,7 @@
 				win_condition_spam_check = TRUE
 				ticker.finished = TRUE
 				return FALSE
-		if (civilians_evacuated == civilians_alive || civilians_alive == 0 || total_killed == 12)
+		if (civilians_alive == 0 || civilians_evacuated == 12-total_killed || total_killed == 12)
 			if ((current_winner && current_loser && world.time > next_win) && no_loop_o == FALSE)
 				ticker.finished = TRUE
 				world << "<font size = 4><span class = 'notice'>The Police Department seized total control of the Bank!</span></font>"
@@ -194,7 +195,8 @@
 	if (istype(A, /area/caribbean/no_mans_land/invisible_wall))
 		if (istype(A, /area/caribbean/no_mans_land/invisible_wall/one))
 			if (H.original_job.is_outlaw == TRUE && !H.original_job.is_law == TRUE)
-				return TRUE
+				if (!H.restrained())
+					return TRUE
 		else if (istype(A, /area/caribbean/no_mans_land/invisible_wall/two))
 			if (H.original_job.is_law == TRUE && !H.original_job.is_outlaw == TRUE)
 				return TRUE
@@ -213,9 +215,12 @@
 				if (H.stat != DEAD && H.client)
 					if (H.restrained())
 						arrested_criminals++
+						for (var/mob/living/human/L in player_list)
+							if (L.ckey == H.handcuffed.fingerprintslast && L.faction_text == CIVILIAN)
+								L.awards["arrests"] += 1
 						spawn(10)
 							if (prob(50))
-								H.forceMove(locate(65,6,1))
+								H.forceMove(locate(65,6,1)) //Hard coded fo rnow
 							else
 								H.forceMove(locate(69,6,1))
 							for (var/obj/item/I in H.contents)
@@ -236,10 +241,12 @@
 /obj/map_metadata/bank_robbery/proc/civ_counter()
 	var/count = 0
 	for (var/mob/living/simple_animal/civilian/HO in world)
-		if (HO.stat != DEAD)
+		if (HO && HO.stat != DEAD)
 			count++
 	civilians_alive = count
 	total_killed = civilians_killed["Robbers"] + civilians_killed["Police"]
+	if (total_killed != 12-civilians_alive)
+		total_killed = 12-civilians_alive
 	spawn(100)
 		civ_counter()
 
@@ -247,7 +254,8 @@
 	spawn(1200)
 		world << "<big>Evacuated hostages: [civilians_evacuated] </big>"
 		world << "<big>Alive hostages: [civilians_alive] </big>"
-		world << "<big>Dead hostages: [total_killed] </big>"
+		world << "<big>Dead hostages: [12-civilians_alive] </big>"
+		world << "<big>Arrested criminals: [arrested_criminals] </big>"
 		civ_status()
 
 //Shitty temporary solution, to be refactored if possible

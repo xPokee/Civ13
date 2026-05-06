@@ -117,53 +117,6 @@
 
 	return TRUE
 
-/datum/job/civilian/banker
-	title = "Banker"
-	en_meaning = "Master of Funds"
-	rank_abbreviation = "Banker"
-
-
-	spawn_location = "JoinLateCivB"
-	is_officer = TRUE
-	whitelisted = TRUE
-	is_vip = TRUE
-
-	is_1713 = TRUE
-
-
-	min_positions = 1
-	max_positions = 1
-
-/datum/job/civilian/banker/equip(var/mob/living/human/H)
-	if (!H)	return FALSE
-//shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/leatherboots(H), slot_shoes)
-//clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/civ4(H), slot_w_uniform)
-//jacket
-	H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/jacket/piratejacket2(H), slot_wear_suit)
-//head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/powdered_wig(H), slot_head)
-
-	H.equip_to_slot_or_del(new/obj/item/stack/money/real(H), slot_r_store)
-	H.equip_to_slot_or_del(new/obj/item/stack/money/real(H), slot_r_store)
-	H.equip_to_slot_or_del(new/obj/item/stack/money/real(H), slot_r_store)
-	H.equip_to_slot_or_del(new/obj/item/stack/money/real(H), slot_r_store)
-	H.equip_to_slot_or_del(new /obj/item/weapon/key/civ/hall(H), slot_l_store)
-//	H.equip_to_slot_or_del(new/obj/item/stack/money/real(H), slot_l_store)
-	H.add_note("Role", "You are a <b>[title]</b>, the leader of this colony's funds. Organize your men and tax the poor!")
-	H.setStat("strength", STAT_MEDIUM_HIGH)
-	H.setStat("crafting", STAT_NORMAL)
-	H.setStat("rifle", STAT_NORMAL)
-	H.setStat("dexterity", STAT_NORMAL)
-	H.setStat("swords", STAT_HIGH)
-	H.setStat("pistol", STAT_MEDIUM_HIGH)
-	H.setStat("bows", STAT_NORMAL)
-	H.setStat("medical", STAT_MEDIUM_LOW)
-	H.make_businessman()
-
-	return TRUE
-
 /datum/job/civilian/bank_teller
 	title = "Teller"
 	en_meaning = "Bank Teller"
@@ -177,6 +130,63 @@
 
 	min_positions = 1
 	max_positions = 2
+
+/datum/job/civilian/banker
+	title = "Banker"
+	en_meaning = "Finance Minister"
+	rank_abbreviation = "Banker"
+	can_be_female = TRUE
+	spawn_location = "JoinLateCivB"
+	is_merchant = TRUE
+	is_officer = TRUE
+	is_commander = TRUE
+
+	whitelisted = TRUE
+	is_1713 = TRUE
+
+	min_positions = 1
+	max_positions = 1
+
+/datum/job/civilian/banker/equip(var/mob/living/human/H)
+	if (!H)	return FALSE
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/blackboots(H), slot_shoes)
+	if (H.gender == "male")
+		var/randcloth = rand(1,5)
+		if (randcloth == 1)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civ1(H), slot_w_uniform)
+		else if (randcloth == 2)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civ2(H), slot_w_uniform)
+		else if (randcloth == 3)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civ3(H), slot_w_uniform)
+		else if (randcloth == 4)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civ5(H), slot_w_uniform)
+		else if (randcloth == 5)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civ6(H), slot_w_uniform)
+	else
+		var/randcloth = rand(1,3)
+		if (randcloth == 1)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civf1(H), slot_w_uniform)
+		else if (randcloth == 2)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civf2(H), slot_w_uniform)
+		else if (randcloth == 3)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/civf3(H), slot_w_uniform)
+	
+	H.add_note("Role", " You are a <b>[title]</b>, the leader of this colony's funds.")
+	H.add_note("Command", " You answer directly to the Colonial Administration. Bank Tellers are your subordinates. The bank is property of Central Administration and YOU are the trusted manager.")
+	H.add_note("You & the Governor", "The government isn't your Boss, nor are you his, however when it comes to colonial funds, you have equal authority and therefore a say. You must make sure the Governor does not waste our funds!")
+	H.add_note("Job Summary", "• Make sure the Governor doesnt waste our money. • Complain to CA if they do. • Manage the bank. • Follow the guidelines, tax people, pay their wages. • Manage your subordinates.")
+	H.setStat("strength", STAT_MEDIUM_HIGH)
+	H.setStat("crafting", STAT_NORMAL)
+	H.setStat("rifle", STAT_NORMAL)
+	H.setStat("dexterity", STAT_NORMAL)
+	H.setStat("swords", STAT_HIGH)
+	H.setStat("pistol", STAT_MEDIUM_HIGH)
+	H.setStat("bows", STAT_NORMAL)
+	H.setStat("medical", STAT_MEDIUM_LOW)
+	H.make_businessman()
+
+	return TRUE
+
 
 /datum/job/civilian/bank_teller/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
@@ -2449,7 +2459,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Officer ","")] police badge"
-		pb.desc = "a police badge in star shape, with <b>[replacetext(H.real_name,"Officer ","")]</b> engraved."
+		pb.desc = "A police badge in star shape, with <b>[replacetext(H.real_name,"Officer ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	if (prob(50))
 		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/swat(H), slot_shoes)
@@ -2473,7 +2483,7 @@
 			H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/shotgun/pump/remington870(H), slot_shoulder)
 			H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/revolver/snw10(H), slot_l_hand)
 			H.equip_to_slot_or_del(new /obj/item/ammo_magazine/shellbox(H), slot_r_store)
-			H.equip_to_slot_or_del(new /obj/item/ammo_magazine/shellbox/beanbag(H), slot_l_store)
+			H.equip_to_slot_or_del(new /obj/item/ammo_magazine/shellbox/rubber(H), slot_l_store)
 			H.equip_to_slot_or_del(new /obj/item/weapon/storage/belt/police/bank/c38(H), slot_belt)
 		if(3)
 			H.equip_to_slot_or_del(new /obj/item/ammo_magazine/p220(H), slot_l_store)
@@ -2503,7 +2513,7 @@
 			H.equip_to_slot_or_del(new /obj/item/clothing/suit/police(H), slot_wear_suit)
 			H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/glock17(H), slot_l_hand)
 			H.equip_to_slot_or_del(new /obj/item/weapon/storage/belt/police/bank/glock(H), slot_belt)
-	
+
 	if (map.ID == MAP_BANK_ROBBERY)
 		H.add_note("Role", "You are a member of the police force. Secure <b>ALL</b> the hostages <b>BEFORE</b> capturing the vault. Arrest as many criminals as possible <b>without</b> killing them!")
 	else
@@ -2545,7 +2555,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Officer ","")] police badge"
-		pb.desc = "a police badge in star shape, with <b>[replacetext(H.real_name,"Officer ","")]</b> engraved."
+		pb.desc = "A police badge in star shape, with <b>[replacetext(H.real_name,"Officer ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/swat(H), slot_shoes)
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/swat_new(H), slot_head)
@@ -2614,7 +2624,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Agent ","")] DEA badge"
-		pb.desc = "a DEA badge, with <b>[replacetext(H.real_name,"Agent ","")]</b> engraved."
+		pb.desc = "A DEA badge, with <b>[replacetext(H.real_name,"Agent ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/laceup(H), slot_shoes)
 	if (prob(50))
@@ -2666,7 +2676,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Deputy ","")] Sheriff's Office badge"
-		pb.desc = "a sheriff deputy badge in star shape, with <b>[replacetext(H.real_name,"Deputy ","")]</b> engraved."
+		pb.desc = "A sheriff deputy badge in star shape, with <b>[replacetext(H.real_name,"Deputy ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	if (prob(50))
 		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/swat(H), slot_shoes)
@@ -2749,7 +2759,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Detective ","")] Sheriff's Office badge"
-		pb.desc = "a Sheriff's Office detective badge in star shape, with <b>[replacetext(H.real_name,"Detective ","")]</b> engraved."
+		pb.desc = "A Sheriff's Office detective badge in star shape, with <b>[replacetext(H.real_name,"Detective ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	if (prob(80))
 		var/randtie = rand(1,3)
@@ -2826,7 +2836,7 @@
 	var/obj/item/clothing/accessory/armband/policebadge/pb = new /obj/item/clothing/accessory/armband/policebadge(null)
 	spawn(15)
 		pb.name = "[replacetext(H.real_name,"Sheriff ","")] Sheriff's Office badge"
-		pb.desc = "a sheriff badge in star shape, with <b>[replacetext(H.real_name,"Sheriff ","")]</b> engraved."
+		pb.desc = "A sheriff badge in a star shape, with <b>[replacetext(H.real_name,"Sheriff ","")]</b> engraved."
 	uniform1.attackby(pb, H)
 	var/obj/item/weapon/storage/belt/keychain/KC2 = new/obj/item/weapon/storage/belt/keychain(H)
 	var/obj/item/weapon/key/civ/police/po1 = new/obj/item/weapon/key/civ/police(null)
@@ -3666,7 +3676,7 @@
 	var/obj/item/clothing/accessory/armband/spanish/republican/white = new /obj/item/clothing/accessory/armband/spanish/republican(null)
 	uniform.attackby(white, H)
 	give_random_name(H)
-	world << "<b><big>[H.real_name] is the Captain of the Republican Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Republican Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -3796,7 +3806,7 @@
 	if (prob(50))
 		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww2/soviet(H), slot_head)
 	else
-		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adrian/soviet(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adriansoviet(H), slot_head)
 //weapons
 	var/obj/item/clothing/under/uniform = H.w_uniform
 	var/obj/item/clothing/accessory/storage/webbing/ww1/leather/webbing = new /obj/item/clothing/accessory/storage/webbing/ww1/leather(null)

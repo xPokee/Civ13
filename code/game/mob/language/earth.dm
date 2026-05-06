@@ -28,6 +28,14 @@
 #define EGYPTIAN_SYLLABLES list("ura","ure", "nuf", "nif", "pha", "phe", "phi", "fenet", "fanat", "uneph", "uniph", "ophset", "uphset", "un", "ne", "nef", "nak", "naf", "rak", "raf", "ru", "ri", "tu", "ti", "ta", "te", "ut", "it", "pher", "phir", "inet", "uot","eunet", "runet", "aunet", "mun", "mon", "min", "am", "em", "im", "oka", "okef", "okif", "okuf", "kha", "onet", "kama", "umet", "khe", "khuf", "nem", "nim", "net", "nit", "phet", "phat", "phat", "om", "am", "um", "im", "yut", "yat", "yit", "eim", "uim", "iem", "het", "uminet", "nieter", "umerter", "omier", "kepne", "kepher", "kuph", "keph", "kiph", "ieun", "iaun", "ioun", "onetfer", "unetfer", "enetfer", "ferneh", "pherneh", "miu", "mih", "mie", "kek")
 #define KOREAN_SYLLABLES list("gya", "ga", "geo", "gyeo", "go", "gyo", "gu", "gyu", "geu", "gi", "na", "nya", "neo", "nyeo", "no", "nyo", "nu", "nyu", "neu", "ni", "da", "dya", "deo", "dyeo", "do", "dyo", "du", "dyu", "deu", "di", "ra", "rya", "reo", "ryeo", "ro", "ryo", "ru", "ryu", "reu", "ri", "ma", "mya", "meo", "myeo", "mo", "myo", "mu", "myu", "meu", "mi", "ba", "bya", "beo", "byeo", "bo", "byo", "bu", "byu", "beu", "bi", "sa", "sya", "seo", "syeo", "so", "syo", "su", "syu", "seu", "si", "a", "ya", "eo", "yeo", "o", "yo", "u", "yu", "eu", "i", "ja", "jya", "jeo", "jyeo", "jo", "jyo", "ju", "jyu", "jeu", "ji", "cha", "chya", "cheo", "chyeo", "cho", "chyo", "chu", "chyu", "cheu", "chi", "ka", "kya", "keo", "kyeo", "ko", "kyo", "ku", "kyu", "keu", "ki", "ta", "tya", "teo", "tyeo", "to", "tyo", "tu", "tyu", "teu", "ti", "pa", "pya", "peo", "pyeo", "po", "pyo", "pu", "pyu", "peu", "pi", "ha", "hya", "heo", "hyeo", "ho", "hyo", "hu", "hyu", "heu", "hi")
 #define IROQUOIS_SYLLABLES list("a", "ga", "ka", "ha", "la", "ma", "na", "hna", "nah", "qua", "s", "sa", "da", "ta", "dla", "tla", "tsa", "wa", "ya", "e", "ge", "he", "le", "me", "ne", "que", "se", "de", "te", "tle", "tse", "we", "ye", "i", "gi", "hi", "li", "mi", "ni", "qui", "si", "di", "tli", "tsi", "twi", "wi", "yi", "ti", "o", "go", "ho", "lo", "mo", "no", "quo", "so", "do", "tio", "tso", "wo", "yo", "u", "gu", "hu", "lu", "mu", "nu", "quu", "su", "du", "tlu", "tsu", "wu", "yu", "v", "gv", "hv", "lv", "nv", "quv", "sv", "dv", "tlv", "wv", "yv")
+#define SIOUX_SYLLABLES list("a", "i", "u", "e", "o", "ka", "kha", "ga", "gha", "ma", "na", "nga", "pa", "pha", "ba", "cha", "chang", "wa", "ya", "za", "ha", "la", "sha", "ta", "tha", "da", "cha", "chang", "wang", "yang", "zha", "sa", "mang", "nang")
+#define APACHE_SYLLABLES list("a", "i", "o", "u", "ba", "da", "ga", "ka", "la", "ma", "na", "pa", "sa", "ta", "tsa", "za", "cha", "ha", "wa", "ya", "nga", "nda", "nka", "nna", "nwa", "nya", "bai", "dai", "gai", "kai", "lai", "mai", "nai", "pai", "sai", "tai", "tsai", "zai", "chai", "hai", "wai", "yai", "ngai", "ndai", "nkai", "nnai", "nwai", "nyai")
+#define NAVAJO_SYLLABLES list("a", "e", "i", "o", "u", "ha", "ba", "cha", "da", "ga", "ja", "ka", "la", "ma", "na", "pa", "sa", "ta", "tsa", "za", "wa", "ya", "aa", "ee", "ii", "oo", "uu", "baa", "daa", "gaa", "jaa", "kaa", "naa", "paa", "saa", "taa", "tsaa", "zaa", "waa", "yaa", "hai", "bai", "dai", "gai", "jai", "kai", "lai", "mai", "nai", "pai", "sai", "tai", "tsai", "zai", "wai", "yai")
+#define CHINOOK_SYLLABLES list("a", "i", "u", "e", "o", "ka", "kha", "ga", "gha", "ma", "na", "nga", "pa", "pha", "ba", "cha", "chang", "wa", "ya", "za", "ha", "la", "sa", "ta", "tha", "da", "cha", "chang", "wang", "yang", "zha", "sa", "mang", "nang")
+#define COMANCHE_SYLLABLES list("a", "e", "i", "o", "u", "wa", "we", "wi", "wo", "wu", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "no", "nu", "pa", "pe", "pi", "po", "pu", "ta", "te", "ti", "to", "tu", "ha", "he", "hi", "ho", "hu", "sa", "se", "si", "so", "su", "ya", "ye", "yi", "yo", "yu")
+#define MAYAN_SYLLABLES list("a", "e", "i", "o", "u", "ka", "ke", "ki", "ko", "ku", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "no", "nu", "pa", "pe", "pi", "po", "pu", "ta", "te", "ti", "to", "tu", "cha", "che", "chi", "cho", "chu", "ja", "je", "ji", "jo", "ju", "sa", "se", "si", "so", "su", "wa", "we", "wi", "wo", "wu", "ya", "ye", "yi", "yo", "yu")
+#define AZTEC_SYLLABLES list("a", "e", "i", "o", "u", "ka", "ke", "ki", "ko", "ku", "ca", "ce", "ci", "co", "cu", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "no", "nu", "pa", "pe", "pi", "po", "pu", "ta", "te", "ti", "to", "tu", "cha", "che", "chi", "cho", "chu", "ya", "ye", "yi", "yo", "yu", "tl", "tla", "tle", "tli", "tlo", "tlu", "xa", "xe", "xi", "xo", "xu")
+#define HAWAIIAN_SYLLABLES list("a", "e", "i", "o", "u", "ka", "ke", "ki", "ko", "ku", "la", "le", "li", "lo", "lu", "ma", "me", "mi", "mo", "mu", "na", "ne", "ni", "no", "nu", "pa", "pe", "pi", "po", "pu", "wa", "we", "wi", "wo", "wu", "ha", "he", "hi", "ho", "hu")
 #define FILIPINO_SYLLABLES list("a", "b", "da", "fa", "ga", "gra", "ha", "han", "hon", "ka", "la", "lat", "ma", "na", "nga", "pa", "pra", "ra", "sa", "sal", "ta", "tra", "wa", "e", "be", "bre", "de", "dre", "ge", "he", "ke", "le", "me", "ne", "pe", "pre", "re", "se", "te", "tre", "i", "bi", "di", "fi", "gi", "hi", "ki", "li", "mi", "ni", "pi", "pri", "ri", "si", "ti", "o", "ong", "oo", "bo", "bro", "do", "dro", "go", "ho", "ko", "lo", "mo", "no", "ngo", "po", "pro", "ro", "so", "to", "tro", "yo", "u", "bu", "du", "gu", "hu", "ku", "lu", "mu", "pu", "yu")
 #define ITALIAN_SYLLABLES list("pi", "za", "pe", "pp", "er", "on", "i", "ma", "mia", "na", "va", "ta", "ra", "ga", "da", "na", "sa", "la", "te", "re", "ge", "de", "ne", "se", "le", "ti", "ri", "gi", "di", "ni", "si")
 #define CHECHEN_SYLLABLES list("la", "ma", "nakh", "dukh", "duy", "lu", "sal", "shi", "shov", "dansh", "en", "be", "kha", "ja", "bal", "tsa", "mol", "ush", "jin", "khor", "gie", "buylsh", "or", "ga", "tha", "zan", "dakh", "gash", "det", "mekh", "sa", "salam", "al", "kum", "ha", "at", "qo", "di", "ste", "aid")
@@ -39,6 +47,12 @@
 #define FARSI_SYLLABLES list("ka", "ki", "ku", "ke", "ko", "ma", "mi", "mu", "me", "mo", "ba", "bi", "bu", "be", "bo", "ra", "ri", "ru", "re", "ro", "sa", "si", "su", "se", "so", "ta", "ti", "tu", "te", "to", "za", "zi", "zu", "ze", "zo", "na", "ni", "nu", "ne", "no", "va", "vi", "vu", "ve", "vo", "da", "di", "du", "de", "do", "ja", "ji", "ju", "je", "jo", "pa", "pi", "pu", "pe", "po", "kha", "khi", "khu", "khe", "kho", "sha", "shi", "shu", "she", "sho", "qa", "qi", "qu", "qe", "qo", "ha", "hi", "hu", "he", "ho", "la", "li", "lu", "le", "lo", "ma", "mi", "mu", "me", "mo", "ya", "yi", "yu", "ye", "yo", "na", "ni", "nu", "ne", "no", "va", "vi", "vu", "ve", "vo", "za", "zi", "zu", "ze", "zo", "fa", "fi", "fu", "fe", "fo", "xa", "xi", "xu", "xe", "xo")
 #define MONGOLIAN_SYLLABLES list("ba", "baa", "be", "bee", "bi", "bii", "bo", "boo", "bu", "buu", "da", "daa", "de", "dee", "di", "dii", "do", "doo", "du", "duu", "ga", "gaa", "ge", "gee", "gi", "gii", "go", "goo", "gu", "guu", "ha", "haa", "he", "hee", "hi", "hii", "ho", "hoo", "hu", "huu", "ka", "kaa", "ke", "kee", "ki", "kii", "ko", "koo", "ku", "kuu", "la", "laa", "le", "lee", "li", "lii", "lo", "loo", "lu", "luu", "ma", "maa", "me", "mee", "mi", "mii", "mo", "moo", "mu", "muu", "na", "naa", "ne", "nee", "ni", "nii", "no", "noo", "nu", "nuu", "pa", "paa", "pe", "pee", "pi", "pii", "po", "poo", "pu", "puu", "qa", "qaa", "qe", "qee", "qi", "qii", "qo", "qoo", "qu", "quu", "ra", "raa", "re", "ree", "ri", "rii", "ro", "roo", "ru", "ruu", "sa", "saa", "se", "see", "si", "sii", "so", "soo", "su", "suu", "ta", "taa", "te", "tee", "ti", "tii", "to", "too", "tu", "tuu", "wa", "waa", "we", "wee", "wi", "wii", "wo", "woo", "wu", "wuu", "ya", "yaa", "ye", "yee", "yi", "yii", "yo", "yoo", "yu", "yuu")
 #define AFRIKAANS_SYLLABLES list("ek", "yk", "my", "eek", "ag", "van", "en", "heid", "al", "oei", "oek", "uur", "er", "net", "het", "hoe", "wat", "en", "alle", "aard", "eer", "nee", "ont", "nee", "yk", "sy", "hy", "sal", "mal", "eyer", "nie", "ja", "ee", "ad", "een", "ol", "ier", "oor", "de", "aar", "aal", "mit", "em", "ie", "alle", "daag", "se", "aer", "ae", "eed")
+#define WELSH_SYLLABLES list("fe", "de", "mi", "na", "be", "a", "ca", "tae", "ae", "ter", "num", "tum", "put", "ux", "tib", "dom", "er", "el", "la", "sum", "su", "per", "mem", "di", "us", "ba", "be", "bi", "bu", "ca", "ce", "ci", "co", "cu", "da", "de", "di", "do", "du", "d'a", "d'e", "d'i", "d'o", "d'u", "fa", "fe", "fi", "fo", "fu", "ga", "ge", "gi", "go", "gu", "ha", "he", "hi", "ho", "hu", "la", "le", "li", "lo", "lu", "ma", "me", "mi", "pi", "za", "pe", "pp", "er", "on", "i", "ma", "mia", "na", "va")
+#define SCOTS_SYLLABLES list("ing", "ti", "po", "tle", "fa", "li", "ern", "er", "ri", "sion", "day", "fe", "lo", "eve", "a", "be", "vi", "ny", "gen", "men", "ly", "per", "el", "pen", "min", "ies", "ed", "to", "est", "pre", "land", "i", "pro", "la", "tive", "ba", "be", "bi", "bu", "ca", "ce", "ci", "co", "cu", "da", "de", "di", "do", "du", "d'a", "d'e", "d'i", "sii", "so", "soo", "su", "suu", "ta", "taa", "te", "tee", "ti", "tii", "to", "too", "tu", "tuu", "wa", "waa", "we", "wee", "wi", "wii", "wo", "woo", "wu", "wuu", "ya", "yaa", "ye", "yee", "yi", "yii", "yo", "yoo", "yu", "yuu")
+#define DROID_SYLLABLES list("0", "1", "01", "10", "101", "010", "1010", "0101", "10101", "01010", "101010", "010101", "101010", "0101010", "1010101")
+#define CA_KIPCHAK_TURKIC_SYLLABLES list("a","ba","be","bi","bo","bu","da","de","di","do","du","ga","ge","gi","go","gu","ka","ke","ki","ko","ku","la","le","li","lo","lu","ma","me","mi","mo","mu","na","ne","ni","no","nu","pa","pe","pi","po","pu","ra","re","ri","ro","ru","sa","se","si","so","su","ta","te","ti","to","tu","va","ve","vi","vo","vu","ya","ye","yi","yo","yu")
+#define CA_OGHUZ_TURKIC_SYLLABLES list("a","ba","be","bi","bo","bu","ca","ce","ci","co","cu","da","de","di","do","du","fa","fe","fi","fo","fu","ga","ge","gi","go","gu","ha","he","hi","ho","hu","ja","je","ji","jo","ju","ka","ke","ki","ko","ku","la","le","li","lo","lu","ma","me","mi","mo","mu","na","ne","ni","no","nu","pa","pe","pi","po","pu","ra","re","ri","ro","ru","sa","se","si","so","su","şa","şe","şi","şo","şu","ta","te","ti","to","tu","va","ve","vi","vo","vu","ya","ye","yi","yo","yu")
+#define CA_KARLUK_TURKIC_SYLLABLES list("a","ba","be","bi","bo","bu","da","de","di","do","du","fa","fe","fi","fo","fu","ga","ge","gi","go","gu","ha","he","hi","ho","hu","ja","je","ji","jo","ju","ka","ke","ki","ko","ku","la","le","li","lo","lu","ma","me","mi","mo","mu","na","ne","ni","no","nu","pa","pe","pi","po","pu","ra","re","ri","ro","ru","sa","se","si","so","su","ta","te","ti","to","tu","va","ve","vi","vo","vu","ya","ye","yi","yo","yu")
 
 /datum/language/portuguese
 	name = "Portuguese"
@@ -65,7 +79,7 @@
 	colour = "English"
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = ENGLISH_SYLLABLES
-	mutual_intelligibility = list(/datum/language/french = 10,/datum/language/german = 10,/datum/language/dutch = 10)
+	mutual_intelligibility = list(/datum/language/french = 10,/datum/language/german = 10,/datum/language/dutch = 10,/datum/language/scots = 80,/datum/language/welsh = 80)
 
 /datum/language/french
 	name = "French"
@@ -102,7 +116,6 @@
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = CARIB_SYLLABLES
 	mutual_intelligibility = list()
-
 
 /datum/language/greek
 	name = "Greek"
@@ -143,7 +156,16 @@
 	colour = "Arabic"
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = DARI_SYLLABLES
-	mutual_intelligibility = list(/datum/language/arab = 20, /datum/language/pashto = 30)
+	mutual_intelligibility = list(/datum/language/arab = 20, /datum/language/pashto = 30, /datum/language/farsi = 80, /datum/language/tajik = 95)
+
+/datum/language/tajik
+	name = "Tajik"
+	desc = "Salaam, dost-e man!"
+	key = "ta"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = DARI_SYLLABLES
+	mutual_intelligibility = list(/datum/language/arab = 20, /datum/language/pashto = 30, /datum/language/farsi = 80, /datum/language/dari = 95)
 
 /datum/language/farsi
 	name = "Farsi"
@@ -152,7 +174,7 @@
 	colour = "Arabic"
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = FARSI_SYLLABLES
-	mutual_intelligibility = list(/datum/language/arab = 30, /datum/language/pashto = 30, /datum/language/dari = 80)
+	mutual_intelligibility = list(/datum/language/arab = 30, /datum/language/pashto = 30, /datum/language/dari = 80, /datum/language/tajik = 80)
 
 /datum/language/pashto
 	name = "Pashto"
@@ -162,6 +184,51 @@
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = PASHTO_SYLLABLES
 	mutual_intelligibility = list(/datum/language/arab = 20, /datum/language/dari = 30)
+
+/datum/language/kazakh
+	name = "Kazakh"
+	desc = "Sälem!"
+	key = "kz"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = CA_KIPCHAK_TURKIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/kyrgyz = 60, /datum/language/turkmen = 40, /datum/language/uzbek = 40, /datum/language/uyghur = 40)
+
+/datum/language/kyrgyz
+	name = "Kyrgyz"
+	desc = "Salam!"
+	key = "ky"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = CA_KIPCHAK_TURKIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/kazakh = 60, /datum/language/turkmen = 40, /datum/language/uzbek = 40, /datum/language/uyghur = 40)
+
+/datum/language/turkmen
+	name = "Turkmen"
+	desc = "Salam!"
+	key = "tr"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = CA_OGHUZ_TURKIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/kyrgyz = 40, /datum/language/kazakh = 40, /datum/language/uzbek = 40, /datum/language/uyghur = 40)
+
+/datum/language/uzbek
+	name = "Uzbek"
+	desc = "Salom!"
+	key = "uz"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = CA_KARLUK_TURKIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/kyrgyz = 40, /datum/language/kazakh = 40, /datum/language/turkmen = 40, /datum/language/uyghur = 60)
+
+/datum/language/uyghur
+	name = "Uyghur"
+	desc = "Salom!"
+	key = "uy"
+	colour = "Arabic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = CA_KARLUK_TURKIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/kyrgyz = 40, /datum/language/kazakh = 40, /datum/language/turkmen = 40, /datum/language/uzbek = 60)
 
 /datum/language/chechen
 	name = "Chechen"
@@ -343,14 +410,14 @@
 	syllables = CRAB_SYLLABLES
 	mutual_intelligibility = list()
 
-/datum/language/gaelic
-	name = "Gaelic"
-	desc = "Drunken ramblings!"
-	key = "ga"
-	colour = "Gaelic"
+/datum/language/scottishgaelic
+	name = "Scottish Gaelic"
+	desc = "Alba gu brath!"
+	key = "sg"
+	colour = "Scottish Gaelic"
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = GAELIC_SYLLABLES
-	mutual_intelligibility = list()
+	mutual_intelligibility = list(/datum/language/gaelic = 80, /datum/language/scots = 70)
 
 /datum/language/italian
 	name = "Italian"
@@ -476,7 +543,79 @@
     colour = "Iroquois"
     flags = RESTRICTED | COMMON_VERBS
     syllables = IROQUOIS_SYLLABLES
-    mutual_intelligibility = list(/datum/language/inuit = 10)
+    mutual_intelligibility = list(/datum/language/inuit = 10, /datum/language/sioux = 6)
+
+/datum/language/sioux
+    name = "Sioux"
+    desc = "Lakotan, the language spoken by the Sioux."
+    key = "sx"
+    colour = "Sioux"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = SIOUX_SYLLABLES
+    mutual_intelligibility = list(/datum/language/cherokee = 10, /datum/language/iroquois = 6)
+
+/datum/language/apache
+    name = "Apache"
+    desc = "Western Apache."
+    key = "ap"
+    colour = "Apache"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = APACHE_SYLLABLES
+    mutual_intelligibility = list(/datum/language/navajo = 10, /datum/language/cherokee = 4)
+
+/datum/language/navajo
+    name = "Navajo"
+    desc = "Diné Bizaad."
+    key = "nv"
+    colour = "Navajo"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = NAVAJO_SYLLABLES
+    mutual_intelligibility = list(/datum/language/apache = 10, /datum/language/cherokee = 4)
+
+/datum/language/chinook
+    name = "Chinook"
+    desc = "Chinook Jargon."
+    key = "cj"
+    colour = "Chinook"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = CHINOOK_SYLLABLES
+    mutual_intelligibility = list(/datum/language/iroquois = 6, /datum/language/inuit = 4)
+
+/datum/language/comanche
+    name = "Comanche"
+    desc = "Numu Tekwapu."
+    key = "cm"
+    colour = "Comanche"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = COMANCHE_SYLLABLES
+    mutual_intelligibility = list(/datum/language/cherokee = 8, /datum/language/apache = 6)
+
+/datum/language/mayan
+    name = "Mayan"
+    desc = "Maya T'aan."
+    key = "my"
+    colour = "Mayan"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = MAYAN_SYLLABLES
+    mutual_intelligibility = list(/datum/language/aztec = 6, /datum/language/cherokee = 2)
+
+/datum/language/aztec
+    name = "Aztec"
+    desc = "Nahuatl language."
+    key = "az"
+    colour = "Aztec"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = AZTEC_SYLLABLES
+    mutual_intelligibility = list(/datum/language/mayan = 6, /datum/language/cherokee = 2)
+
+/datum/language/hawaiian
+    name = "Hawaiian"
+    desc = "Ōlelo Hawai'i."
+    key = "hw"
+    colour = "Hawaiian"
+    flags = RESTRICTED | COMMON_VERBS
+    syllables = HAWAIIAN_SYLLABLES
+    mutual_intelligibility = list(/datum/language/chinook = 4, /datum/language/inuit = 2)
 
 /datum/language/filipino
     name = "Filipino"
@@ -487,19 +626,46 @@
     syllables = FILIPINO_SYLLABLES
     mutual_intelligibility = list(/datum/language/spanish = 40)
 
+/datum/language/welsh
+	name = "Welsh"
+	desc = "Cymru am byth!"
+	key = "we"
+	colour = "Welsh"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = WELSH_SYLLABLES
+	mutual_intelligibility = list(/datum/language/english = 80)
+
+/datum/language/scots
+	name = "Scots"
+	desc = "It may sound like giberrish, but it makes perfect sense!"
+	key = "sc"
+	colour = "Scots"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = SCOTS_SYLLABLES
+	mutual_intelligibility = list(/datum/language/english = 80, /datum/language/scottishgaelic = 60)
+
+/datum/language/gaelic
+	name = "Gaelic"
+	desc = "Drunken ramblings!"
+	key = "ga"
+	colour = "Gaelic"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = GAELIC_SYLLABLES
+	mutual_intelligibility = list(/datum/language/scottishgaelic = 80)
+
 /datum/language/redmenian
 	name = "Redmenian"
 	desc = "The language of Redmenia."
-	key = "rd"
+	key = "red"
 	colour = "Redmenian"
 	flags = RESTRICTED | COMMON_VERBS
-	syllables = ARAB_SYLLABLES
+	syllables = JAPANESE_SYLLABLES
 	mutual_intelligibility = list(/datum/language/blugoslavian = 10)
 
 /datum/language/blugoslavian
 	name = "Blugoslavian"
 	desc = "The language of Blugoslavia."
-	key = "bl"
+	key = "blue"
 	colour = "Blugoslavian"
 	flags = RESTRICTED | COMMON_VERBS
 	syllables = RUSSIAN_SYLLABLES
@@ -514,3 +680,11 @@
 	syllables = CHECHEN_SYLLABLES
 	mutual_intelligibility = list()
 
+/datum/language/droid
+	name = "Binary"
+	desc = "Binary language used by droids."
+	key = "bn"
+	colour = "Binary"
+	flags = RESTRICTED | COMMON_VERBS
+	syllables = DROID_SYLLABLES
+	mutual_intelligibility = list()

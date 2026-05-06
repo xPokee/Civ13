@@ -1,4 +1,4 @@
-/obj/structure/barricade/wood_pole
+/obj/structure/barricade/wood_pole // TODO move this and procs to barricade.dm
 	name = "wood pole"
 	desc = "A simple wood pole. You can attach stuff to it."
 	icon = 'icons/obj/structures.dmi'
@@ -36,7 +36,7 @@
 			L.S2 = src
 			L.S1.following_mob = src
 			L.S1.stop_automated_movement = TRUE
-			user << "You tie \the [L.S1] to \the [src] with the leash."
+			to_chat(user, SPAN_NOTICE("You tie \the [L.S1] to \the [src] with the leash."))
 			qdel(L)
 			return
 	else
@@ -68,13 +68,13 @@
 			L.S2 = src
 			L.S1.following_mob = src
 			L.S1.stop_automated_movement = TRUE
-			user << "You tie \the [L.S1] to \the [src] with the leash."
+			to_chat(user, SPAN_NOTICE("You tie \the [L.S1] to \the [src] with the leash."))
 			attached = "animal"
 			qdel(L)
 			return
 	else if (istype(O, /obj/item/flashlight/lantern))
 		var/obj/item/flashlight/lantern/LT = O
-		user << "You tie \the [O] to \the [src]."
+		to_chat(user, SPAN_NOTICE("You tie \the [O] to \the [src]."))
 		LT.anchored = TRUE
 		LT.on = TRUE
 		LT.update_icon()
@@ -90,7 +90,7 @@
 	if (!isliving(user))
 		return
 	if (attached_ob && istype(attached_ob, /obj/item/flashlight/lantern))
-		user << "You remove \the [attached_ob] from \the [src]."
+		to_chat(user, SPAN_NOTICE("You remove \the [attached_ob] from \the [src]."))
 		var/obj/item/flashlight/lantern/O = attached_ob
 		O.anchored = FALSE
 		O.forceMove(user.loc)
@@ -109,6 +109,7 @@
 			LT.update_icon()
 			attached_ob = null
 	..()
+
 /obj/structure/grille/logfence
 	name = "palisade"
 	desc = "A wooden palisade."
@@ -135,6 +136,30 @@
 	health = 80
 	opacity = TRUE
 	hitsound = 'sound/weapons/blade_parry1.ogg'
+
+/obj/structure/grille/metalsheetfence/attackby(obj/item/W, mob/user)
+	if (istype(W, /obj/item/weapon/siegeladder))
+		user.visible_message(
+			SPAN_DANGER("[user] starts deploying \the [W.name]."),
+			SPAN_NOTICE("You start deploying \the [W.name]."))
+		if (do_after(user, 8 SECONDS, src))
+			user.visible_message(
+				SPAN_DANGER("[user] has deployed \the [W.name]!"),
+				SPAN_DANGER("You have deployed \the [W.name]!"))
+			var/obj/item/weapon/siegeladder/ANCH = W
+			user.remove_from_mob(ANCH)
+			ANCH.loc = src.loc
+			ANCH.anchored = TRUE
+			climbable = TRUE
+			ANCH.deployed = TRUE
+			ANCH.icon_state = ANCH.depicon
+			ANCH.dir = src.dir
+		else
+			user.visible_message(
+				SPAN_DANGER("[user] stops deploying \the [W.name]."),
+				SPAN_DANGER("You stop deploying \the [W.name]."))
+	..()
+
 /obj/structure/grille/metalsheetfence/blue
 	icon_state = "metal_fence2"
 /obj/structure/grille/metalsheetfence/red
@@ -224,6 +249,8 @@
 
 	return TRUE
 
+///////CHAIN-LINK FENCE PROC AND DEFINES/////////////
+
 /obj/structure/grille/chainlinkfence/proc/update_cut_status()
 	if(!cuttable)
 		return
@@ -255,7 +282,7 @@
 	cuttable = FALSE
 	density = FALSE
 
-// DOOR
+///////CHAIN-LINK FENCE DOOR /////////////
 
 /obj/structure/grille/chainlinkfence/door
 	name = "chain-link fence door"
@@ -281,10 +308,16 @@
 /obj/structure/grille/chainlinkfence/door/proc/toggle(mob/user)
 	switch(open)
 		if(FALSE)
-			visible_message("<span class='notice'>\The [user] opens \the [src].</span>")
+			user.visible_message("<span class='warning'>\The [user] opens \the [src].</span>",
+								"<span class='notice'>You open \the [src].</span>",
+								"You hear something being opened.")
+
 			open = TRUE
 		if(TRUE)
-			visible_message("<span class='notice'>\The [user] closes \the [src].</span>")
+			user.visible_message("<span class='warning'>\The [user] closes \the [src].</span>",
+								"<span class='notice'>You close \the [src].</span>",
+								"You hear something being closed.")
+
 			open = FALSE
 
 	update_door_status()
@@ -302,7 +335,7 @@
 /obj/structure/grille/chainlinkfence/door/proc/can_open(mob/user)
 	return TRUE
 
-////////////////////////////////////////////////
+////////////////////wallclock////////////////////////////
 
 /obj/structure/wallclock
 	name = "standing clock"
@@ -315,7 +348,9 @@
 	anchored = TRUE
 /obj/structure/wallclock/examine(mob/user)
 	..()
-	user << "<big>It is now [clock_time()].</big>"
+	to_chat(user, "<big>It is now [clock_time()].</big>")
+
+//////////Props/////////////////////////////
 
 /obj/structure/props/server
 	name = "server hub"
@@ -343,6 +378,8 @@
 	desc = "A big, heavy duty, power transformer turning high voltage electricity into low voltage electricity to be used by the consumer or else."
 	icon = 'icons/obj/machines/servers.dmi'
 	icon_state = "controller"
+
+//////////More Props/////////////////////////////
 
 /obj/structure/props/junk
 	name = "junk"
@@ -389,7 +426,7 @@
 	bound_height = 64
 
 /obj/structure/props/stove
-	name = "stove"
+	name = "gas stove"
 	desc = "A gas stove."
 	icon = 'icons/obj/modern_structures.dmi'
 	icon_state = "stove"
@@ -544,8 +581,8 @@
 	anchored = TRUE
 
 /obj/structure/props/djtable
-	name = "dj table"
-	desc = "A dj table."
+	name = "DJ table"
+	desc = "A DJ table."
 	icon = 'icons/obj/junk.dmi'
 	icon_state = "djtable"
 	flammable = TRUE
@@ -582,12 +619,20 @@
 	icon_state = "sofa_forward_right"
 
 /obj/structure/props/sofa/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		return prob(75)
 	else
 		return FALSE
 
 /obj/structure/props/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		return prob(50)
 	else
@@ -717,7 +762,7 @@
 	desc = "A hotbulb engine in operation."
 	icon_state = "hotbulb_on"
 /obj/structure/props/engineprops/dieselgeni
-	name = "diesel genertator"
+	name = "diesel generator"
 	desc = "A diesel generator in operation."
 	icon_state = "diesel_on"
 /obj/structure/props/engineprops/hesselman
@@ -790,6 +835,9 @@
 	bound_width = 32
 	bound_height = 64
 	bound_x = 32
+
+/* Computer props */
+
 /obj/structure/props/computerprops
 	name = "access terminal"
 	desc = "The screen is on and the buttons all work but you aren't sure you know which ones to push."
@@ -831,10 +879,16 @@
 /obj/structure/props/computerprops/modern/synth2
 	icon_state = "synth2"
 
+/* Fallout */
+
 /obj/structure/props/computerprops/enclave
 	icon_state = "enclave_on"
+
 /obj/structure/props/computerprops/terminal
 	icon_state = "terminal_on"
+
+/* Broken Helicopter Parts */
+
 /obj/structure/broken_hind
 	name = "Mi-24 remains"
 	desc = "The remains of a Soviet helicopter."
@@ -849,6 +903,8 @@
 	bound_width = 128
 	bound_height = 128
 	bound_x = 32
+	crushable = FALSE
+
 /obj/structure/broken_hind_tail
 	name = "helicopter tail"
 	desc = "The tail of a helicopter."
@@ -863,6 +919,7 @@
 	bound_width = 128
 	bound_height = 128
 	bound_x = 32
+	crushable = FALSE
 
 /obj/structure/props/marketstall
 	name = "market stall"
@@ -880,8 +937,8 @@
 		icon_state ="propstall[rand(1,4)]"
 
 /obj/structure/props/keyboard
-	name = "eletric keyboard"
-	desc = "A electric keyboard."
+	name = "electric keyboard"
+	desc = "An electric keyboard."
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "keyboard"
 	flammable = FALSE
@@ -892,8 +949,8 @@
 	anchored = TRUE
 
 /obj/structure/props/dj
-	name = "dj table"
-	desc = "A dj setup for makin sick beats."
+	name = "DJ table"
+	desc = "A DJ setup for makin' sick beats."
 	icon = 'icons/obj/junk.dmi'
 	icon_state = "djtable"
 	flammable = FALSE
@@ -905,7 +962,7 @@
 
 /obj/structure/props/micstand
 	name = "microphone stand"
-	desc = "A mic stand."
+	desc = "A mic-stand."
 	icon = 'icons/obj/structures.dmi'
 	icon_state = "microphone_stand"
 	flammable = FALSE
@@ -926,6 +983,7 @@
 	density = TRUE
 	opacity = TRUE
 	anchored = TRUE
+	crushable = FALSE
 
 /obj/structure/flag
 	icon = 'icons/obj/flags.dmi'
@@ -938,6 +996,7 @@
 	flammable = TRUE
 	not_movable = FALSE
 	not_disassemblable = TRUE
+	crushable = FALSE
 
 /obj/structure/flag/ex_act(severity)
 	switch(severity)
@@ -953,32 +1012,32 @@
 
 /obj/structure/flag/pirates
 	icon_state = "pirates"
-	name = "Pirate Flag"
+	name = "Pirate flag"
 	desc = "A black and white pirate flags with skull and bones."
 
 /obj/structure/flag/black
 	icon_state = "black"
-	name = "Black Flag"
+	name = "Black flag"
 	desc = "A black flag."
 
 /obj/structure/flag/white
 	icon_state = "white"
-	name = "White Flag"
+	name = "White flag"
 	desc = "A white flag."
 
 /obj/structure/flag/french
 	icon_state = "french"
-	name = "French Flag"
+	name = "French flag"
 	desc = "The French flag, white with golden fleur-de-lys."
 
 /obj/structure/flag/french_modern
 	icon_state = "french2"
-	name = "French Flag"
+	name = "French flag"
 	desc = "The modern french tricoleur."
 
 /obj/structure/flag/french_monarchist
 	icon_state = "french3"
-	name = "French Flag"
+	name = "French flag"
 	desc = "The french monarchist flag."
 
 
@@ -999,12 +1058,12 @@
 
 /obj/structure/flag/british
 	icon_state = "british"
-	name = "British Flag"
+	name = "British flag"
 	desc = "The Union Jack."
 
 /obj/structure/flag/portuguese
 	icon_state = "portuguese"
-	name = "Portuguese Flag"
+	name = "Portuguese flag"
 	desc = "A white flag with the Portuguese Coat of Arms in the middle."
 
 /obj/structure/flag/dutch
@@ -1019,17 +1078,17 @@
 
 /obj/structure/flag/japanese
 	icon_state = "japanese"
-	name = "Imperial Japanese Flag"
+	name = "Imperial Japanese flag"
 	desc = "The Imperial Japanese flag."
 
 /obj/structure/flag/russian
 	icon_state = "russian"
-	name = "Russian Flag"
+	name = "Russian flag"
 	desc = "The tricolor Russian flag."
 
 /obj/structure/flag/russian
 	icon_state = "russian"
-	name = "Russian Flag"
+	name = "Russian flag"
 	desc = "The tricolor Russian flag."
 
 /obj/structure/flag/soviet
@@ -1039,17 +1098,17 @@
 
 /obj/structure/flag/us
 	icon_state = "us"
-	name = "USA Flag"
+	name = "USA flag"
 	desc = "The US flag."
 
 /obj/structure/flag/german
 	icon_state = "german"
-	name = "German Flag"
+	name = "German flag"
 	desc = "The German flag."
 
 /obj/structure/flag/german_modern
 	icon_state = "german2"
-	name = "German Flag"
+	name = "German flag"
 	desc = "The German flag."
 
 /obj/structure/flag/confed
@@ -1097,6 +1156,11 @@
 	name = "Blugoslavia Flag"
 	desc = "The flag of Blugoslavia."
 
+/obj/structure/flag/cafr
+	icon_state = "cafr"
+	name = "CAFR Flag"
+	desc = "The flag of the Central Asian Federal Republic."
+
 /obj/structure/flag/pole
 	icon_state = "flagpole_blank"
 	name = "Flagpole"
@@ -1138,7 +1202,7 @@
 			if (do_after(user, 10 SECONDS, src))
 				faction_text = user.faction_text
 				switch(faction_text)
-					if (PIRATES)
+					if (REDFACTION)
 						icon_state = "redmenia"
 						name = "Redmenia Flag"
 						desc = "The flag of Redmenia."
@@ -1146,7 +1210,7 @@
 						for (var/mob/M in player_list)
 							M.client << warning_sound
 						world << "<font size = 5><b>REDMENIA HAS RECAPTURED THEIR CAPITAL.</b></font>"
-					if (CIVILIAN)
+					if (BLUEFACTION)
 						icon_state = "blugoslavia"
 						name = "Blugoslavia Flag"
 						desc = "The flag of Blugoslavia."
@@ -1160,7 +1224,7 @@
 			if (do_after(user, 10 SECONDS, src))
 				faction_text = user.faction_text
 				switch(faction_text)
-					if (PIRATES)
+					if (REDFACTION)
 						icon_state = "redmenia"
 						name = "Redmenia Flag"
 						desc = "The flag of Redmenia."
@@ -1168,7 +1232,7 @@
 						for (var/mob/M in player_list)
 							M.client << warning_sound
 						world << "<font size = 5><b>REDMENIA HAS CAPTURED THE BLUGOSLAVIAN CAPITAL.</b></font>"
-					if (CIVILIAN)
+					if (BLUEFACTION)
 						icon_state = "blugoslavia"
 						name = "Blugoslavia Flag"
 						desc = "The flag of Blugoslavia."
@@ -1179,20 +1243,20 @@
 				user << "You succesfully hoist your own flag! <br><font size = 5><span class = 'good'>Long live [capitalize(icon_state)]!</span></font>"
 	else
 		user << SPAN_WARNING("Long live [capitalize(icon_state)]!")
-	
+
 /obj/structure/flag/campaign/redmenia
 	icon_state = "redmenia"
 	name = "Redmenia Flag"
 	desc = "The flag of Redmenia."
-	faction_text = PIRATES
-	original_faction = PIRATES
+	faction_text = REDFACTION
+	original_faction = REDFACTION
 
 /obj/structure/flag/campaign/blugoslavia
 	icon_state = "blugoslavia"
 	name = "Blugoslavia Flag"
 	desc = "The flag of Blugoslavia."
-	faction_text = CIVILIAN
-	original_faction = CIVILIAN
+	faction_text = BLUEFACTION
+	original_faction = BLUEFACTION
 
 /obj/structure/flag/pole/attackby(obj/item/W as obj, var/mob/living/human/H)
 	if(istype(W, /obj/item/stack/material/cloth))
@@ -1291,9 +1355,9 @@
 	opacity = FALSE
 
 /obj/structure/wallframe/attackby(obj/item/W as obj, var/mob/living/human/H)
-	if(istype(W, /obj/item/stack/material/wood))
+	if(istype(W, /obj/item/stack/material/clay))
 		var/input
-		var/display = list("Medieval Window - 4", "Medieval Wall - 6", "Medieval Crossbraced Wall (X) - 6", "Medieval Braced Wall (\\) - 6", "Medieval Braced Wall (/) - 6", "Cancel")
+		var/display = list("Medieval Window - 4", "Medieval Wall - 6","Cancel")
 		input =  WWinput(H, "What wall would you like to make?", "Building", "Cancel", display)
 		playsound(src.loc,'sound/items/ratchet.ogg',40) //rip_pack.ogg
 		if (input == "Cancel")
@@ -1308,24 +1372,6 @@
 			if(W.amount >= 6)
 				if (do_after(H, 41, src))
 					new/obj/covers/wood_wall/medieval(src.loc)
-					qdel(src)
-					W.amount -= 6
-		else if(input == "Medieval Crossbraced Wall (X) - 6")
-			if(W.amount >= 6)
-				if (do_after(H, 43, src))
-					new/obj/covers/wood_wall/medieval/x(src.loc)
-					qdel(src)
-					W.amount -= 6
-		else if(input == "Medieval Braced Wall (\\) - 6")
-			if(W.amount >= 6)
-				if (do_after(H, 42, src))
-					new/obj/covers/wood_wall/medieval/y/r(src.loc)
-					qdel(src)
-					W.amount -= 6
-		else if(input == "Medieval Braced Wall (/) - 6")
-			if(W.amount >= 6)
-				if (do_after(H, 42, src))
-					new/obj/covers/wood_wall/medieval/y/l(src.loc)
 					qdel(src)
 					W.amount -= 6
 		else
@@ -1392,6 +1438,15 @@
 					W.amount -= 2
 		else
 			H << "<span class='notice'>That does not exist!</span>"
+	else if(istype(W, /obj/item/stack/material/woodplank))
+		playsound(loc, 'sound/effects/woodfile.ogg', 100, TRUE) //rip_pack.ogg
+		if(W.amount >= 10)
+			if (do_after(H, 40, src))
+				new/obj/covers/wood_wall/adjustable(src.loc)
+				qdel(src)
+				W.amount -= 10
+		else
+			H << "<span class='notice'>You need 10 planks to build the wall!</span>"
 
 /* Bamboo Wall-Frame*/
 
@@ -1537,7 +1592,7 @@
 	layer = 5
 	density = FALSE
 	anchored = TRUE
-
+	crushable = FALSE
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////TORCH STAND/////////////////////////////////////////////
@@ -1556,13 +1611,14 @@
 	var/obj/item/weapon/storage/internal/storage
 	var/max_storage = 3
 	var/brightness_on = 5 //luminosity when on
+	crushable = FALSE
 
 /obj/structure/torch_stand/update_icon()
 	if (dir == 1)
 		pixel_y = 32
 	else
 		pixel_y = 0
-	if (storage.contents.len > 0)
+	if (storage && storage.contents.len > 0)
 		for (var/obj/item/flashlight/torch/TOR in src.storage.contents)
 			if (TOR.on == TRUE)
 				icon_state = "torch_stand1_on"
@@ -1606,7 +1662,7 @@
 	..()
 
 /obj/structure/torch_stand/attack_hand(mob/user as mob)
-	if (istype(user, /mob/living/human) && user in range(1,src))
+	if (istype(user, /mob/living/human) && (user in range(1,src)))
 		storage.open(user)
 		update_icon()
 	else
@@ -1666,6 +1722,7 @@
 	not_disassemblable = TRUE
 	bound_width = 96
 	bound_height = 64
+	crushable = FALSE
 
 /obj/structure/cargo_container/New()
 	var/number = rand(1,5)
@@ -1684,6 +1741,7 @@
 	not_disassemblable = TRUE
 	bound_width = 96
 	bound_height = 96
+	crushable = FALSE
 
 /obj/structure/machinery/construction_crane
 	name = "crane"
@@ -1696,6 +1754,7 @@
 	not_disassemblable = TRUE
 	bound_width = 64
 	bound_height = 64
+	crushable = FALSE
 
 /obj/structure/machinery/construction_crane/New()
 	if (dir == NORTH || dir == EAST)//Need to find another way to displace bounds than bound_x;bound_y
@@ -1721,6 +1780,7 @@
 	not_disassemblable = TRUE
 	bound_width = 64
 	bound_height = 64
+	crushable = FALSE
 
 /obj/structure/machinery/construction_crane/New()
 	if (dir == NORTH || dir == EAST)//Need to find another way to displace bounds than bound_x;bound_y
@@ -1742,6 +1802,7 @@
 	not_disassemblable = TRUE
 	bound_width = 64
 	bound_height = 128
+	crushable = FALSE
 
 /obj/structure/radome
 	name = "radio dome"
@@ -1754,6 +1815,7 @@
 	not_disassemblable = TRUE
 	bound_width = 128
 	bound_height = 128
+	crushable = FALSE
 
 /obj/structure/medical_divider
 	name = "medical divider"
@@ -1761,8 +1823,10 @@
 	icon_state = "medical_divider_half"
 	density = FALSE
 	flammable = TRUE
+	anchored = TRUE
 
 /obj/structure/medical_divider/full
 	icon_state = "medical_divider_full"
 	density = TRUE
 	flammable = TRUE
+	anchored = TRUE

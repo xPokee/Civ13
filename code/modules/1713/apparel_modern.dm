@@ -6,7 +6,7 @@
    * - 2 Us Army
    * - 2a Us Army Armor
    * - 2a1 PASGT Armor
-   * - 2a2 US Lightwieght Helmets
+   * - 2a2 US Lightweight Helmets
    * - 2b US Army Clothing
    * - 2c Russian Army Clothing
    /////////////////////////////////////
@@ -79,7 +79,7 @@
 /* Armor Plates*/
 
 /obj/item/weapon/armorplates
-	name = "ballistic plates"
+	name = "ballistic plate"
 	desc = "Used to increase the protection of some body armors."
 	icon = 'icons/obj/clothing/ties.dmi'
 	icon_state = "plates"
@@ -94,6 +94,7 @@
 	sharp = FALSE
 	edge = TRUE
 	w_class = ITEM_SIZE_SMALL
+	var/protection = 10
 
 /obj/item/weapon/armorplatesswimmer
 	name = "swimmer plate"
@@ -379,6 +380,19 @@
 	w_class = ITEM_SIZE_LARGE
 	weight = 4.2
 
+/obj/item/clothing/accessory/armor/coldwar/plates/b46
+	name = "6B46 body armor"
+	desc = "A modern plate carrier of Russian origin. This one is used by paratroopers and vehicle crewmen as it is a lighter version of the 6B45."
+	icon_state = "6b46"
+	item_state = "6b46"
+	worn_state = "6b46"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	armor = list(melee = 60, arrow = 95, gun = 50, energy = 22, bomb = 55, bio = 20, rad = FALSE)
+	value = 150
+	slowdown = 0.1
+	w_class = ITEM_SIZE_LARGE
+	weight = 3.2
+
 /* Us Army*/
 
 	/* Us Army Armor*/
@@ -423,6 +437,15 @@
 	icon_state = "pasgt_white"
 	item_state = "pasgt_white"
 	worn_state = "pasgt_white"
+
+/obj/item/clothing/head/helmet/modern/pasgt/white/alt
+	icon_state = "pasgt_white_alt"
+	item_state = "pasgt_white_alt"
+	worn_state = "pasgt_white_alt"
+/obj/item/clothing/head/helmet/modern/pasgt/white/alt/two
+	icon_state = "pasgt_white_alt_2"
+	item_state = "pasgt_white_alt_2"
+	worn_state = "pasgt_white_alt_2"
 
 /obj/item/clothing/head/helmet/modern/pasgt/desert/New()
 	..()
@@ -493,12 +516,12 @@
 
 /obj/item/clothing/accessory/armor/coldwar/plates/b5/n34/medical
 	name = "N34-BM body armor"
-	desc = "A blugoslavian armor used by medics and doctors alike, comes with a white medical cross on the back."
+	desc = "A Blugoslavian armor used by medics and doctors alike, comes with a white medical cross on the back."
 	icon_state = "n34bmm"
 	item_state = "n34bmm"
 	worn_state = "n34bmm"
 
-		/* US Lightwieght Helmets*/
+		/* US Lightweight Helmets*/
 
 /obj/item/clothing/head/helmet/modern/lwh
 	name = "LWH helmet"
@@ -774,7 +797,7 @@
 	worn_state = "a6b47"
 	body_parts_covered = HEAD
 	flags_inv = BLOCKHEADHAIR
-	armor = list(melee = 60, arrow = 100, gun = 86, energy = 27, bomb = 76, bio = 30, rad = FALSE)
+	armor = list(melee = 62, arrow = 75, gun = 55, energy = 15, bomb = 55, bio = 20, rad = FALSE)
 
 /obj/item/clothing/head/helmet/modern/a6b47/emr
 	icon_state = "6b47_emr"
@@ -1052,7 +1075,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 65, arrow = 95, gun = 73, energy = 22, bomb = 60, bio = 20, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 90
 
 /* Motorist*/
@@ -1064,7 +1086,6 @@
 	item_state = "motorcycle"
 	worn_state = "motorcycle"
 	body_parts_covered = FACE|EYES|HEAD
-	restricts_view = 1
 	flags_inv = HIDEMASK|BLOCKHAIR|BLOCKHEADHAIR
 	armor = list(melee = 55, arrow = 65, gun = 5, energy = 35, bomb = 35, bio = 30, rad = FALSE)
 
@@ -1175,7 +1196,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 65, arrow = 95, gun = 85, energy = 27, bomb = 64, bio = 20, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 90
 
 /obj/item/clothing/head/helmet/swat_new
@@ -1187,7 +1207,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 85, arrow = 95, gun = 85, energy = 27, bomb = 70, bio = 20, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 100
 
 	/* Emergency Services Clothing*/
@@ -1429,8 +1448,8 @@
 	..()
 	new /obj/item/flashlight/modern(src)
 	new /obj/item/stack/medical/bruise_pack/bint(src)
-	new /obj/item/weapon/handcuffs(src)
-	new /obj/item/weapon/handcuffs(src)
+	new /obj/item/weapon/handcuffs/zip(src)
+	new /obj/item/weapon/handcuffs/zip(src)
 	new /obj/item/ammo_magazine/glock17(src)
 	new /obj/item/ammo_magazine/m16(src)
 	new /obj/item/ammo_magazine/m16(src)
@@ -1466,8 +1485,8 @@
 	..()
 	new /obj/item/flashlight/modern(src)
 	new /obj/item/stack/medical/bruise_pack/bint(src)
-	new /obj/item/weapon/handcuffs(src)
-	new /obj/item/weapon/handcuffs(src)
+	new /obj/item/weapon/handcuffs/zip(src)
+	new /obj/item/weapon/handcuffs/zip(src)
 	new /obj/item/ammo_magazine/glock17(src)
 	new /obj/item/ammo_magazine/mp40/mp5(src)
 	new /obj/item/ammo_magazine/mp40/mp5(src)
@@ -1549,7 +1568,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 75, arrow = 95, gun = 93, energy = 22, bomb = 60, bio = 20, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 90
 
 /obj/item/clothing/under/trackpants
@@ -1743,7 +1761,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 95, arrow = 100, gun = 110, energy = 50, bomb = 90, bio = 45, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 200
 
 /obj/item/clothing/head/helmet/iogmask1 //too broad, this is meant to be some sort of extreme sports armorwear or something.
@@ -1755,7 +1772,6 @@
 	body_parts_covered = HEAD
 	armor = list(melee = 95, arrow = 100, gun = 100, energy = 50, bomb = 90, bio = 45, rad = 100)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 200
 
 	/* Scrap Armor*/
@@ -1781,7 +1797,6 @@
 	body_parts_covered = HEAD|FACE
 	armor = list(melee = 70, arrow = 85, gun = 20, energy = 20, bomb = 50, bio = 10, rad = 40)
 	flags_inv = BLOCKHAIR
-	restricts_view = 1
 	health = 60
 
 
@@ -1872,24 +1887,53 @@
 	set src in usr
 	if (type != /obj/item/clothing/under/russian)
 		return
+	if (rolled)
+		item_state = "russian_emr"
+		worn_state = "russian_emr"
+		item_state_slots["w_uniform"] = "russian_emr"
+		to_chat(usr, SPAN_NOTICE("You roll down your uniform's sleeves."))
+		rolled = FALSE
+		cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
 	else
-		if (rolled)
-			item_state = "russian_emr"
-			worn_state = "russian_emr"
-			item_state_slots["w_uniform"] = "russian_emr"
-			usr << "<span class = 'danger'>You roll down your uniform's sleeves.</span>"
-			rolled = FALSE
-			cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
-			update_clothing_icon()
-		else if (!rolled)
-			item_state = "russian_emr_rolled"
-			worn_state = "russian_emr_rolled"
-			item_state_slots["w_uniform"] = "russian_emr_rolled"
-			usr << "<span class = 'danger'>You roll up your uniform's sleeves.</span>"
-			rolled = TRUE
-			heat_protection = ARMS
-			cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS
-			update_clothing_icon()
+		item_state = "russian_emr_rolled"
+		worn_state = "russian_emr_rolled"
+		item_state_slots["w_uniform"] = "russian_emr_rolled"
+		to_chat(usr, SPAN_NOTICE("You roll up your uniform's sleeves."))
+		rolled = TRUE
+		heat_protection = ARMS
+		cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS
+	update_clothing_icon()
+
+/obj/item/clothing/under/russian/vdv/roll_sleeves()
+	set category = null
+	set src in usr
+	if (type != /obj/item/clothing/under/russian/vdv)
+		return
+	if (rolled)
+		item_state = "russian_emr_vdv"
+		worn_state = "russian_emr_vdv"
+		item_state_slots["w_uniform"] = "russian_emr_vdv"
+		to_chat(usr, SPAN_NOTICE("You roll down your uniform's sleeves."))
+		rolled = FALSE
+		cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	else
+		item_state = "russian_emr_vdv_rolled"
+		worn_state = "russian_emr_vdv_rolled"
+		item_state_slots["w_uniform"] = "russian_emr_vdv_rolled"
+		to_chat(usr, SPAN_NOTICE("You roll up your uniform's sleeves."))
+		rolled = TRUE
+		heat_protection = ARMS
+		cold_protection = UPPER_TORSO|LOWER_TORSO|LEGS
+	update_clothing_icon()
+
+/obj/item/clothing/under/russian/vdv
+	name = "EMR pattern uniform"
+	desc = "The standard Russian Federation Army camo uniform."
+	icon_state = "russian_emr_vdv"
+	item_state = "russian_emr_vdv"
+	worn_state = "russian_emr_vdv"
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
+	rolled = FALSE
 
 /obj/item/clothing/under/russiandesert
 	name = "EMR desert pattern uniform"
@@ -2083,6 +2127,16 @@
 	stripped = FALSE
 	base_icon = "cad_pat_arid"
 
+/obj/item/clothing/under/caf/winter
+	name = "cadpat uniform"
+	desc = "A canadian pattern uniform"
+	icon_state = "cad_pat_winter"
+	item_state = "cad_pat_winter"
+	worn_state = "cad_pat_winter"
+	rolled = FALSE
+	stripped = FALSE
+	base_icon = "cad_pat_winter"
+
 /obj/item/clothing/under/caf/verb/roll_sleeves()
 	set category = null
 	set src in usr
@@ -2134,7 +2188,7 @@
 /obj/item/clothing/under/caf/verb/strip()
 	set category = null
 	set src in usr
-	if (type != /obj/item/clothing/under/ww2/japuni)
+	if (type != /obj/item/clothing/under/caf)
 		return
 	else
 		if (stripped)
@@ -2202,6 +2256,11 @@
 	item_state = "cg634_arid"
 	worn_state = "cg634_arid"
 
+/obj/item/clothing/head/helmet/modern/cg634/winter
+	icon_state = "cg634_winter"
+	item_state = "cg634_winter"
+	worn_state = "cg634_winter"
+
 /obj/item/clothing/accessory/storage/webbing/caf_tacvest
 	name = "CAF Tacvest"
 	desc = "A large webbing with several pouches."
@@ -2214,6 +2273,29 @@
 
 /obj/item/clothing/accessory/storage/webbing/caf_tacvest/arid
 	icon_state = "caf_tacvest_arid"
+	worn_state = "caf_tacvest_arid"
+
+/obj/item/clothing/accessory/storage/webbing/caf_tacvest/winter
+	icon_state = "caf_tacvest_winter"
+	worn_state = "caf_tacvest_winter"
+
+/obj/item/clothing/head/jungle_hat/caf
+	name = "cadpat tilly"
+	desc = "A wide brim, soft sun hat."
+	icon_state = "tilly_cadpat"
+	item_state = "tilly_cadpat"
+	worn_state = "tilly_cadpat"
+	body_parts_covered = HEAD
+
+/obj/item/clothing/head/jungle_hat/caf/arid
+	icon_state = "tilly_cadpat_arid"
+	item_state = "tilly_cadpat_arid"
+	worn_state = "tilly_cadpat_arid"
+
+/obj/item/clothing/head/jungle_hat/caf/winter
+	icon_state = "tilly_cadpat_winter"
+	item_state = "tilly_cadpat_winter"
+	worn_state = "tilly_cadpat_winter"
 
 /obj/item/clothing/head/helmet/modern/mechanical
 	name = "Mechanical Helmet"

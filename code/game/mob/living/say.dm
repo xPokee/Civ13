@@ -75,8 +75,8 @@ var/list/radio_prefixes = list(";", ":b", ":l", ":r", ":t", ":f",
 		speaking = parse_language(message)
 
 	if (speaking)
-		message = copytext(message,2+length(speaking.key))
-		alt_message = copytext(alt_message,2+length(speaking.key))
+		message = copytext(message,2+length_char(speaking.key))
+		alt_message = copytext(alt_message,2+length_char(speaking.key))
 	else
 		speaking = get_default_language()
 
@@ -142,8 +142,8 @@ var/list/radio_prefixes = list(";", ":b", ":l", ":r", ":t", ":f",
 		for (var/I in hear)
 			if (ismob(I))
 				var/mob/M = I
-				listening += M
-				hearturfs += M.locs[1]
+				listening |= M
+				hearturfs |= M.locs[1]
 			else if (isobj(I))
 				var/obj/O = I
 				hearturfs += O.locs[1]
@@ -153,7 +153,7 @@ var/list/radio_prefixes = list(";", ":b", ":l", ":r", ":t", ":f",
 			if (M.stat == DEAD && M.is_preference_enabled(/datum/client_preference/ghost_ears))
 				listening |= M
 				continue
-			if (M.loc && M.locs[1] in hearturfs)
+			if (M.loc && (M.locs[1] in hearturfs))
 				listening |= M
 
 	var/speech_bubble_test = say_test(message)

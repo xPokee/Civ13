@@ -88,6 +88,58 @@ proc/random_english_name(gender, species = "Human")
 	else
 		return current_species.get_random_english_name(gender)
 
+proc/random_gaelic_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_gaelic)) + " " + capitalize(pick(last_names_gaelic))
+		else
+			return capitalize(pick(first_names_male_gaelic)) + " " + capitalize(pick(last_names_gaelic))
+	else
+		return current_species.get_random_gaelic_name(gender)
+
+proc/random_welsh_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_welsh)) + " " + capitalize(pick(last_names_welsh))
+		else
+			return capitalize(pick(first_names_male_welsh)) + " " + capitalize(pick(last_names_welsh))
+	else
+		return current_species.get_random_welsh_name(gender)
+
+proc/random_scots_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_scots)) + " " + capitalize(pick(last_names_scots))
+		else
+			return capitalize(pick(first_names_male_scots)) + " " + capitalize(pick(last_names_scots))
+	else
+		return current_species.get_random_scots_name(gender)
+
+proc/random_scottishgaelic_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_scottishgaelic)) + " " + capitalize(pick(last_names_scottishgaelic))
+		else
+			return capitalize(pick(first_names_male_scottishgaelic)) + " " + capitalize(pick(last_names_scottishgaelic))
+	else
+		return current_species.get_random_scottishgaelic_name(gender)
+
 proc/random_spanish_name(gender, species = "Human")
 	var/datum/species/current_species
 	if (species)
@@ -324,6 +376,32 @@ proc/random_polish_name(gender, species = "Human")
 	else
 		return current_species.get_random_polish_name(gender)
 
+proc/random_bluefaction_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_english)) + " " + capitalize(pick(last_names_english))
+		else
+			return capitalize(pick(first_names_male_english)) + " " + capitalize(pick(last_names_english))
+	else
+		return current_species.get_random_english_name(gender)
+
+proc/random_redfaction_name(gender, species = "Human")
+	var/datum/species/current_species
+	if (species)
+		current_species = all_species[species]
+
+	if (!current_species || current_species.name_language == null)
+		if (gender==FEMALE)
+			return capitalize(pick(first_names_female_english)) + " " + capitalize(pick(last_names_english))
+		else
+			return capitalize(pick(first_names_male_english)) + " " + capitalize(pick(last_names_english))
+	else
+		return current_species.get_random_english_name(gender)
+
 // Afrikaans names. No real ingame purpose at the moment.
 proc/random_afrikaans_name(gender, species = "Human")
 	var/datum/species/current_species
@@ -339,65 +417,62 @@ proc/random_afrikaans_name(gender, species = "Human")
 		return current_species.get_random_afrikaans_name(gender)
 
 proc/random_skin_tone()
-
-	var/skin_tone = "caucasian"
-	if (prob(60))
-		pass()
-	else if (prob(15))
-		skin_tone = "mulatto"
-	else if (prob(10))
-		skin_tone = "african"
-	else if (prob(10))
-		skin_tone = "latino"
-
-	switch(skin_tone)
-		if ("caucasian")		. = -10
-		if ("mulatto")	. = -115
-		if ("african")		. = -165
-		if ("latino")		. = -55
-		else				. = rand(-185,34)
-	return min(max( .+rand(-25, 25), -185),34)
+	switch(pick(60;"caucasian", 15;"afroamerican", 10;"african", 10;"latino", 5;"albino"))
+		if("caucasian")		. = -10
+		if("afroamerican")	. = -115
+		if("african")		. = -165
+		if("latino")		. = -55
+		if("albino")		. = 34
+	return clamp(. + rand(-25, 25), -185, 34) // Clamp() keeps the rand(-25, 25) variation of skin tone between -185 to 34.
 
 proc/skintone2racedescription(tone)
-	switch (tone)
-		if (30 to INFINITY)		return "albino"
-		if (20 to 30)			return "pale"
-		if (5 to 15)				return "light skinned"
-		if (-10 to 5)			return "white"
-		if (-25 to -10)			return "tan"
-		if (-45 to -25)			return "darker skinned"
-		if (-65 to -45)			return "brown"
-		if (-INFINITY to -65)	return "black"
-		else					return "unknown"
+	if(!isnum(tone))
+		CRASH("skintone2racedescription; proc called without correct tone (integer) argument.")
 
-proc/age2agedescription(age)
-	switch(age)
-		if (0 to 1)			return "infant"
-		if (1 to 3)			return "toddler"
-		if (3 to 13)			return "child"
-		if (13 to 19)		return "teenager"
-		if (19 to 30)		return "young adult"
-		if (30 to 45)		return "adult"
-		if (45 to 60)		return "middle-aged"
-		if (60 to 70)		return "aging"
-		if (70 to INFINITY)	return "elderly"
+	switch(tone)
+		if (30 to INFINITY)		return "albino"
+		if (20 to 29)			return "pale"
+		if (5 to 19)			return "light skinned"
+		if (-10 to 4)			return "white"
+		if (-25 to -9)			return "tan"
+		if (-45 to -24)			return "darker skinned"
+		if (-65 to -44)			return "brown"
+		if (-INFINITY to -64)		return "black"
 		else				return "unknown"
 
-proc/ageAndGender2Desc(age, gender)//Used for the radio
-	if (gender == FEMALE)
+proc/age2agedescription(age)
+	if(!isnum(age))
+		CRASH("age2agedescription; proc called without correct age (integer) argument.")
+
+	switch(age)
+		if (0 to 1)			return "infant"
+		if (2 to 3)			return "toddler"
+		if (4 to 12)			return "child"
+		if (13 to 17)			return "teenager"
+		if (18 to 29)			return "young adult"
+		if (30 to 44)			return "adult"
+		if (45 to 59)			return "middle-aged"
+		if (60 to 69)			return "aging"
+		if (70 to INFINITY)		return "elderly"
+		else				return "unknown"
+
+proc/ageAndGender2Desc(age, gender) // Radio name getters.
+	if (!gender || !isnum(age))
+		CRASH("ageAndGender2Desc; proc called without age/gender argument.")
+
+	if (gender == MALE)
 		switch(age)
-			if (0 to 15)			return "Girl"
-			if (15 to 25)		return "Young Woman"
-			if (25 to 60)		return "Woman"
-			if (60 to INFINITY)	return "Old Woman"
-			else				return "Unknown"
+			if (0 to 15)		return "Boy"
+			if (16 to 25)		return "Young Man"
+			if (26 to 60)		return "Man"
+			if (61 to INFINITY)	return "Old Man"
 	else
 		switch(age)
-			if (0 to 15)			return "Boy"
-			if (15 to 25)		return "Young Man"
-			if (25 to 60)		return "Man"
-			if (60 to INFINITY)	return "Old Man"
-			else				return "Unknown"
+			if (0 to 15)		return "Girl"
+			if (16 to 25)		return "Young Woman"
+			if (26 to 60)		return "Woman"
+			if (61 to INFINITY)	return "Old Woman"
+	return "Unknown"
 
 proc/get_body_build(gender, body_build = "Default")
 	if (gender == MALE)
@@ -836,6 +911,70 @@ Proc for attack log creation, because really why not
 			polish += H
 	return polish
 
+/proc/getbluefactionmobs(var/alive = FALSE)
+	var/list/bluefaction = list()
+	for (var/mob/living/human/H in mob_list)
+		if (!istype(H))
+			continue
+		if (alive && H.stat == DEAD)
+			continue
+		if (!H.loc)
+			continue
+		if (!istype(H.original_job, /datum/job/bluefaction))
+			continue
+		if (istype(H, /mob/living/human/corpse))
+			continue
+		bluefaction += H
+	return bluefaction
+
+/proc/getredfactionmobs(var/alive = FALSE)
+	var/list/redfaction = list()
+	for (var/mob/living/human/H in mob_list)
+		if (!istype(H))
+			continue
+		if (alive && H.stat == DEAD)
+			continue
+		if (!H.loc)
+			continue
+		if (!istype(H.original_job, /datum/job/redfaction))
+			continue
+		if (istype(H, /mob/living/human/corpse))
+			continue
+		redfaction += H
+	return redfaction
+
+/proc/getcafrmobs(var/alive = FALSE)
+	var/list/cafr = list()
+	for (var/mob/living/human/H in mob_list)
+		if (!istype(H))
+			continue
+		if (alive && H.stat == DEAD)
+			continue
+		if (!H.loc)
+			continue
+		if (!istype(H.original_job, /datum/job/cafr))
+			continue
+		if (istype(H, /mob/living/human/corpse))
+			continue
+		cafr += H
+	return cafr
+
+/proc/gettsfsrmobs(var/alive = FALSE)
+	var/list/tsfsr = list()
+	for (var/mob/living/human/H in mob_list)
+		if (!istype(H))
+			continue
+		if (alive && H.stat == DEAD)
+			continue
+		if (!H.loc)
+			continue
+		if (!istype(H.original_job, /datum/job/tsfsr))
+			continue
+		if (istype(H, /mob/living/human/corpse))
+			continue
+		tsfsr += H
+	return tsfsr
+
 /proc/getfitmobs(var/faction)
 
 	var/list/mobs = null
@@ -884,6 +1023,14 @@ Proc for attack log creation, because really why not
 			mobs = getfilipinomobs(0)
 		if (POLISH)
 			mobs = getpolishmobs(0)
+		if (BLUEFACTION)
+			mobs = getbluefactionmobs(0)
+		if (REDFACTION)
+			mobs = getredfactionmobs(0)
+		if (CAFR)
+			mobs = getcafrmobs(0)
+		if (TSFSR)
+			mobs = gettsfsrmobs(0)
 	// sort mobs by stat: alive, unconscious, then dead
 	for (var/v in 0 to 2)
 		for (var/mob/m in mobs)
@@ -902,7 +1049,6 @@ Proc for attack log creation, because really why not
 					newmobs[m.real_name] = m
 
 	return newmobs
-
 
 //Orders mobs by type then by name
 /proc/sortmobs()

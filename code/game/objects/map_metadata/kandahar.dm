@@ -2,7 +2,7 @@
 	ID = MAP_KANDAHAR
 	title = "Soviet-Afghan War"
 	no_winner ="The region of Kandahar is still contested."
-	lobby_icon = "icons/lobby/sovafghan.png"
+	lobby_icon = 'icons/lobby/sovafghan.png'
 	caribbean_blocking_area_types = list(/area/caribbean/no_mans_land/invisible_wall, /area/caribbean/no_mans_land/invisible_wall/one, /area/caribbean/no_mans_land/invisible_wall/two)
 	respawn_delay = 600
 	has_hunger = TRUE
@@ -25,7 +25,7 @@
 	faction2 = RUSSIAN
 	valid_weather_types = list(WEATHER_NONE, WEATHER_WET, WEATHER_EXTREME)
 	songs = list(
-		"Swallowing Dust:1" = "sound/music/swallowingdust.ogg")
+		"Swallowing Dust:1" = 'sound/music/swallowingdust.ogg')
 	gamemode = "Afghan"
 	artillery_count = 3
 	var/sov_points = 0
@@ -39,7 +39,7 @@
 	grace_wall_timer = 4800
 	var/list/supply_points = list(
 		"Soviet Army" = 0,
-		"Mujahideen" = 0,)
+		"Mujahideen" = 0)
 
 /obj/map_metadata/kandahar/New()
 	..()
@@ -54,6 +54,7 @@
 	spawn(100)
 		load_new_recipes("config/crafting/material_recipes_sovafghan.txt")
 		override_global_recipes = "sovafghan"
+		handle_flags() //Called once in the beginning to set up DRA flags
 	spawn(4800)
 		points_check()
 
@@ -327,10 +328,11 @@
 						if ("Mujahideen Group Leader")
 							sov_points += 2
 							world << "<font color='orange' size=2>A <b><font color='black'>Mujahideen Group Leader</font></b> is in captivity!</font>"
-	spawn(600)
+	handle_flags()
+	spawn(600) // 1 minute
 		points_check()
 		spawn(300)
-			world << "<big><b>Current Points:</big></b>"
+			world << "<big><b>Current Points:</b></big>"
 			world << "<big>Mujahideen: [muj_points]</big>"
 			world << "<big>Soviets and DRA: [sov_points]</big>"
 
@@ -509,53 +511,123 @@
 		if ("RPK-74 crate")*/
 
 /mob/living/simple_animal/civilian/afghan/attackby(var/obj/item/W as obj, var/mob/living/human/H as mob)
-	if (istype(W, /obj/item/weapon/package/humanitarian))
-		if (H.faction_text == "ARAB")
-			return
-		if (package_given)
-			return
-		if (H.a_intent == I_HELP)
-			qdel(W)
-			if (map && map.ID == MAP_KANDAHAR)
-				var/obj/map_metadata/kandahar/KD = map
-				KD.supply_points["Soviet Army"] += 20
-			package_given = TRUE
-			return
+	if (src.stat != DEAD)
+		if (istype(W, /obj/item/weapon/package/humanitarian))
+			if (H.faction_text == "ARAB")
+				return
+			if (package_given)
+				return
+			if (H.a_intent == I_HELP)
+				qdel(W)
+				if (map && map.ID == MAP_KANDAHAR)
+					var/obj/map_metadata/kandahar/KD = map
+					KD.supply_points["Soviet Army"] += 20
+				package_given = TRUE
+				return
 	..()
 
 /mob/living/simple_animal/civilian/afghan/attack_hand(mob/living/human/user as mob)
-	if (user.faction_text == "ARAB")
-		if (user.a_intent == I_HELP)
-			if (already_coerced)
-				user << SPAN_WARNING("\icon[src] No way! Leave me alone!")
-				return
-			if (package_given)
-				user << SPAN_WARNING("\icon[src] You blood-thirsty savages, the Soviets and the DRA are actually helping this country!")
-				already_coerced = TRUE
-				return
-			if (user.original_job_title != "Mujahideen Imam" && user.original_job_title != "Mujahideen Warchief")
-				if (prob(50))
+	if (src.stat != DEAD)
+		if (user.faction_text == "ARAB")
+			if (user.a_intent == I_HELP)
+				if (already_coerced)
+					user << SPAN_WARNING("\icon[src] No way! Leave me alone!")
+					return
+				if (package_given)
+					user << SPAN_WARNING("\icon[src] You blood-thirsty savages, the Soviets and the DRA are actually helping this country!")
+					already_coerced = TRUE
+					return
+				if (user.original_job_title != "Mujahideen Imam" && user.original_job_title != "Mujahideen Warchief")
+					if (prob(50))
+						user << SPAN_WARNING("\icon[src] I refuse!")
+						already_coerced = TRUE
+						return
+					if (prob(30))
+						new /mob/living/simple_animal/hostile/human/muj_insurgent/akm(loc)
+					else
+						new /mob/living/simple_animal/hostile/human/muj_insurgent(loc)
+					qdel(src)
+					return
+				if (prob(30))
 					user << SPAN_WARNING("\icon[src] I refuse!")
 					already_coerced = TRUE
 					return
-				if (prob(30))
-					new /mob/living/simple_animal/hostile/human/muj_insurgent/akm(loc)
-				else
+				if (prob(50))
 					new /mob/living/simple_animal/hostile/human/muj_insurgent(loc)
+				else
+					new /mob/living/simple_animal/hostile/human/muj_insurgent/akm(loc)
+				if (prob(50))
+					world << "The Mujahideen coerced some of the local population into their ranks."
 				qdel(src)
 				return
-			if (prob(30))
-				user << SPAN_WARNING("\icon[src] I refuse!")
-				already_coerced = TRUE
-				return
-			if (prob(50))
-				new /mob/living/simple_animal/hostile/human/muj_insurgent(loc)
-			else
-				new /mob/living/simple_animal/hostile/human/muj_insurgent/akm(loc)
-			if (prob(50))
-				world << "The Mujahideen coerced some of the local population into their ranks."
-			qdel(src)
-			return
 	..()
 
-	
+/obj/map_metadata/kandahar/proc/handle_flags()
+	switch (a1_control)
+		if ("Soviets")
+			for (var/obj/structure/flag/objective/one/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		if ("Mujahideen")
+			for (var/obj/structure/flag/objective/one/F in world)
+				F.icon_state = "pirates"
+				F.name = "Mujahideen flag"
+		if ("DRA")
+			for (var/obj/structure/flag/objective/one/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		else
+			for (var/obj/structure/flag/objective/one/F in world)
+				F.icon_state = "white"
+				F.name = "Unclaimed flag"
+	switch (a2_control)
+		if ("Soviets")
+			for (var/obj/structure/flag/objective/two/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		if ("Mujahideen")
+			for (var/obj/structure/flag/objective/two/F in world)
+				F.icon_state = "pirates"
+				F.name = "Mujahideen flag"
+		if ("DRA")
+			for (var/obj/structure/flag/objective/two/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		else
+			for (var/obj/structure/flag/objective/two/F in world)
+				F.icon_state = "white"
+				F.name = "Unclaimed flag"
+	switch (a3_control)
+		if ("Soviets")
+			for (var/obj/structure/flag/objective/three/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		if ("Mujahideen")
+			for (var/obj/structure/flag/objective/three/F in world)
+				F.icon_state = "pirates"
+				F.name = "Mujahideen flag"
+		if ("DRA")
+			for (var/obj/structure/flag/objective/three/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		else
+			for (var/obj/structure/flag/objective/three/F in world)
+				F.icon_state = "white"
+				F.name = "Unclaimed flag"
+	switch (a4_control)
+		if ("Soviets")
+			for (var/obj/structure/flag/objective/four/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		if ("Mujahideen")
+			for (var/obj/structure/flag/objective/four/F in world)
+				F.icon_state = "pirates"
+				F.name = "Mujahideen flag"
+		if ("DRA")
+			for (var/obj/structure/flag/objective/four/F in world)
+				F.icon_state = "soviet"
+				F.name = "Soviet flag"
+		else
+			for (var/obj/structure/flag/objective/four/F in world)
+				F.icon_state = "white"
+				F.name = "Unclaimed flag"

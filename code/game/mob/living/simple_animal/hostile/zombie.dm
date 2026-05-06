@@ -59,7 +59,10 @@
 		else
 			bodyparts -= "l_leg_s"
 			bodyparts -= "l_foot_s"
-	maxHealth = rand(60,120)
+	if (map.ID == MAP_SIBERIAD)
+		maxHealth = rand(100,200)
+	else	
+		maxHealth = rand(60,120)
 	health = maxHealth
 	limb_updates()
 	update_icons()
@@ -103,21 +106,21 @@
 				playsound(src.loc, sound2play, 100, TRUE)
 
 /mob/living/simple_animal/hostile/human/zombie/hit_with_weapon(obj/item/O, mob/living/user, var/effective_force, var/hit_zone)
-	if (hit_zone in list("r_leg", "l_leg", "l_arm", "r_arm") && prob(25))
-		visible_message("<span class='notice'>[user] tried to strike \the [src] but missed!</span>")
+	if ((hit_zone in list("r_leg", "l_leg", "l_arm", "r_arm")) && prob(25))
+		visible_message(SPAN_NOTICE("[user] tried to strike \the [src] but missed!"))
 		return
-	else if (hit_zone in list("r_foot", "l_foot", "l_hand", "r_hand") && prob(40))
-		visible_message("<span class='notice'>[user] tried to strike \the [src] but missed!</span>")
+	else if ((hit_zone in list("r_foot", "l_foot", "l_hand", "r_hand")) && prob(40))
+		visible_message(SPAN_NOTICE("[user] tried to strike \the [src] but missed!"))
 		return
 
 	else if (hit_zone == "head" && prob(35))
-		visible_message("<span class='notice'>[user] tried to strike \the [src] but missed!</span>")
+		visible_message(SPAN_NOTICE("[user] tried to strike \the [src] but missed!"))
 		return
 	else
-		visible_message("<span class='danger'>\The [src] has been attacked in \the [parse_zone(hit_zone)] with \the [O] by [user].</span>")
+		visible_message(SPAN_DANGER("\The [src] has been attacked in \the [parse_zone(hit_zone)] with \the [O] by [user]."))
 
 		if (O.force <= resistance)
-			user << "<span class='danger'>This weapon is ineffective, it does no damage.</span>"
+			to_chat(user, SPAN_DANGER("This weapon is ineffective, it does no damage."))
 			return 2
 
 		var/damage = O.force
@@ -135,7 +138,7 @@
 			health = 0
 			death()
 	else
-		if (limb in list("r_leg", "l_leg", "l_arm", "r_arm") && prob(50))
+		if ((limb in list("r_leg", "l_leg", "l_arm", "r_arm")) && prob(50))
 			bodyparts -= "[limb]_s"
 			visible_message("[src]'s [parse_zone(limb)] gets severed!")
 			var/tmplimb = limb

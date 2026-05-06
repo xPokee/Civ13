@@ -11,7 +11,7 @@
 			color = material.icon_colour
 /obj/structure/bed/chair/carseat
 	name = "car seat"
-	desc = "a leather car seat."
+	desc = "A leather car seat."
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "carseat_middle"
 	material = "leather"
@@ -35,6 +35,10 @@
 	icon_state = "carseat_right_type95"
 	applies_material_colour = FALSE
 	material = null
+/obj/structure/bed/chair/carseat/left/type94
+	icon_state = "carseat_left_type94"
+	applies_material_colour = FALSE
+	material = null
 /obj/structure/bed/chair/drivers/car/lion
 	material = "lionpelt"
 /obj/structure/bed/chair/carseat/left/lion
@@ -45,6 +49,8 @@
 	material = "lionpelt"
 /obj/structure/bed/chair/drivers/car/type95
 	icon_state = "carseat_driver_right_type95"
+/obj/structure/bed/chair/drivers/car/type94
+	icon_state = "carseat_driver_right_type94"
 /obj/structure/bed/chair/drivers/car/dark
 	material = "darkleather"
 /obj/structure/bed/chair/carseat/left/dark
@@ -286,6 +292,84 @@
 	hasoverlay = "carback2_right"
 	removesroof = TRUE
 	override_roof_icon = "truckback_right_closed"
+
+//TOYOTA
+/obj/structure/vehicleparts/frame/car/toyota/lf
+	icon_state = "frame_steel_corner_lf"
+	w_front = list("truckfront2_leftU",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_left = list("none",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	hasoverlay = "toyota2_left"
+	removesroof = TRUE
+/obj/structure/vehicleparts/frame/car/toyota/rf
+	icon_state = "frame_steel_corner_rf"
+	w_front = list("truckfront2_rightU",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_right = list("none",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	hasoverlay = "toyota2_right"
+	removesroof = TRUE
+/obj/structure/vehicleparts/frame/car/toyota/lfc
+	w_left = list("c_windoweddoor",TRUE,TRUE,0,4,TRUE,FALSE)
+	w_front = list("vanwindshield2door_leftU",FALSE,TRUE,0,0.1,FALSE,FALSE)
+	hasoverlay = "vanwindshield2door_left"
+/obj/structure/vehicleparts/frame/car/toyota/rfc
+	w_right = list("c_windoweddoor",TRUE,TRUE,0,4,TRUE,FALSE)
+	w_front = list("vanwindshield2door_rightU",FALSE,TRUE,0,0.1,FALSE,FALSE)
+	hasoverlay = "vanwindshield2door_right"
+/obj/structure/vehicleparts/frame/car/toyota/lfcc
+	w_left = list("c_windoweddoor",TRUE,TRUE,0,4,TRUE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota/rfcc
+	w_right = list("c_windoweddoor",TRUE,TRUE,0,4,TRUE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota/lb
+	icon_state = "frame_steel_corner_lb"
+	w_back = list("truckback_leftU",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	w_left = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_front = list("c_thin",TRUE,TRUE,1,0.1,FALSE,FALSE)
+	hasoverlay = "carback2_left"
+	removesroof = TRUE
+	override_roof_icon = "truckback_left_closed"
+/obj/structure/vehicleparts/frame/car/toyota/rb
+	icon_state = "frame_steel_corner_rb"
+	w_back = list("truckback_rightU",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	w_right = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_front = list("c_thin",TRUE,TRUE,1,0.1,FALSE,FALSE)
+	hasoverlay = "carback2_right"
+	removesroof = TRUE
+	override_roof_icon = "truckback_right_closed"
+
+//TOYOTA armored
+/obj/structure/vehicleparts/frame/car/toyota_armored/lf
+	icon_state = "frame_steel_corner_lf"
+	w_front = list("c_armoredwall",TRUE,TRUE,25,30,FALSE,FALSE)
+	w_left = list("c_wall",TRUE,TRUE,25,30,TRUE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota_armored/rf
+	icon_state = "frame_steel_corner_rf"
+	w_front = list("c_armoredwall",TRUE,TRUE,25,30,FALSE,FALSE)
+	w_right = list("c_wall",TRUE,TRUE,25,30,TRUE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota_armored/lfc
+	w_left = list("c_door",TRUE,TRUE,25,30,TRUE,FALSE)
+	w_front = list("c_window2",FALSE,TRUE,25,30,FALSE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota_armored/rfc
+	w_right = list("c_door",TRUE,TRUE,25,30,TRUE,FALSE)
+	w_front = list("c_window2",FALSE,TRUE,25,30,FALSE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota_armored/lfcc
+	w_left = list("c_windoweddoor",TRUE,TRUE,25,30,TRUE,FALSE)
+/obj/structure/vehicleparts/frame/car/toyota_armored/rfcc
+	w_right = list("c_windoweddoor",TRUE,TRUE,25,30,TRUE,FALSE)
+
+/obj/structure/vehicleparts/frame/car/toyota_armored/lb
+	icon_state = "frame_steel_corner_lb"
+	w_back = list("truckback_leftU",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	w_left = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_front = list("c_thin",TRUE,TRUE,1,0.1,FALSE,FALSE)
+	hasoverlay = "carback2_left"
+	override_roof_icon = "truckback_left_closed"
+/obj/structure/vehicleparts/frame/car/toyota_armored/rb
+	icon_state = "frame_steel_corner_rb"
+	w_back = list("truckback_rightU",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	w_right = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_front = list("c_thin",TRUE,TRUE,1,0.1,FALSE,FALSE)
+	hasoverlay = "carback2_right"
+	override_roof_icon = "truckback_right_closed"
+
 //shinobu
 /obj/structure/vehicleparts/frame/car/shinobu/lf
 	w_front = list("carfront5_leftU",TRUE,TRUE,0,0.1,FALSE,FALSE)
@@ -389,6 +473,30 @@
 	w_right = list("none",TRUE,TRUE,0,0.1,TRUE,FALSE)
 	hasoverlay = "type95windshielddoor_right"
 	icon_state = "frame_steel_corner_crf_type95"
+///////////////TYPE 94 TRUCK//////////////////////////////////////////////////////////
+/////////////////////TYPE95 Kurogane////////////
+/obj/structure/vehicleparts/frame/car/type94/lf
+	w_front = list("type94front_leftU",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_left = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	hasoverlay = "type94front_left"
+	icon_state = "frame_steel_corner_lf_type95"
+	removesroof = TRUE
+/obj/structure/vehicleparts/frame/car/type94/rf
+	w_front = list("type94front_rightU",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_right = list("none",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	hasoverlay = "type94front_right"
+	icon_state = "frame_steel_corner_rf_type95"
+	removesroof = TRUE
+/obj/structure/vehicleparts/frame/car/type94/lc
+	w_front = list("type94windshielddoor_leftU",TRUE,TRUE,0,0.1,FALSE,FALSE)
+	w_left = list("none",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	hasoverlay = "type94windshielddoor_left"
+	icon_state = "frame_steel_corner_clf_type95"
+/obj/structure/vehicleparts/frame/car/type94/rc
+	w_front = list("type94windshielddoor_rightU",FALSE,TRUE,0,0.1,FALSE,FALSE)
+	w_right = list("none",TRUE,TRUE,0,0.1,TRUE,FALSE)
+	hasoverlay = "type94windshielddoor_right"
+	icon_state = "frame_steel_corner_crf_type95"
 ///////////////axis///////////////
 /obj/structure/vehicleparts/axis/car/piccolino
 	name = "ASNO Piccolino"
@@ -397,7 +505,7 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 700
-	speedlist = list(1=8,2=6,3=4.5,4=3)
+	speedlist = alist(1=8,2=6,3=4.5,4=3)
 	turntimer = 5
 
 /obj/structure/vehicleparts/axis/car/quattroporte
@@ -407,7 +515,7 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 800
-	speedlist = list(1=7,2=5,3=3.5,4=2.5)
+	speedlist = alist(1=7,2=5,3=3.5,4=2.5)
 	turntimer = 7
 
 /obj/structure/vehicleparts/axis/car/erstenklasse
@@ -417,7 +525,7 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 1100
-	speedlist = list(1=7,2=6,3=5,4=4,5=3)
+	speedlist = alist(1=7,2=6,3=5,4=4,5=3)
 	turntimer = 6
 
 /obj/structure/vehicleparts/axis/car/cv
@@ -427,7 +535,7 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 1900
-	speedlist = list(1=7,2=6,3=5,4=4,5=3)
+	speedlist = alist(1=7,2=6,3=5,4=4,5=3)
 	turntimer = 6
 
 /obj/structure/vehicleparts/axis/car/falcon
@@ -437,13 +545,13 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 1000
-	speedlist = list(1=7,2=6,3=5,4=2)
+	speedlist = alist(1=7,2=6,3=5,4=2)
 	turntimer = 5
 
 /obj/structure/vehicleparts/axis/car/falcon/police
 	speeds = 5
 	maxpower = 1000
-	speedlist = list(1=7,2=6,3=5,4=3,5=2.5)
+	speedlist = alist(1=7,2=6,3=5,4=3,5=2.5)
 	turntimer = 4
 	New()
 		..()
@@ -461,7 +569,7 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 800
-	speedlist = list(1=5,2=4,3=3,4=2,5=1.2)
+	speedlist = alist(1=5,2=4,3=3,4=2,5=1.2)
 	turntimer = 4
 
 /obj/structure/vehicleparts/axis/car/shinobu/police
@@ -483,7 +591,7 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 800
-	speedlist = list(1=6,2=5,3=4,4=2.5)
+	speedlist = alist(1=6,2=5,3=4,4=2.5)
 	turntimer = 5
 /obj/structure/vehicleparts/axis/car/type95
 	name = "Kurogane Type 95"
@@ -492,8 +600,18 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 800
-	speedlist = list(1=5,2=4,3=2.5,4=1.5,5=1)
+	speedlist = alist(1=5,2=4,3=2.5,4=1.5,5=1)
 	turntimer = 4
+
+/obj/structure/vehicleparts/axis/car/type94
+	name = "Isuzu Type 94"
+	desc = "A powered axis from a car."
+	icon = 'icons/obj/vehicles/vehicleparts.dmi'
+	icon_state = "axis_powered"
+	speeds = 5
+	maxpower = 800
+	speedlist = alist(1=5,2=4,3=2.5,4=1.5,5=1)
+	turntimer = 5
 
 /obj/structure/vehicleparts/axis/car/falcon/police
 	name = "SMC Falcon Police Interceptor"
@@ -511,7 +629,7 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 1200
-	speedlist = list(1=8,2=6.5,3=4.5,4=2.5)
+	speedlist = alist(1=8,2=6.5,3=4.5,4=2.5)
 	turntimer = 9
 
 /obj/structure/vehicleparts/axis/car/wyoming
@@ -521,8 +639,19 @@
 	icon_state = "axis_powered"
 	speeds = 4
 	maxpower = 1300
-	speedlist = list(1=7,2=5.5,3=4.5,4=3)
+	speedlist = alist(1=7,2=5.5,3=4.5,4=3)
 	turntimer = 9
+
+/obj/structure/vehicleparts/axis/car/toyota
+	name = "Toyota"
+	desc = "A powered axis from a car."
+	icon = 'icons/obj/vehicles/vehicleparts.dmi'
+	icon_state = "axis_powered"
+	color = "#BDB76B"
+	speeds = 5
+	maxpower = 1580
+	speedlist = alist(1=10,2=6.5,3=4.5,4=3,5=2)
+	turntimer = 7
 
 /obj/structure/vehicleparts/axis/car/daf
 	name = "DAF YA-4442 Truck"
@@ -530,8 +659,8 @@
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
 	speeds = 5
-	maxpower = 800
-	speedlist = list(1=10,2=6,3=5,4=4,5=3)
+	maxpower = 1800
+	speedlist = alist(1=8,2=5,3=4,4=3,5=2)
 	turntimer = 8
 
 /obj/structure/vehicleparts/axis/car/mercedes
@@ -540,8 +669,8 @@
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
 	speeds = 5
-	maxpower = 800
-	speedlist = list(1=10,2=5,3=4,4=3,5=2)
+	maxpower = 1000
+	speedlist = alist(1=7,2=4,3=3,4=2,5=1)
 	turntimer = 8
 
 /obj/structure/vehicleparts/axis/car/tigr
@@ -550,8 +679,8 @@
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
 	speeds = 5
-	maxpower = 800
-	speedlist = list(1=10,2=5,3=4,4=3,5=2)
+	maxpower = 1000
+	speedlist = alist(1=7,2=4,3=3,4=2,5=1)
 	turntimer = 8
 
 /obj/structure/vehicleparts/axis/car/ba64
@@ -561,11 +690,10 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 800
-	speedlist = list(1=10,2=6,3=4,4=3)
+	speedlist = alist(1=10,2=6,3=4,4=3)
 	turntimer = 7
 	reg_number = ""
 	color = "#3d5931"
-	turret_type = "none"
 	New()
 		..()
 		var/pickedname = pick(tank_names_soviet)
@@ -579,11 +707,10 @@
 	icon_state = "axis_powered"
 	speeds = 5
 	maxpower = 800
-	speedlist = list(1=10,2=6,3=4,4=3,5=2)
+	speedlist = alist(1=10,2=6,3=4,4=3,5=2)
 	turntimer = 6
 	reg_number = ""
 	color = "#3d5931"
-	turret_type = "none"
 	New()
 		..()
 		var/pickedname = pick(tank_names_soviet)
@@ -595,13 +722,12 @@
 	desc = "A powered axis from a car."
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
-	speeds = 5
+	speeds = 4
 	maxpower = 1000
-	speedlist = list(1=10,2=6,3=5,4=4,5=3)
+	speedlist = alist(1=10,2=6,3=4,4=3)
 	turntimer = 6
 	reg_number = ""
 	color = "#ffffff"
-	turret_type = "none"
 	New()
 		..()
 		var/pickedname = pick(tank_names_soviet)
@@ -614,8 +740,8 @@
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
 	speeds = 5
-	maxpower = 800
-	speedlist = list(1=10,2=6,3=5,4=4,5=3)
+	maxpower = 1800
+	speedlist = alist(1=8,2=5,3=4,4=3,5=2)
 	turntimer = 8
 
 /obj/structure/vehicleparts/axis/car/volle/ambulance
@@ -652,6 +778,9 @@
 /obj/structure/engine/internal/diesel/premade/chiha
 	enginesize = 25000
 
+/obj/structure/engine/internal/diesel/premade/hago
+	enginesize = 10000
+
 /obj/structure/engine/internal/gasoline/premade/falcon
 	enginesize = 6500
 
@@ -663,6 +792,10 @@
 /obj/structure/engine/internal/gasoline/premade/type95
 	enginesize = 3800
 
+/obj/structure/engine/internal/gasoline/premade/type94
+	enginesize = 4400
+	fuelefficiency = 0.1
+
 /obj/structure/engine/internal/gasoline/premade/panzeriv
 	enginesize = 12000
 
@@ -672,6 +805,10 @@
 /obj/structure/engine/internal/gasoline/premade/l3
 	name = "FIAT-SPA CV3"
 	enginesize = 4300
+
+/obj/structure/engine/internal/diesel/premade/m13
+	name = "SPA 8 T M40 11"
+	enginesize = 12500
 
 /obj/structure/engine/internal/diesel/premade/omw22_2
 	name = "OMW 15 liter diesel engine"
@@ -771,7 +908,7 @@
 /obj/structure/emergency_lights/proc/check_sound()
 	if (world.realtime >= lastsoundcheck)
 		if (on)
-			if (map.ID != MAP_DRUG_BUST || map.ID != MAP_BANK_ROBBERY)
+			if (map.ID != MAP_DRUG_BUST && map.ID != MAP_BANK_ROBBERY)
 				playsound(loc,'sound/machines/police_siren.ogg',100,FALSE,15)
 				lastsoundcheck = world.realtime+55
 				spawn(55)

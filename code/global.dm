@@ -1,7 +1,7 @@
 //#define TESTING
-#if DM_VERSION < 512
-#warn This compiler is out of date. You may experience issues with projectile animations.
-#endif
+//#if DM_VERSION < 512
+//#warn This compiler is out of date. You may experience issues with projectile animations.
+//#endif
 
 var/bearcave_ticking = FALSE
 var/wolfcave_ticking = FALSE
@@ -23,7 +23,6 @@ var/datum/configuration/config	  = null
 
 var/Debug2 = FALSE
 var/datum/debug/debugobj
-
 
 var/join_motd = null
 
@@ -54,12 +53,14 @@ var/custom_event_msg = null
 // Bomb cap!
 var/max_explosion_range = 14
 
+var/global/datum/titlecard/lobby_titlecard
+
 // Announcer intercom, because too much stuff creates an intercom for one message then hard del()s it.
 //var/global/obj/item/radio/intercom/global_announcer = new(null)
 
 // "convenient" (shitcode) way to make normal windows look like nanoUI, since BYOND won't load stylesheets normally - Kachnov
 var/common_browser_style = {"
-<meta charset="UTF-8">
+<meta charset='utf-8'>
 <style>
 body
 {
@@ -377,7 +378,7 @@ div.notice
 "}
 //green on black
 var/computer_browser_style = {"
-<meta charset="UTF-8">
+<meta charset='utf-8'>
 <style>
 body
 {

@@ -36,6 +36,10 @@
 	if (!W.has_edge() || !W.force || W.damtype != BRUTE)
 		return FALSE //unsuitable weapon
 
+	if(user.pacifist)
+		to_chat(src, "<font color='yellow'><big><b>I don't want to fight!</b></big></font>")
+		return FALSE
+
 	user.visible_message("<span class='danger'>\The [user] begins to slit [src]'s throat with \the [W]!</span>")
 
 	user.next_move = world.time + delay //also should prevent user from triggering this repeatedly

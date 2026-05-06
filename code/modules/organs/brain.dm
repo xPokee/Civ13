@@ -55,7 +55,6 @@
 
 /obj/item/organ/brain/proc/take_internal_damage(var/damage, var/silent)
 	set waitfor = 0
-	..()
 	if(damage >= 10) //This probably won't be triggered by oxyloss or mercury. Probably.
 		var/damage_secondary = damage * 0.20
 		owner.eye_blurry += damage_secondary
@@ -119,7 +118,7 @@
 				if((damage >= (max_damage * 0.75)))
 					if(!owner.lying && prob(2))
 						to_chat(owner, "<span class='danger'>You black out!</span>")
-						owner.Paralyse(10)
+						owner.SetSleeping(rand(10,15)) // Sets the user to sleep (blackout).
 
 		// Brain damage from low oxygenation or lack of blood.
 		// No heart? You are going to have a very bad time. Not 100% lethal because heart transplants should be a thing.

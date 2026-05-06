@@ -1,6 +1,6 @@
 
 /hook/roundstart/proc/mainstuff()
-	world << "<b><big>The round has started!</big></b>"
+	to_chat(world, "<big><b>The round has started!</b></big>")
 
 	for (var/C in clients)
 		winset(C, null, "mainwindow.flash=1")
@@ -32,8 +32,8 @@
 				GR.assign()
 			for (var/obj/effect/step_trigger/goal/blue/GB in world)
 				GB.assign()	
-		if (map && map.ID == MAP_FOOTBALL_CAMPAIGN)
-			var/obj/map_metadata/football_campaign/FM = map
+		if (map && map.ID == MAP_FOOTBALL_CMP)
+			var/obj/map_metadata/football_cmp/FM = map
 			for (var/datum/job/job in job_master.faction_organized_occupations)
 				if (istype(job, /datum/job/civilian/football_red_campaign/goalkeeper))
 					job.title = "[FM.teams[FM.team1][1]] goalkeeper"

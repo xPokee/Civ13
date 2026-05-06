@@ -19,56 +19,12 @@
 	magazine_based = FALSE
 	var/single_action = FALSE
 	var/cocked = FALSE
-	var/base_icon = null
 	equiptimer = 5
 	gun_type = GUN_TYPE_PISTOL
 	maxhealth = 55
 	gtype = "pistol"
 	load_method = SINGLE_CASING|SPEEDLOADER
-
-	accuracy_list = list(
-		// small body parts: head, hand, feet
-		"small" = list(
-			SHORT_RANGE_STILL = 60,
-			SHORT_RANGE_MOVING = 40,
-
-			MEDIUM_RANGE_STILL = 53,
-			MEDIUM_RANGE_MOVING = 35,
-
-			LONG_RANGE_STILL = 45,
-			LONG_RANGE_MOVING = 30,
-
-			VERY_LONG_RANGE_STILL = 38,
-			VERY_LONG_RANGE_MOVING = 25),
-
-		// medium body parts: limbs
-		"medium" = list(
-			SHORT_RANGE_STILL = 64,
-			SHORT_RANGE_MOVING = 42,
-
-			MEDIUM_RANGE_STILL = 56,
-			MEDIUM_RANGE_MOVING = 38,
-
-			LONG_RANGE_STILL = 49,
-			LONG_RANGE_MOVING = 32,
-
-			VERY_LONG_RANGE_STILL = 41,
-			VERY_LONG_RANGE_MOVING = 27),
-
-		// large body parts: chest, groin
-		"large" = list(
-			SHORT_RANGE_STILL = 68,
-			SHORT_RANGE_MOVING = 44,
-
-			MEDIUM_RANGE_STILL = 60,
-			MEDIUM_RANGE_MOVING = 40,
-
-			LONG_RANGE_STILL = 53,
-			LONG_RANGE_MOVING = 35,
-
-			VERY_LONG_RANGE_STILL = 45,
-			VERY_LONG_RANGE_MOVING = 30),
-	)
+	accuracy = 10
 
 	accuracy_increase_mod = 1.50
 	accuracy_decrease_mod = 2.00
@@ -76,22 +32,34 @@
 	stat = "pistol"
 	aim_miss_chance_divider = 2.00
 	load_delay = 6
+	barrel_x_offset = 17
+	barrel_y_offset = 0
 
 /obj/item/weapon/gun/projectile/revolver/update_icon()
 	..()
+	item_state = initial(item_state)
 	if (base_icon)
 		if (cocked)
 			icon_state = "[base_icon]_cocked"
 		else
 			icon_state = base_icon
+
+	if (silencer && (!silencer.fits || (silencer.fits && !silencer.fits.Find("pistol"))))
+		overlays -= barrel_image
+		var/part_icon_state = "pistol_[silencer.icon_state]"
+		barrel_image = image(icon = 'icons/obj/guns/parts.dmi', loc = src, icon_state = part_icon_state, pixel_x = barrel_x_offset, pixel_y = barrel_y_offset)
+		overlays += barrel_image
+
 /obj/item/weapon/gun/projectile/revolver/verb/spin_cylinder()
 	set name = "Spin cylinder"
 	set desc = "Fun when you're bored out of your skull."
+	set src in usr
 	set category = null
 
 	chamber_offset = FALSE
-	visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
-	"<span class='notice'>You hear something metallic spin and click.</span>")
+	usr.visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
+						"<span class='notice'>You spin the cylinder of \the [src].</span>", \
+						"<span class='notice'>You hear something metallic spin and click.</span>")
 	playsound(loc, 'sound/weapons/guns/interact/revolver_spin.ogg', 100, TRUE)
 	loaded = shuffle(loaded)
 	if (rand(1,max_shells) > loaded.len)
@@ -117,12 +85,12 @@
 	if (single_action)
 		if (!cocked)
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='warning'>[user] cocks the [src]!</span>","<span class='warning'>You cock the [src]!</span>")
+			user.visible_message("<span class='warning'>[user] cocks \the [src]!</span>","<span class='warning'>You cock \the [src]!</span>")
 			cocked = TRUE
 			update_icon()
 		else
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='notice'>[user] uncocks the [src].</span>","<span class='notice'>You uncock the [src].</span>")
+			user.visible_message("<span class='notice'>[user] uncocks \the [src].</span>","<span class='notice'>You uncock \the [src].</span>")
 			cocked = FALSE
 			update_icon()
 
@@ -158,13 +126,13 @@
 					count++
 				loaded.Cut()
 			if (count)
-				visible_message("[user] unloads [src].", "<span class='notice'>You unload [count] round\s from [src].</span>")
+				user.visible_message("[user] unloads \the [src].", "<span class='notice'>You unload [count] round\s from \the [src].</span>")
 				if (bulletinsert_sound) playsound(loc, bulletinsert_sound, 75, TRUE)
 		else if (load_method & SINGLE_CASING)
 			var/obj/item/ammo_casing/C = loaded[loaded.len]
 			loaded.len--
 			user.put_in_hands(C)
-			visible_message("[user] removes \a [C] from [src].", "<span class='notice'>You remove \a [C] from [src].</span>")
+			user.visible_message("[user] removes \a [C] from \the [src].", "<span class='notice'>You remove \a [C] from \the [src].</span>")
 			if (istype(src, /obj/item/weapon/gun/projectile/boltaction))
 				var/obj/item/weapon/gun/projectile/boltaction/B = src
 				if (B.bolt_safety && !B.loaded.len)
@@ -353,7 +321,6 @@
 	blackpowder = FALSE
 	cocked = FALSE
 	pocket = TRUE
-	effectiveness_mod = 0.93
 
 /obj/item/weapon/gun/projectile/revolver/coltpolicepositive/standardized
 
@@ -405,7 +372,7 @@
 	handle_casings = CYCLE_CASINGS
 	max_shells = 6
 	magazine_type = /obj/item/ammo_magazine/c44
-	ammo_type = /obj/item/ammo_casing/a44
+	ammo_type = /obj/item/ammo_magazine/c44
 	weight = 2.3
 	single_action = TRUE
 	blackpowder = TRUE
@@ -421,7 +388,7 @@
 	handle_casings = CYCLE_CASINGS
 	max_shells = 6
 	magazine_type = /obj/item/ammo_magazine/c44magnum
-	ammo_type = /obj/item/ammo_casing/a44magnum
+	ammo_type = /obj/item/ammo_magazine/c44magnum
 	weight = 2.3
 	single_action = FALSE
 	blackpowder = FALSE
@@ -437,7 +404,6 @@
 	handle_casings = CYCLE_CASINGS
 	max_shells = 6
 	magazine_type = /obj/item/ammo_magazine/c45
-	ammo_type = /obj/item/ammo_casing/a45
 	weight = 2.3
 	single_action = FALSE
 	blackpowder = FALSE
@@ -453,7 +419,7 @@
 	handle_casings = CYCLE_CASINGS
 	max_shells = 6
 	magazine_type = /obj/item/ammo_magazine/c44magnum
-	ammo_type = /obj/item/ammo_casing/a44magnum
+
 	good_mags = list(/obj/item/ammo_magazine/m44speedloader, /obj/item/ammo_magazine/emptyspeedloader)
 	weight = 2.3
 	single_action = FALSE
@@ -484,7 +450,6 @@
 	blackpowder = FALSE
 	cocked = FALSE
 	pocket = TRUE
-	effectiveness_mod = 0.9
 
 /obj/item/weapon/gun/projectile/revolver/sw3
 	name = "Orbea Hermanos"
@@ -504,7 +469,8 @@
 	blackpowder = FALSE
 	cocked = FALSE
 	pocket = FALSE
-	effectiveness_mod = 0.9
+	accuracy = 4
+
 /obj/item/weapon/gun/projectile/revolver/snw10
 	name = "Smith & Wesson M.10"
 	desc = "A Smith 'n Wesson revolver model 10, chambered in .38 S&W."
@@ -523,7 +489,7 @@
 	blackpowder = FALSE
 	cocked = FALSE
 	pocket = FALSE
-	effectiveness_mod = 0.9
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/revolver/t26_revolver
 	name = "Type 26 revolver"
@@ -544,7 +510,7 @@
 
 /obj/item/weapon/gun/projectile/revolver/panther
 	name = "Panther revolver"
-	desc = "a .44 caliber revolver."
+	desc = "A .44 caliber revolver."
 	icon_state = "panther"
 	item_state = "panther"
 	w_class = ITEM_SIZE_SMALL
@@ -575,57 +541,13 @@
 	force = 4
 	slot_flags = SLOT_HOLSTER | SLOT_POCKET | SLOT_BELT
 	handle_casings = HOLD_CASINGS
-	move_delay = 4
+	move_delay = 1
 	var/open = FALSE
 	var/recentpump = FALSE // to prevent spammage
 	load_delay = 6
 	blackpowder = TRUE
 	pocket = TRUE
 
-	accuracy_list = list(
-
-		// small body parts: head, hand, feet
-		"small" = list(
-			SHORT_RANGE_STILL = 60,
-			SHORT_RANGE_MOVING = 40,
-
-			MEDIUM_RANGE_STILL = 53*0.9,
-			MEDIUM_RANGE_MOVING = 35*0.9,
-
-			LONG_RANGE_STILL = 45*0.7,
-			LONG_RANGE_MOVING = 30*0.7,
-
-			VERY_LONG_RANGE_STILL = 38*0.5,
-			VERY_LONG_RANGE_MOVING = 25*0.5),
-
-		// medium body parts: limbs
-		"medium" = list(
-			SHORT_RANGE_STILL = 64,
-			SHORT_RANGE_MOVING = 42,
-
-			MEDIUM_RANGE_STILL = 56*0.9,
-			MEDIUM_RANGE_MOVING = 38*0.9,
-
-			LONG_RANGE_STILL = 49*0.7,
-			LONG_RANGE_MOVING = 32*0.7,
-
-			VERY_LONG_RANGE_STILL = 41*0.5,
-			VERY_LONG_RANGE_MOVING = 27*0.5),
-
-		// large body parts: chest, groin
-		"large" = list(
-			SHORT_RANGE_STILL = 68,
-			SHORT_RANGE_MOVING = 44,
-
-			MEDIUM_RANGE_STILL = 60*0.9,
-			MEDIUM_RANGE_MOVING = 40*0.9,
-
-			LONG_RANGE_STILL = 53*0.7,
-			LONG_RANGE_MOVING = 35*0.7,
-
-			VERY_LONG_RANGE_STILL = 45*0.5,
-			VERY_LONG_RANGE_MOVING = 30*0.5),
-	)
 /obj/item/weapon/gun/projectile/revolver/derringer/spin_cylinder()
 	return
 /obj/item/weapon/gun/projectile/revolver/derringer/consume_next_projectile()
@@ -709,51 +631,6 @@
 	maxhealth = 45
 	gtype = "rifle"
 
-	accuracy_list = list(
-
-		// small body parts: head, hand, feet
-		"small" = list(
-			SHORT_RANGE_STILL = 83,
-			SHORT_RANGE_MOVING = 42,
-
-			MEDIUM_RANGE_STILL = 73,
-			MEDIUM_RANGE_MOVING = 37,
-
-			LONG_RANGE_STILL = 53,
-			LONG_RANGE_MOVING = 27,
-
-			VERY_LONG_RANGE_STILL = 43,
-			VERY_LONG_RANGE_MOVING = 23),
-
-		// medium body parts: limbs
-		"medium" = list(
-			SHORT_RANGE_STILL = 88,
-			SHORT_RANGE_MOVING = 44,
-
-			MEDIUM_RANGE_STILL = 78,
-			MEDIUM_RANGE_MOVING = 39,
-
-			LONG_RANGE_STILL = 68,
-			LONG_RANGE_MOVING = 34,
-
-			VERY_LONG_RANGE_STILL = 58,
-			VERY_LONG_RANGE_MOVING = 29),
-
-		// large body parts: chest, groin
-		"large" = list(
-			SHORT_RANGE_STILL = 93,
-			SHORT_RANGE_MOVING = 47,
-
-			MEDIUM_RANGE_STILL = 83,
-			MEDIUM_RANGE_MOVING = 42,
-
-			LONG_RANGE_STILL = 73,
-			LONG_RANGE_MOVING = 37,
-
-			VERY_LONG_RANGE_STILL = 63,
-			VERY_LONG_RANGE_MOVING = 32),
-	)
-
 	accuracy_increase_mod = 1.50
 	accuracy_decrease_mod = 2.00
 	KD_chance = KD_CHANCE_LOW
@@ -764,11 +641,13 @@
 /obj/item/weapon/gun/projectile/revolving/verb/spin_cylinder()
 	set name = "Spin cylinder"
 	set desc = "Fun when you're bored out of your skull."
+	set src in usr
 	set category = null
 
 	chamber_offset = FALSE
-	visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
-	"<span class='notice'>You hear something metallic spin and click.</span>")
+	usr.visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
+						"<span class='notice'>You spin the cylinder of \the [src].</span>", \
+						"<span class='notice'>You hear something metallic spin and click.</span>")
 	playsound(loc, 'sound/weapons/guns/interact/revolver_spin.ogg', 100, TRUE)
 	loaded = shuffle(loaded)
 	if (rand(1,max_shells) > loaded.len)
@@ -790,15 +669,16 @@
 		unload_ammo(user, allow_dump=0)
 	else
 		return ..()
+
 /obj/item/weapon/gun/projectile/revolving/attack_self(mob/user)
 	if (single_action)
 		if (!cocked)
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='warning'>[user] cocks the [src]!</span>","<span class='warning'>You cock the [src]!</span>")
+			user.visible_message("<span class='warning'>[user] cocks \the [src]!</span>","<span class='warning'>You cock \the [src]!</span>")
 			cocked = TRUE
 		else
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='notice'>[user] uncocks the [src].</span>","<span class='notice'>You uncock the [src].</span>")
+			user.visible_message("<span class='notice'>[user] uncocks \the [src].</span>","<span class='notice'>You uncock \the [src].</span>")
 			cocked = FALSE
 
 /obj/item/weapon/gun/projectile/revolving/special_check(mob/user)
@@ -833,20 +713,19 @@
 					count++
 				loaded.Cut()
 			if (count)
-				visible_message("[user] unloads [src].", "<span class='notice'>You unload [count] round\s from [src].</span>")
+				user.visible_message("[user] unloads [src].", "<span class='notice'>You unload [count] round\s from [src].</span>")
 				if (bulletinsert_sound) playsound(loc, bulletinsert_sound, 75, TRUE)
 		else if (load_method & SINGLE_CASING)
 			var/obj/item/ammo_casing/C = loaded[loaded.len]
 			loaded.len--
 			user.put_in_hands(C)
-			visible_message("[user] removes \a [C] from [src].", "<span class='notice'>You remove \a [C] from [src].</span>")
+			user.visible_message("[user] removes \a [C] from [src].", "<span class='notice'>You remove \a [C] from [src].</span>")
 			if (istype(src, /obj/item/weapon/gun/projectile/boltaction))
 				var/obj/item/weapon/gun/projectile/boltaction/B = src
 				if (B.bolt_safety && !B.loaded.len)
 					B.check_bolt_lock++
 			if (bulletinsert_sound) playsound(loc, bulletinsert_sound, 75, TRUE)
-	else
-		user << "<span class='warning'>[src] is empty.</span>"
+		to_chat(user, SPAN_WARNING("\The [src] is empty."))
 	update_icon()
 
 /obj/item/weapon/gun/projectile/revolving/colt
@@ -860,11 +739,11 @@
 	handle_casings = CYCLE_CASINGS
 	max_shells = 6
 	magazine_type = /obj/item/ammo_magazine/c44
-	ammo_type = /obj/item/ammo_casing/a44
 	weight = 5.0
 	single_action = TRUE
 	blackpowder = TRUE
 	cocked = FALSE
+	accuracy = 3
 
 ///////////////////cap n ball revolvers/////////////////
 
@@ -888,52 +767,8 @@
 	magazine_based = FALSE
 	var/single_action = FALSE
 	var/cocked = FALSE
-	var/base_icon = null
+	base_icon = null
 	gtype = "pistol"
-	accuracy_list = list(
-
-		// small body parts: head, hand, feet
-		"small" = list(
-			SHORT_RANGE_STILL = 58,
-			SHORT_RANGE_MOVING = 39,
-
-			MEDIUM_RANGE_STILL = 53,
-			MEDIUM_RANGE_MOVING = 35,
-
-			LONG_RANGE_STILL = 40,
-			LONG_RANGE_MOVING = 25,
-
-			VERY_LONG_RANGE_STILL = 30,
-			VERY_LONG_RANGE_MOVING = 18),
-
-		// medium body parts: limbs
-		"medium" = list(
-			SHORT_RANGE_STILL = 64,
-			SHORT_RANGE_MOVING = 42,
-
-			MEDIUM_RANGE_STILL = 56,
-			MEDIUM_RANGE_MOVING = 38,
-
-			LONG_RANGE_STILL = 49,
-			LONG_RANGE_MOVING = 32,
-
-			VERY_LONG_RANGE_STILL = 41,
-			VERY_LONG_RANGE_MOVING = 27),
-
-		// large body parts: chest, groin
-		"large" = list(
-			SHORT_RANGE_STILL = 68,
-			SHORT_RANGE_MOVING = 44,
-
-			MEDIUM_RANGE_STILL = 60,
-			MEDIUM_RANGE_MOVING = 40,
-
-			LONG_RANGE_STILL = 53,
-			LONG_RANGE_MOVING = 35,
-
-			VERY_LONG_RANGE_STILL = 45,
-			VERY_LONG_RANGE_MOVING = 30),
-	)
 
 	accuracy_increase_mod = 1.50
 	accuracy_decrease_mod = 2.00
@@ -941,6 +776,7 @@
 	stat = "pistol"
 	aim_miss_chance_divider = 2.00
 	load_delay = 6
+	accuracy = 10
 
 /obj/item/weapon/gun/projectile/capnball/update_icon()
 	..()
@@ -949,14 +785,17 @@
 			icon_state = "[base_icon]_cocked"
 		else
 			icon_state = base_icon
+
 /obj/item/weapon/gun/projectile/capnball/verb/spin_cylinder()
 	set name = "Spin cylinder"
 	set desc = "Fun when you're bored out of your skull."
+	set src in usr
 	set category = null
 
 	chamber_offset = FALSE
-	visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
-	"<span class='notice'>You hear something metallic spin and click.</span>")
+	usr.visible_message("<span class='warning'>\The [usr] spins the cylinder of \the [src]!</span>", \
+						"<span class='notice'>You spin the cylinder of \the [src].</span>", \
+						"<span class='notice'>You hear something metallic spin and click.</span>")
 	playsound(loc, 'sound/weapons/guns/interact/revolver_spin.ogg', 100, TRUE)
 	loaded = shuffle(loaded)
 	if (rand(1,max_shells) > loaded.len)
@@ -978,16 +817,17 @@
 		unload_ammo(user, allow_dump=0)
 	else
 		return ..()
+
 /obj/item/weapon/gun/projectile/capnball/attack_self(mob/user)
 	if (single_action)
 		if (!cocked)
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='warning'>[user] cocks the [src]!</span>","<span class='warning'>You cock the [src]!</span>")
+			user.visible_message("<span class='warning'>[user] cocks \the [src]!</span>","<span class='warning'>You cock \the [src]!</span>")
 			cocked = TRUE
 			update_icon()
 		else
 			playsound(loc, cocked_sound, 50, TRUE)
-			visible_message("<span class='notice'>[user] uncocks the [src].</span>","<span class='notice'>You uncock the [src].</span>")
+			user.visible_message("<span class='notice'>[user] uncocks \the [src].</span>","<span class='notice'>You uncock \the [src].</span>")
 			cocked = FALSE
 			update_icon()
 
@@ -1052,6 +892,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 40
+	accuracy = 3
 
 /obj/item/weapon/gun/projectile/capnball/babydragoon
 	name = "Colt Baby Dragoon M1848"
@@ -1069,6 +910,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 45
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/pocketpistol
 	name = "Colt Pocket-Pistol M1849"
@@ -1086,6 +928,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 30
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/walker
 	name = "Colt Walker M1846"
@@ -1103,6 +946,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 40
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/pocketm1849
 	name = "Colt Police Pocket-Pistol M1849"
@@ -1120,6 +964,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 38
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/navym1851
 	name = "Colt Navy Revolver M1851"
@@ -1137,6 +982,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 40
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/navym1861
 	name = "Colt Navy Revolver M1861"
@@ -1154,6 +1000,7 @@
 	blackpowder = TRUE
 	cocked = FALSE
 	load_delay = 37
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/capnball/
 	name = "Colt Army Revolver M1860"

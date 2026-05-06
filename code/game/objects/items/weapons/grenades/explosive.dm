@@ -5,7 +5,7 @@
 
 	base_spread = FALSE //causes it to be treated as a shrapnel explosion instead of cone
 	spread_step = 12
-
+	tracer_type = null
 	silenced = TRUE
 	no_attack_log = TRUE
 	muzzle_type = null
@@ -52,8 +52,7 @@
 
 /obj/proc/fragmentate(var/turf/T, var/fragment_number = 30, var/spreading_range = 5, var/list/fragtypes=list(/obj/item/projectile/bullet/pellet/fragment/short_range = 1))
 	set waitfor = 0
-	..()
-	
+
 	if(!T) return
 
 	var/list/target_turfs = getcircle(T, spreading_range)
@@ -67,7 +66,6 @@
 		P.shot_from = src.name
 
 		P.launch_fragment(TT)
-		P.firer_loc = get_turf(src)
 
 		//Make sure to hit any mobs in the source turf
 		for(var/mob/living/M in T)

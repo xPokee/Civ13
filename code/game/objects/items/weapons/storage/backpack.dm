@@ -420,10 +420,24 @@
 		..()
 		new/obj/item/ammo_casing/rocket/atgm(src)
 		new/obj/item/ammo_casing/rocket/atgm(src)
-		new/obj/item/ammo_casing/rocket/atgm/apcr(src)
-		new/obj/item/ammo_casing/rocket/atgm/apcr(src)
+		new/obj/item/ammo_casing/rocket/atgm(src)
+		new/obj/item/ammo_casing/rocket/atgm(src)
 		new/obj/item/ammo_casing/rocket/atgm/he(src)
 		new/obj/item/ammo_casing/rocket/atgm/he(src)
+
+/obj/item/weapon/storage/backpack/heavyrucksack/mortar
+	New()
+		..()
+		new/obj/item/cannon_ball/mortar_shell(src)
+		new/obj/item/cannon_ball/mortar_shell(src)
+		new/obj/item/cannon_ball/mortar_shell(src)
+		new/obj/item/cannon_ball/mortar_shell(src)
+		new/obj/item/cannon_ball/mortar_shell(src)
+		new/obj/item/cannon_ball/mortar_shell(src)
+
+/obj/item/weapon/storage/backpack/heavyrucksack/black
+	icon_state = "heavyrucksack_black"
+	base_icon = "heavyrucksack_black"
 
 /obj/item/weapon/storage/backpack/civbag
 	name = "backpack"

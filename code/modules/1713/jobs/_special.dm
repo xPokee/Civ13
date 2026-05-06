@@ -95,7 +95,7 @@
 /datum/job/var/is_soviet = FALSE
 /datum/job/var/is_muj = FALSE
 /datum/job/var/is_dra = FALSE
-/datum/job/var/is_afro = FALSE
+/datum/job/var/can_be_afro = FALSE
 /datum/job/var/is_waco = FALSE
 /datum/job/var/is_clash = FALSE
 /datum/job/var/is_event_role = FALSE
@@ -122,6 +122,7 @@
 /datum/job/var/is_syria = FALSE
 /datum/job/var/is_rotstadt = FALSE
 /datum/job/var/is_twotribes = FALSE
+/datum/job/var/is_latin = FALSE
 
 /datum/job/var/can_get_coordinates = FALSE
 /datum/job/var/is_event = FALSE
@@ -196,6 +197,14 @@
 		. = FILIPINO
 	else if (istype(src, /datum/job/polish))
 		. = POLISH
+	else if (istype(src, /datum/job/bluefaction))
+		. = BLUEFACTION
+	else if (istype(src, /datum/job/redfaction))
+		. = REDFACTION
+	else if (istype(src, /datum/job/cafr))
+		. = CAFR
+	else if (istype(src, /datum/job/tsfsr))
+		. = TSFSR
 	_base_type_flag = .
 	return _base_type_flag
 
@@ -279,6 +288,19 @@
 	else if (istype(src, /datum/job/polish))
 		user.faction_text = "POLISH"
 		user.base_faction = new/datum/job/polish(user, src)
+	else if (istype(src, /datum/job/bluefaction))
+		user.faction_text = "BLUEFACTION"
+		user.base_faction = new/datum/faction/bluefaction(user, src)
+	else if (istype(src, /datum/job/redfaction))
+		user.faction_text = "REDFACTION"
+		user.base_faction = new/datum/faction/redfaction(user, src)
+	else if (istype(src, /datum/job/cafr))
+		user.faction_text = "CAFR"
+		user.base_faction = new/datum/faction/cafr(user, src)
+	else if (istype(src, /datum/job/tsfsr))
+		user.faction_text = "TSFSR"
+		user.base_faction = new/datum/faction/tsfsr(user, src)
+
 /datum/job/proc/opposite_faction_name()
 	if (istype(src, /datum/job/pirates))
 		return "British Empire"

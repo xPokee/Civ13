@@ -40,7 +40,7 @@
 
 
 
-/mob/living/proc/apply_effect(var/effect = FALSE,var/effecttype = STUN, var/blocked = FALSE, var/check_protection = TRUE)
+/mob/living/proc/apply_effect(var/effect = FALSE, var/effecttype = STUN, var/blocked = FALSE, var/check_protection = TRUE)
 	if (!effect || (blocked >= 2))	return FALSE
 	switch(effecttype)
 		if (STUN)
@@ -78,10 +78,12 @@
 	return TRUE
 
 /mob/living/proc/updatehealth()
-	if (status_flags & GODMODE)
-		health = 100
-		stat = CONSCIOUS
-	else
-		health = maxHealth - getOxyLoss() - getToxLoss() - getBurnLoss() - getBruteLoss() - getCloneLoss() - halloss
-	if (health <= 0) // experimental block
-		death()
+    if (status_flags & GODMODE)
+        health = 100
+        stat = CONSCIOUS
+    else
+        health = maxHealth - getOxyLoss() - getToxLoss() - getBurnLoss() - getBruteLoss() - getCloneLoss() - halloss
+    
+    if (health <= 0) // experimental block
+        if (!istype(src, /mob/living/human))
+            death()

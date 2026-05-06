@@ -51,7 +51,7 @@
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
 
-	world << "<b><big>[H.real_name] is the Captain of the Chinese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Chinese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -111,7 +111,7 @@
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
 
-	world << "<b><big>[H.real_name] is the 1st Lieutenant of the Chinese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 1st Lieutenant of the Chinese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. The whole operation relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -311,7 +311,7 @@
 		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/german(H), slot_w_uniform)
 		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/chicap(H), slot_head)
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/boltaction/gewehr98/karabiner98k/chinese(H), slot_shoulder)
-	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/sniper_scope(H), slot_l_store)
+	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/sniper_scope/zf39(H), slot_l_store)
 	if (time_of_day == "Night" || time_of_day == "Evening" || time_of_day == "Early Morning")
 		if (prob(60))
 			H.equip_to_slot_or_del(new /obj/item/flashlight/militarylight/alt(H), slot_wear_id)
@@ -373,7 +373,7 @@
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
 
-	world << "<b><big>[H.real_name] is the Captain of the Chinese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Chinese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -429,7 +429,7 @@
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
 
-	world << "<b><big>[H.real_name] is the 1st Lieutenant of the Chinese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 1st Lieutenant of the Chinese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. The whole operation relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -923,6 +923,100 @@
 
 ////////////////////MODERN PLA/////////////////////
 
+/datum/job/chinese/pla/captain
+	title = "Shang Wei"
+	en_meaning = "PLA Captain"
+	rank_abbreviation = "Shang."
+	spawn_location = "JoinLateRUSgt"
+
+	is_pla = TRUE
+	is_commander = TRUE
+	is_officer = TRUE
+	whitelisted = TRUE
+
+	can_get_coordinates = TRUE
+
+	min_positions = 1
+	max_positions = 1
+
+/datum/job/chinese/pla/captain/equip(var/mob/living/human/H)
+	if (!H)	return FALSE
+	give_random_name(H)
+//shoes
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/jackboots(H), slot_shoes)
+//clothes
+	H.equip_to_slot_or_del(new /obj/item/clothing/under/chinese_type07(H), slot_w_uniform)
+//head
+	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/modern/qgf03(H), slot_head)
+//back
+	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/submachinegun/qbz95(H), slot_shoulder)
+	H.equip_to_slot_or_del(new /obj/item/weapon/radio/walkietalkie/faction2(H), slot_wear_id)
+	var/obj/item/clothing/under/uniform = H.w_uniform
+	var/obj/item/clothing/accessory/armor/coldwar/plates/platecarriergreen/armour = new /obj/item/clothing/accessory/armor/coldwar/plates/platecarriergreen(null)
+	uniform.attackby(armour, H)
+	var/obj/item/clothing/accessory/holster/hip/holsterh = new /obj/item/clothing/accessory/holster/hip(null)
+	uniform.attackby(holsterh, H)
+	holsterh.attackby(new/obj/item/weapon/gun/projectile/pistol/makarov, H)
+
+	H.add_note("Role", "You are a <b>[title]</b>, lead your squad in the Chinese advance!")
+	H.setStat("strength", STAT_VERY_HIGH)
+	H.setStat("crafting", STAT_MEDIUM_LOW)
+	H.setStat("rifle", STAT_VERY_HIGH)
+	H.setStat("dexterity", STAT_VERY_HIGH)
+	H.setStat("swords", STAT_NORMAL)
+	H.setStat("pistol", STAT_VERY_HIGH)
+	H.setStat("bows", STAT_NORMAL)
+	H.setStat("medical", STAT_MEDIUM_LOW)
+	H.setStat("machinegun", STAT_VERY_HIGH)
+	return TRUE
+
+/datum/job/chinese/pla/lieutenant
+	title = "Zhong Wei"
+	en_meaning = "PLA Lieutenant"
+	rank_abbreviation = "Zh."
+	spawn_location = "JoinLateRUSgt"
+
+	is_pla = TRUE
+	is_officer = TRUE
+	whitelisted = TRUE
+
+	can_get_coordinates = TRUE
+
+	min_positions = 1
+	max_positions = 2
+
+/datum/job/chinese/pla/lieutenant/equip(var/mob/living/human/H)
+	if (!H)	return FALSE
+	give_random_name(H)
+//shoes
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/jackboots(H), slot_shoes)
+//clothes
+	H.equip_to_slot_or_del(new /obj/item/clothing/under/chinese_type07(H), slot_w_uniform)
+//head
+	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/modern/qgf03(H), slot_head)
+//back
+	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/submachinegun/qbz95(H), slot_shoulder)
+	H.equip_to_slot_or_del(new /obj/item/weapon/radio/walkietalkie/faction2(H), slot_wear_id)
+	var/obj/item/clothing/under/uniform = H.w_uniform
+	var/obj/item/clothing/accessory/armor/coldwar/plates/platecarriergreen/armour = new /obj/item/clothing/accessory/armor/coldwar/plates/platecarriergreen(null)
+	uniform.attackby(armour, H)
+	var/obj/item/clothing/accessory/holster/hip/holsterh = new /obj/item/clothing/accessory/holster/hip(null)
+	uniform.attackby(holsterh, H)
+	holsterh.attackby(new/obj/item/weapon/gun/projectile/pistol/makarov, H)
+
+	H.add_note("Role", "You are a <b>[title]</b>, lead your squad in the Chinese advance!")
+	H.setStat("strength", STAT_VERY_HIGH)
+	H.setStat("crafting", STAT_MEDIUM_LOW)
+	H.setStat("rifle", STAT_VERY_HIGH)
+	H.setStat("dexterity", STAT_VERY_HIGH)
+	H.setStat("swords", STAT_NORMAL)
+	H.setStat("pistol", STAT_VERY_HIGH)
+	H.setStat("bows", STAT_NORMAL)
+	H.setStat("medical", STAT_MEDIUM_LOW)
+	H.setStat("machinegun", STAT_VERY_HIGH)
+	return TRUE
+
+
 /datum/job/chinese/pla/sergeant
 	title = "Zhong Shi"
 	en_meaning = "PLA Sergeant"
@@ -1017,7 +1111,7 @@
 	H.setStat("machinegun", STAT_HIGH)
 	return TRUE
 
-/datum/job/chinese/pla
+/datum/job/chinese/pla/soldier
 	title = "Lie Bing"
 	en_meaning = "PLA Infantryman"
 	rank_abbreviation = ""
@@ -1026,7 +1120,7 @@
 	uses_squads = TRUE
 
 	min_positions = 25
-	max_positions = 80
+	max_positions = 100
 
 /datum/job/chinese/pla/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
@@ -1093,7 +1187,7 @@
 	H.setStat("machinegun", STAT_MEDIUM_HIGH)
 	return TRUE
 
-//////////////////////////////sovietsino borderconflict////////////////////////////////
+//////////////////////////////Sino-Soviet Border Conflict////////////////////////////////
 
 /datum/job/chinese/sovcon/pla/commisar
 	title = "Zhengwei"

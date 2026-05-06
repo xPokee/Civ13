@@ -26,6 +26,8 @@
 	// replaced by OPENCONTAINER flags and atom/proc/is_open_container()
 	///Chemistry.
 
+	var/crafted = FALSE //optimization for map loaded atoms
+
 	//Detective Work, used for the duplicate data points kept in the scanners
 	var/list/original_atom
 
@@ -77,11 +79,6 @@
 	else
 		return null
 
-//return flags that should be added to the viewer's sight var.
-//Otherwise return a negative number to indicate that the view should be cancelled.
-/atom/proc/check_eye(user as mob)
-	return -1
-
 /atom/proc/on_reagent_change()
 	return
 
@@ -105,11 +102,6 @@
 
 /atom/proc/CheckExit()
 	return TRUE
-
-// If you want to use this, the atom must have the PROXMOVE flag, and the moving
-// atom must also have the PROXMOVE flag currently to help with lag. ~ ComicIronic
-/atom/proc/HasProximity(atom/movable/AM as mob|obj)
-	return
 
 /atom/proc/emp_act(var/severity)
 	return
@@ -172,10 +164,14 @@
 			f_name += "<span class='danger'>blood-stained</span> [name][infix]!"
 		else
 			f_name += "oil-stained [name][infix]."
+
 	if (!isobserver(user))
-		user.visible_message("<font size=1>[user.name] looks at [src].</font>")
-	user << "\icon[src] That's [f_name] [suffix]"
-	user << desc
+		user.visible_message("<font size=1>[user.name] looks at \the [src].</font>", "<font size =1>You look at \the [src].</font>")
+
+	to_chat(user, "\icon[src] That's [f_name] [suffix]")
+
+	if(desc) // If the description is not null.
+		to_chat(user, desc)
 
 	return distance == -1 || (get_dist(src, user) <= distance)
 
@@ -186,7 +182,7 @@
 		return FALSE
 
 	dir = new_dir
-	dir_set_event.raise_event(src, old_dir, new_dir)
+	GLOB.dir_set_event.raise_event(src, old_dir, new_dir)
 	return TRUE
 
 /atom/proc/ex_act()
@@ -253,8 +249,6 @@
 	if (isnull(M)) return
 	if (isnull(M.key)) return
 	if (ishuman(M))
-		//Fibers
-		add_fibers(M)
 		//Add the list if it does not exist.
 		if (!fingerprintshidden)
 			fingerprintshidden = list()
@@ -368,7 +362,6 @@
 
 //returns TRUE if made bloody, returns FALSE otherwise
 /atom/proc/add_blood(mob/living/human/M as mob)
-
 	if (flags & NOBLOODY)
 		return FALSE
 
@@ -377,6 +370,7 @@
 
 	was_bloodied = TRUE
 	blood_color = "#A10808"
+	
 	if (istype(M))
 		if (!istype(M.dna, /datum/dna))
 			M.dna = new /datum/dna(null)
@@ -384,6 +378,8 @@
 		M.check_dna()
 		if (M.species)
 			blood_color = M.species.blood_color
+		if (M.droid)
+			blood_color = "#030303"
 	. = TRUE
 	return TRUE
 
@@ -421,7 +417,7 @@
 // blind_message (optional) is what blind people will hear e.g. "You hear something!"
 /atom/proc/visible_message(var/message, var/blind_message)
 
-	var/list/see = get_mobs_or_objects_in_view(7,src) | viewers(get_turf(src), null)
+	var/list/see = get_mobs_or_objects_in_view(7,src, TRUE, FALSE) | viewers(get_turf(src), null)
 
 	for (var/I in see)
 		if (isobj(I))
@@ -477,8 +473,8 @@
 		return
 
 	if(user.handcuffed && prob(45) && !user.incapacitated(INCAPACITATION_FORCELYING))//User can fail to kick smbd if cuffed
-		user.visible_message("<span class='danger'>[user.name] loses \his balance while trying to kick \the [src].</span>", \
-					"<span class='warning'> You lost your balance.</span>")
+		user.visible_message(SPAN_DANGER("[user.name] loses \his balance while trying to kick \the [src]."), \
+					" You lost your balance.")
 		user.Weaken(1)
 		return
 
@@ -497,15 +493,18 @@
 		return
 	if(!Adjacent(user) || user.incapacitated(INCAPACITATION_STUNNED|INCAPACITATION_KNOCKOUT) || istype(user.loc, /obj/structure/closet) || !ishuman(src))
 		return
+	if(user.pacifist)
+		to_chat(src, "<font color='yellow'><big><b>I don't want to bite!</b></big></font>")
+		return
 	var/mob/living/human/target = src
 	if(user.middle_click_intent == "bite")//We're in bite mode, so bite the opponent
 		var/limbcheck = user.targeted_organ
 		if (limbcheck == "random")
 			limbcheck = pick("l_arm","r_arm","l_hand","r_hand")
-		if(limbcheck in list("l_hand","r_hand","l_arm","r_arm") || user.werewolf)
+		if((limbcheck in list("l_hand","r_hand","l_arm","r_arm")) || user.werewolf)
 			var/obj/item/organ/external/affecting = target.get_organ(limbcheck)
 			if(!affecting)
-				user << "<span class='notice'>[src] is missing that body part.</span>"
+				to_chat(user, SPAN_NOTICE("[src] is missing that body part."))
 				return FALSE
 			else
 				visible_message("<span class='danger'>[user] bites the [src]'s [affecting.name]!</span>","<span class='danger'>You bite the [src]'s [affecting.name]!</span>")
@@ -532,7 +531,7 @@
 							target.visible_message("<span class='danger'>[target] drops \the [target.r_hand]!</span>")
 							target.drop_r_hand()
 		else
-			user << "<span class='notice'>You cannot bite that part of the body, it's too far away!</span>"
+			to_chat(user, SPAN_NOTICE("You cannot bite that part of the body, it's too far away!"))
 			return FALSE
 
 		user.setClickCooldown(25)
@@ -565,7 +564,7 @@
 			return
 	for (var/obj/O in get_turf(target))
 		if (O.density)
-			user << "<span class='danger'>You hit the [O]!</span>"
+			to_chat(user, SPAN_DANGER("You hit the [O]!"))
 			user.adjustBruteLoss(rand(2,7))
 			user.Weaken(2)
 			user.setClickCooldown(22)
@@ -576,7 +575,7 @@
 		var/dir_to_tgt = get_dir(user,target)
 		for(var/obj/O in range(1,user))
 			if ((get_dir(user,O) in nearbydirections(dir_to_tgt)) && (O.density == TRUE || istype(O, /obj/structure/window/barrier/railing)))
-				user << "<span class='danger'>You hit the [O]!</span>"
+				to_chat(user, SPAN_DANGER("You hit the [O]!"))
 				user.adjustBruteLoss(rand(2,7))
 				user.Weaken(2)
 				user.setClickCooldown(22)
@@ -584,7 +583,7 @@
 			if (istype(O, /obj/structure/vehicleparts/frame))
 				var/obj/structure/vehicleparts/frame/F = O
 				if (!F.CanPass())
-					user << "<span class='danger'>You hit the [F.axis]!</span>"
+					to_chat(user, SPAN_DANGER("You hit the [F.axis]!"))
 					user.adjustBruteLoss(rand(2,7))
 					user.Weaken(2)
 					user.setClickCooldown(22)
@@ -592,7 +591,7 @@
 
 		for(var/turf/T in range(1,user))
 			if ((get_dir(user,T) in nearbydirections(dir_to_tgt)) && T.density == TRUE)
-				user << "<span class='danger'>You hit the [T]!</span>"
+				to_chat(user, SPAN_DANGER("You hit the [T]!"))
 				user.adjustBruteLoss(rand(2,7))
 				user.Weaken(2)
 				user.setClickCooldown(22)
@@ -601,14 +600,14 @@
 		var/dir_to_tgt = get_dir(user,target)
 		for(var/obj/O in range(2,user))
 			if ((get_dir(user,O) in nearbydirections(dir_to_tgt)) && (O.density == TRUE || istype(O, /obj/structure/window/barrier/railing)))
-				user << "<span class='danger'>You hit the [O]!</span>"
+				to_chat(user, SPAN_DANGER("You hit the [O]!"))
 				user.adjustBruteLoss(rand(2,7))
 				user.Weaken(2)
 				user.setClickCooldown(22)
 				return
 		for(var/turf/T in range(2,user))
 			if ((get_dir(user,T) in nearbydirections(dir_to_tgt)) && T.density == TRUE)
-				user << "<span class='danger'>You hit the [T]!</span>"
+				to_chat(user, SPAN_DANGER("You hit the [T]!"))
 				user.adjustBruteLoss(rand(2,7))
 				user.Weaken(2)
 				user.setClickCooldown(22)
@@ -619,8 +618,3 @@
 	user.stats["stamina"][1] = max(user.stats["stamina"][1] - rand(20,40), 0)
 	user.throw_at(target, 5, 0.5, user)
 	user.setClickCooldown(22)
-
-/atom/proc/SetName(var/new_name)
-	var/old_name = name
-	if(old_name != new_name)
-		name = new_name

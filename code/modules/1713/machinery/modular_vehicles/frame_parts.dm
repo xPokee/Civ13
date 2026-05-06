@@ -15,7 +15,7 @@ var/global/list/vehicle_walls = list( \
 
 /obj/structure/vehicleparts/frame/wood
 	name = "wood frame"
-	desc = "a wood vehicle frame."
+	desc = "A wood vehicle frame."
 	icon_state = "frame_wood"
 	flammable = TRUE
 	resistance = 90
@@ -109,26 +109,30 @@ var/global/list/vehicle_walls = list( \
 	normal_icon = 'icons/obj/vehicles/tankparts.dmi'
 
 /obj/structure/vehicleparts/frame/l3/lf
-	w_front = list("c_armoredfront",FALSE,TRUE,14,14,FALSE,FALSE)
-	w_left = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE)
+	w_front = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE,TRUE)
+	w_left = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE,TRUE)
 	override_roof_icon = "l3_barrel"
+/obj/structure/vehicleparts/frame/l3/lf/cc
+	w_front = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE,TRUE)
+	w_left = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE,TRUE)
+	override_roof_icon = "l3cc_barrel"
 /obj/structure/vehicleparts/frame/l3/rf
-	w_front = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE)
-	w_right = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE)
+	w_front = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE,TRUE)
+	w_right = list("c_wall",FALSE,TRUE,14,14,FALSE,FALSE,TRUE)
 
 /obj/structure/vehicleparts/frame/l3/lc
-	w_front = list("l3_turret",TRUE,TRUE,14,14,FALSE,FALSE)
+	w_front = list("l3_turret",TRUE,TRUE,14,14,FALSE,FALSE,TRUE)
 	w_left = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE)
 	override_frame_icon = "l3_turret"
 /obj/structure/vehicleparts/frame/l3/rc
 	w_front = list("l3_driver_port",TRUE,TRUE,14,14,FALSE,FALSE)
 	w_right = list("c_door",FALSE,TRUE,14,14,TRUE,TRUE)
 	override_frame_icon = "l3_driver_port"
-/obj/structure/vehicleparts/frame/l3/rb
-	w_right = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE)
-	w_back = list("c_wall",TRUE,TRUE,8,8,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/l3/lb
 	w_left = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE)
+	w_back = list("c_wall",TRUE,TRUE,8,8,FALSE,FALSE)
+/obj/structure/vehicleparts/frame/l3/rb
+	w_right = list("c_wall",TRUE,TRUE,14,14,FALSE,FALSE)
 	w_back = list("c_wall",TRUE,TRUE,8,8,FALSE,FALSE)
 
 /obj/structure/vehicleparts/frame/car/front
@@ -158,7 +162,7 @@ var/global/list/vehicle_walls = list( \
 	w_back = list("c_door",TRUE,TRUE,0,0.1,TRUE,TRUE)
 /obj/structure/vehicleparts/frame/car/left
 	name = "wood frame"
-	desc = "a wood vehicle frame."
+	desc = "A wood vehicle frame."
 	icon_state = "frame_wood"
 	flammable = TRUE
 	resistance = 90
@@ -166,7 +170,7 @@ var/global/list/vehicle_walls = list( \
 	w_left = list("c_wall",TRUE,TRUE,0,0.1,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/right
 	name = "wood frame"
-	desc = "a wood vehicle frame."
+	desc = "A wood vehicle frame."
 	icon_state = "frame_wood"
 	flammable = TRUE
 	resistance = 90
@@ -174,7 +178,7 @@ var/global/list/vehicle_walls = list( \
 	w_right = list("c_wall",TRUE,TRUE,0,0.1,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/left/armored
 	name = "wood frame"
-	desc = "a wood vehicle frame."
+	desc = "A wood vehicle frame."
 	icon_state = "frame_wood"
 	flammable = TRUE
 	resistance = 90
@@ -182,7 +186,7 @@ var/global/list/vehicle_walls = list( \
 	w_left = list("c_wall",TRUE,TRUE,10,30,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/right/armored
 	name = "wood frame"
-	desc = "a wood vehicle frame."
+	desc = "A wood vehicle frame."
 	icon_state = "frame_wood"
 	flammable = TRUE
 	resistance = 90
@@ -190,7 +194,7 @@ var/global/list/vehicle_walls = list( \
 	w_right = list("c_wall",TRUE,TRUE,10,30,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/left/metal
 	name = "steel frame"
-	desc = "a steel vehicle frame."
+	desc = "A steel vehicle frame."
 	icon_state = "frame_steel"
 	flammable = TRUE
 	resistance = 150
@@ -198,7 +202,7 @@ var/global/list/vehicle_walls = list( \
 	w_left = list("c_wall",TRUE,TRUE,0,0.1,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/left/metalreinforced
 	name = "steel frame"
-	desc = "a steel vehicle frame."
+	desc = "A steel vehicle frame."
 	icon_state = "frame_steel"
 	flammable = TRUE
 	resistance = 150
@@ -206,7 +210,7 @@ var/global/list/vehicle_walls = list( \
 	w_left = list("c_wall",TRUE,TRUE,30,30,FALSE,FALSE)
 /obj/structure/vehicleparts/frame/car/right/metal
 	name = "steel frame"
-	desc = "a steel vehicle frame."
+	desc = "A steel vehicle frame."
 	icon_state = "frame_steel"
 	flammable = TRUE
 	resistance = 150
@@ -319,7 +323,7 @@ var/global/list/license_plate_numbers = list()
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "license_plate_us"
 	name = "license plate"
-	desc = "a vehicle registration plate."
+	desc = "A vehicle registration plate."
 	layer = 12.1
 	var/reg_number = "000"
 	var/centered = FALSE
@@ -432,6 +436,19 @@ var/global/list/license_plate_numbers = list()
 	centered = TRUE
 /obj/structure/vehicleparts/license_plate/nl/centered/front
 	icon_state = "license_plate_nl"
+	front = TRUE
+	centered = TRUE
+
+/obj/structure/vehicleparts/license_plate/ru_mil
+	icon_state = "license_plate_ru_mil"
+/obj/structure/vehicleparts/license_plate/ru_mil/front
+	icon_state = "license_plate_ru_mil"
+	front = TRUE
+/obj/structure/vehicleparts/license_plate/ru_mil/centered
+	icon_state = "license_plate_ru_mil"
+	centered = TRUE
+/obj/structure/vehicleparts/license_plate/ru_mil/centered/front
+	icon_state = "license_plate_ru_mil"
 	front = TRUE
 	centered = TRUE
 

@@ -36,7 +36,7 @@
 
 /obj/item/connector
 	name = "cable connector"
-	desc = "a cable connector, used to merge or split cables."
+	desc = "A cable connector, used to merge or split cables."
 	w_class = ITEM_SIZE_TINY
 	layer = 3.92
 	icon = 'icons/obj/machines/power.dmi'
@@ -52,7 +52,7 @@
 	set src in range(1, usr)
 
 	if (!anchored)
-		usr << "Place it first."
+		to_chat(usr, "Place it first.")
 		return
 
 	if (tilepos == "over")
@@ -80,7 +80,7 @@
 /obj/item/connector/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if (istype(W, /obj/item/weapon/wrench))
 		playsound(loc, 'sound/items/Ratchet.ogg', 100, TRUE)
-		user << (anchored ? "<span class='notice'r>You unfasten \the [src] from the floor.</span>" : "<span class='notice'>You secure \the [src] to the floor.</span>")
+		user << (anchored ? "<span class='notice'>You unfasten \the [src] from the floor.</span>" : "<span class='notice'>You secure \the [src] to the floor.</span>")
 		anchored = !anchored
 		return
 

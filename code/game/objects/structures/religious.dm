@@ -164,7 +164,7 @@ obj/structure/religious/monument
 
 	New()
 		..()
-		top = image(icon='icons/obj/statue.dmi', icon_state = "venus_top", layer=3.2)
+		top = image(icon='icons/obj/statue.dmi', icon_state = "venus_top", layer= 6.0)
 		top.pixel_y = 32
 		update_icon()
 
@@ -172,6 +172,14 @@ obj/structure/religious/monument
 		..()
 		overlays.Cut()
 		overlays += top
+
+/obj/structure/religious/monument/liberty
+	name = "statue of liberty"
+	desc = "A figure of Libertas."
+	icon = 'icons/obj/decals_wider.dmi'
+	icon_state = "liberty"
+	bound_height = 64
+	layer = 5.0
 
 /obj/structure/religious/monument/karl_marx
 	name = "monumental bronze statue of karl marx"
@@ -554,7 +562,7 @@ obj/structure/religious/monument
 				open = FALSE
 				icon_state = "grave_filled"
 				name = "grave"
-				desc = "a grave."
+				desc = "A grave."
 				for (var/obj/structure/religious/remains/RMN in src.loc)
 					RMN.forceMove(src)
 				for (var/obj/item/IT in src.loc)
@@ -585,7 +593,7 @@ obj/structure/religious/monument
 		else
 			return
 	else if (istype(W, /obj/item/weapon/material/shovel) && !open)
-		visible_message("[user] starts digging up \the [src]...","You start digging up \the [src]...")
+		user.visible_message("[user] starts digging up \the [src]...", "You start digging up \the [src]...")
 		playsound(src,'sound/effects/shovelling.ogg',100,1)
 		if (do_after(user, 100, src))
 			if (!open)
@@ -622,7 +630,7 @@ obj/structure/religious/monument
 							HM.client.perspective = MOB_PERSPECTIVE
 					CF.forceMove(src.loc)
 	if (istype(W, /obj/item/weapon/barrier) && open)
-		visible_message("[user] throws the dirt into \the [src].", "You throw the dirt into \the [src].")
+		user.visible_message("[user] throws the dirt into \the [src].", "You throw the dirt into \the [src].")
 		filled++
 		qdel(W)
 		if (filled >= 2)
@@ -686,7 +694,7 @@ obj/structure/religious/monument
 
 /obj/structure/religious/proc/try_destroy()
 	if (health <= 0)
-		visible_message("<span class='danger'>The [src] is broken into pieces!</span>")
+		visible_message("<span class='danger'>\The [src] is broken into pieces!</span>")
 		qdel(src)
 		return
 
@@ -734,6 +742,7 @@ obj/structure/religious/monument
 					newmob.x=src.x+(rand(12,25))
 					newmob.y=src.y+(rand(-15,15))
 		I += 1
+
 /obj/structure/religious/totem/offerings/proc/check_favours()
 	spawn(1800)
 		//very angry
@@ -799,7 +808,7 @@ obj/structure/religious/monument
 		return
 
 /obj/structure/religious/totem/offerings/proc/check_power()
-	spawn(600)
+	spawn(600) // 1 minute
 		if (reltype == "tribal")
 			if (tribe == "goose")
 				for (var/datum/job/indians/tribes/red/R in job_master.faction_organized_occupations)

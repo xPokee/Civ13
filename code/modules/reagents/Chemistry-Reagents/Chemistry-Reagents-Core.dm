@@ -1,5 +1,5 @@
 /datum/reagent/blood
-	data = new/list("donor" = null, "viruses" = null, "species" = "Human", "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, "antibodies" = list())
+	data = list("donor" = null, "viruses" = null, "species" = "Human", "blood_DNA" = null, "blood_type" = null, "blood_colour" = "#A10808", "resistances" = null, "trace_chem" = null, "antibodies" = list())
 	name = "Blood"
 	id = "blood"
 	reagent_state = LIQUID
@@ -37,10 +37,8 @@
 	if (effective_dose > 15)
 		M.adjustToxLoss(removed)
 
-
 /datum/reagent/blood/affect_touch(var/mob/living/human/M, var/alien, var/removed)
 	return
-
 
 /datum/reagent/blood/affect_blood(var/mob/living/human/M, var/alien, var/removed)
 	M.inject_blood(src, volume)

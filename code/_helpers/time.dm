@@ -1,45 +1,34 @@
-#define SECOND *10
-#define SECONDS *10
-
-#define MINUTE *600
-#define MINUTES *600
-
-#define HOUR *36000
-#define HOURS *36000
-
-#define DAY *864000
-#define DAYS *864000
-
 #define TimeOfGame (get_game_time())
 #define TimeOfTick (world.tick_usage*0.01*world.tick_lag)
 
-#define CHECK_TICK if (world.tick_usage > 80) sleep(world.tick_lag)
+var/midnight_rollovers = 0
+var/rollovercheck_last_timeofday = 0
 
-#define TICK *world.tick_lag
-#define TICKS *world.tick_lag
+#define REALTIMEOFDAY (world.timeofday + (864000 * MIDNIGHT_ROLLOVER_CHECK))
+#define MIDNIGHT_ROLLOVER_CHECK ( rollovercheck_last_timeofday != world.timeofday ? update_midnight_rollover() : midnight_rollovers )
 
-#define DS2TICKS(DS) (DS/world.tick_lag)	// Convert deciseconds to ticks
-#define TICKS2DS(T) ((T) TICKS) 				// Convert ticks to deciseconds
+/proc/update_midnight_rollover()
+	if(world.timeofday < rollovercheck_last_timeofday)
+		midnight_rollovers++
+
+	rollovercheck_last_timeofday = world.timeofday
+	return midnight_rollovers
+
+var/global/cached_game_time
+var/global/last_world_time
+var/global/time_offset = 0
 
 /proc/get_game_time()
-	var/global/time_offset = 0
-	var/global/last_time = 0
-	var/global/last_usage = 0
+    if (world.time != last_world_time)
+        last_world_time = world.time
+        time_offset = (world.tick_usage > 100) ? (world.tick_usage - 100) * 0.01 : 0
+        cached_game_time = world.time + (time_offset + world.tick_usage * 0.01) * world.tick_lag
 
-	var/wtime = world.time
-	var/wusage = world.tick_usage * 0.01
-
-	if (last_time < wtime && last_usage > 1)
-		time_offset += last_usage - 1
-
-	last_time = wtime
-	last_usage = wusage
-
-	return wtime + (time_offset + wusage) * world.tick_lag
-
+    return cached_game_time
+	
 var/roundstart_hour = 0
 var/station_date = ""
-var/next_station_date_change = 1 DAY
+var/next_station_date_change = 1 DAYS
 
 #define roundduration2text_in_ticks (round_start_time ? world.time - round_start_time : 0)
 #define station_time_in_ticks (roundstart_hour HOURS + roundduration2text_in_ticks)
@@ -51,10 +40,10 @@ var/next_station_date_change = 1 DAY
 /proc/stationdate2text()
 	var/update_time = FALSE
 	if (station_time_in_ticks > next_station_date_change)
-		next_station_date_change += 1 DAY
+		next_station_date_change += 1 DAYS
 		update_time = TRUE
 	if (!station_date || update_time)
-		var/extra_days = round(station_time_in_ticks / (1 DAY)) DAYS
+		var/extra_days = round(station_time_in_ticks / (1 DAYS)) DAYS
 		var/timeofday = world.timeofday + extra_days
 		station_date = num2text((text2num(time2text(timeofday, "YYYY"))+544)) + "-" + time2text(timeofday, "MM-DD")
 	return station_date
@@ -75,14 +64,15 @@ proc/isDay(var/month, var/day)
 			//return TRUE
 
 var/next_duration_update = 0
-var/next_duration_update_days = 0
+var/next_duration_update_days= 0
 var/last_roundduration2text = 0
 var/last_roundduration2text_days = 0
 var/round_start_time = 0
 
 /hook/roundstart/proc/start_timer()
 	round_start_time = world.time
-	return 1
+	time_offset = 0
+	return TRUE
 
 /proc/roundduration2text()
 	if (!round_start_time)
@@ -129,3 +119,7 @@ var/round_start_time = 0
 /proc/process_schedule_interval(var/process_name)
 	var/process/process = processScheduler.getProcess(process_name)
 	return process.schedule_interval
+
+//Returns the world time in english
+/proc/worldtime2text(time = world.time)
+	return "[round(time / 36000)+12]:[(time / 600 % 60) < 10 ? add_zero(time / 600 % 60, 1) : time / 600 % 60]"

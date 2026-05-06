@@ -49,16 +49,15 @@
  */
 /hook/death
 
-/proc/callHook(hook, list/args=null)
+/proc/callHook(hook, list/hook_args=null)
 	var/hook_path = text2path("/hook/[hook]")
 	if (!hook_path)
 		error("Invalid hook '/hook/[hook]' called.")
 		return FALSE
 
-	var/caller = new hook_path
 	var/status = TRUE
 	for (var/P in typesof("[hook_path]/proc"))
-		if (!call(caller, P)(arglist(args)))
+		if (!call(caller, P)(arglist(hook_args)))
 			error("Hook '[P]' failed or runtimed.")
 			status = FALSE
 

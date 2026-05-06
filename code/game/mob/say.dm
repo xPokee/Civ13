@@ -10,12 +10,12 @@
 	set name = "Say"
 	set category = "IC"
 	if (say_disabled)	//This is here to try to identify lag problems
-		usr << "<span class = 'red'>Speech is currently admin-disabled.</span>"
+		to_chat(usr, SPAN_RED("Speech is currently admin-disabled."))
 		return
 
 	set_typing_indicator(0)
 	if (dd_hasprefix(message, "*scream") && isobserver(src))
-		usr << "<span class = 'warning'>You can't scream, because you're dead.</span>"
+		to_chat(usr, SPAN_WARNING("You can't scream, because you're dead."))
 		return
 
 	usr.say(message)
@@ -26,18 +26,21 @@
 	set category = "IC"
 
 	if (say_disabled)	//This is here to try to identify lag problems
-		usr << "<span class = 'red'>Speech is currently admin-disabled.</span>"
+		to_chat(usr, SPAN_RED("Speech is currently admin-disabled."))
 		return
+
 
 	set_typing_indicator(0)
 	if (dd_hasprefix(message, "*scream") && isobserver(src))
-		usr << "<span class = 'warning'>You can't scream, because you're dead.</span>"
+		to_chat(usr, SPAN_WARNING("You can't scream, because you're dead."))
 		return
 
 	if (!wolfman)
-		usr << "<span class = 'warning'>You can't howl.</span>"
+		to_chat(usr, SPAN_WARNING("You can't howl."))
 		return
+
 	usr.say(message, TRUE)
+
 /mob/verb/me_verb(message as text)
 	set name = "Me"
 	set category = "IC"
@@ -45,11 +48,12 @@
 		var/mob/living/human/H = src
 		if ((H.werewolf || H.gorillaman) && H.body_build.name != "Default")
 			if (map && map.ID != MAP_TRIBES && map.ID != MAP_THREE_TRIBES && map.ID != MAP_FOUR_KINGDOMS && map.ID != MAP_NOMADS_NEW_WORLD)
-				usr << "<span class = 'red'>You can't emote.</span>"
+				to_chat(usr, SPAN_RED("You can't emote."))
 				return
 	if (say_disabled)	//This is here to try to identify lag problems
-		usr << "<span class = 'red'>Speech is currently admin-disabled.</span>"
+		to_chat(usr, SPAN_RED("Speech is currently admin-disabled."))
 		return
+
 
 	message = sanitize(message)
 
@@ -61,16 +65,16 @@
 
 /mob/proc/say_dead(var/message)
 	if (say_disabled)	//This is here to try to identify lag problems
-		usr << "<span class='danger'>Speech is currently admin-disabled.</span>"
+		to_chat(usr, SPAN_DANGER("Speech is currently admin-disabled."))
 		return
 	if (client)
 		if (!client.holder)
 			if (!config.dsay_allowed)
-				src << "<span class='danger'>Deadchat is globally muted.</span>"
+				to_chat(src, SPAN_DANGER("Deadchat is globally muted."))
 				return
 
 	if (!is_preference_enabled(/datum/client_preference/show_dsay))
-		usr << "<span class='danger'>You have deadchat muted.</span>"
+		to_chat(usr, SPAN_DANGER("You have deadchat muted."))
 		return
 
 	say_dead_direct("[pick("complains","moans","whines","laments","blubbers")], <span class='message'>\"[message]\"</span>", src)
@@ -113,7 +117,7 @@
 
 /mob/proc/say_quote(var/message, var/datum/language/speaking = null)
 		var/verb = "says"
-		var/ending = copytext(message, length(message))
+		var/ending = copytext(message, length_char(message))
 		if (ending=="!")
 				verb=pick("exclaims","shouts","yells")
 		else if (ending=="?")
@@ -135,7 +139,7 @@
 	return get_turf(src)
 
 /mob/proc/say_test(var/text)
-	var/ending = copytext(text, length(text))
+	var/ending = copytext(text, length_char(text))
 	if (ending == "?")
 		return "1"
 	else if (ending == "!")
@@ -146,10 +150,10 @@
 //returns the language object only if the code corresponds to a language that src can speak, otherwise null.
 /mob/proc/parse_language(var/message)
 	var/prefix = copytext(message,1,2)
-	if (length(message) >= 1 && prefix == "!")
+	if (length_char(message) >= 1 && prefix == "!")
 		return all_languages["Noise"]
 
-	if (length(message) >= 3 && is_language_prefix(prefix))
+	if (length_char(message) >= 3 && is_language_prefix(prefix))
 		var/language_prefix = lowertext(copytext(message, 2, 4))
 		var/datum/language/L = language_keys[language_prefix]
 		if (can_speak(L))

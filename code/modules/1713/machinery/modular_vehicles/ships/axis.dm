@@ -9,7 +9,7 @@
 	currentspeed = 0
 	speeds = 3
 	maxpower = 1200
-	speedlist = list(1=15,2=11,3=7)
+	speedlist = alist(1=15,2=11,3=7)
 	icon = 'icons/obj/vehicles/vehicleparts.dmi'
 	icon_state = "axis_powered"
 	ship = TRUE
@@ -18,7 +18,7 @@
 	name = "heavy rudder control"
 	speeds = 3
 	maxpower = 2500
-	speedlist = list(1=18,2=14,3=10)
+	speedlist = alist(1=18,2=14,3=10)
 
 /obj/structure/vehicleparts/axis/ship/movementsound()
 	if (!moving)
@@ -28,14 +28,16 @@
 		movementsound()
 
 /obj/structure/vehicleparts/axis/ship/movementloop()
-	if (moving == TRUE)
+	if (moving && !movement_processes)
 		get_weight()
+		movement_processes++
 		if (masts.len)
 			check_sails()
 		if (do_vehicle_check() && currentspeed > 0)
 			for (var/obj/structure/vehicleparts/movement/sail/S in masts)
 				if (!S.sails || S.broken)
 					moving = FALSE
+					movement_processes--
 					stopmovementloop()
 					return FALSE
 				else
@@ -44,9 +46,11 @@
 		else
 			currentspeed = 0
 			moving = FALSE
+			movement_processes--
 			stopmovementloop()
 			return FALSE
 		spawn(vehicle_m_delay+1)
+			movement_processes--
 			movementloop()
 			return FALSE
 	else
@@ -160,7 +164,7 @@
 						return FALSE
 				if (!done)
 					if (O.density == TRUE && !(O in transporting))
-						if (current_weight >= 400 && !istype(O, /obj/structure/mailbox) && !istype(O, /obj/structure/barricade/antitank) && !istype(O, /obj/structure/vehicleparts/frame)&& !istype(O, /obj/structure/vehicleparts/movement))
+						if (current_weight >= 400 && !istype(O, /obj/structure/mailbox) && !istype(O, /obj/structure/barricade/antitank) && !istype(O, /obj/structure/barricade/stone_h/cliffside) && !istype(O, /obj/structure/vehicleparts/frame)&& !istype(O, /obj/structure/vehicleparts/movement))
 							visible_message("<span class='warning'>\the [src] crushes \the [O]!</span>","<span class='warning'>You crush \the [O]!</span>")
 							qdel(O)
 						else

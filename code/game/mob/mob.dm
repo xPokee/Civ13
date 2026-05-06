@@ -33,9 +33,8 @@
 		living_mob_list += src
 	..()
 
-
-	if (!isnewplayer(src))
-		src << browse(null, "window=playersetup;")
+	if (!isnewplayer(src) && !istype(src, /mob/dview) && src.client)
+		src.client << browse(null, "window=playersetup;")
 
 	spawn (10)
 		if (client)
@@ -76,12 +75,12 @@
 // blind_message (optional) is what blind people will hear e.g. "You hear something!"
 
 /mob/visible_message(var/message, var/self_message, var/blind_message)
-	var/list/see = get_mobs_or_objects_in_view(7,src) | viewers(7,src)
+	var/list/see = get_mobs_or_objects_in_view(7,src,TRUE,FALSE) | viewers(7,src)
 
 	for (var/I in see)
 		if (isobj(I))
 			spawn(0)
-				if (I) //It's possible that it could be deleted in the meantime.
+				if (istype(I, /mob/living/human)) //It's possible that it could be deleted in the meantime.
 					var/obj/O = I
 					O.show_message( message, TRUE, blind_message, 2)
 		else if (ismob(I))
@@ -213,7 +212,7 @@
 	set category = "IC"
 
 	if ((is_blind(src) || stat) && !isobserver(src))
-		src << "<span class='notice'>Something is there but you can't see it.</span>"
+		to_chat(src, SPAN_NOTICE("Something is there but you can't see it."))
 		return TRUE
 
 	// changing direction counts as a movement, so don't do it unless we have to - Kachnov
@@ -338,6 +337,22 @@
 			update_inv_r_hand()
 	return
 
+
+/mob/verb/secondary_action()
+	set name = "Activate Secondary Object"
+	set category = null
+	set src = usr
+	if (hand)
+		var/obj/item/W = l_hand
+		if (W)
+			W.secondary_attack_self(src)
+			update_inv_l_hand()
+	else
+		var/obj/item/W = r_hand
+		if (W)
+			W.secondary_attack_self(src)
+			update_inv_r_hand()
+	return
 /*
 /mob/verb/dump_source()
 
@@ -419,7 +434,7 @@
 /mob/proc/update_flavor_text()
 	set src in usr
 	if (usr != src)
-		usr << "No."
+		to_chat(usr, "No.")
 	var/msg = sanitize(input(usr,"Set the flavor text in your 'examine' verb. Can also be used for OOC notes about your character.","Flavor Text",html_decode(flavor_text)) as message|null, extra = FALSE)
 
 	if (msg != null)
@@ -446,21 +461,21 @@
 	set category = "IC"
 
 	if (!( config.abandon_allowed ))
-		usr << "<span class='notice'>Respawn is disabled.</span>"
+		to_chat(usr, SPAN_NOTICE("Respawn is disabled."))
 		return
 
 	if ((stat != DEAD || !( ticker )))
-		usr << "<span class='notice'><b>You must be dead to use this!</b></span>"
+		to_chat(usr, SPAN_NOTICE("<b>You must be dead to use this!</b>"))
 		return
 
 	src << browse(null, "window=memory")
 
-	src << "You can respawn now, enjoy your new life!"
+	to_chat(src, "You can respawn now, enjoy your new life!")
 	stop_ambience(usr)
 
 	log_game("[name]/[key] used abandon mob.")
 
-	usr << "<span class='notice'><b>Make sure to play a different character, and please roleplay correctly!</b></span>"
+	to_chat(usr, SPAN_NOTICE("<b>Make sure to play a different character, and please roleplay correctly!</b>"))
 
 	if (!client)
 		log_game("[key] AM failed due to disconnect.")
@@ -491,7 +506,7 @@
 	if (client.holder && (client.holder.rights & R_ADMIN))
 		is_admin = TRUE
 	else if (stat != DEAD || istype(src, /mob/new_player))
-		usr << "<span class = 'notice'>You must be observing to use this!</span>"
+		to_chat(usr, SPAN_NOTICE("You must be observing to use this!"))
 		return
 
 	if (is_admin && stat == DEAD)
@@ -548,20 +563,16 @@
 
 
 /mob/proc/pull_damage()
-	return 0
-
-/mob/living/human/pull_damage()
-	if(!lying || getBruteLoss() + getBurnLoss() < 100)
-		return 0
-	for(var/thing in organs)
-		var/obj/item/organ/external/E = thing
-		if(!E || E.is_stump())
-			continue
-		if((E.status & ORGAN_BROKEN) && !(E.status & ORGAN_SPLINTED))
-			return 1
-		if(E.status & ORGAN_BLEEDING)
-			return 1
-	return 0
+	if (ishuman(src))
+		var/mob/living/human/H = src
+		if (H.health - H.halloss <= config.health_threshold_softcrit)
+			for (var/name in H.organs_by_name)
+				var/obj/item/organ/external/e = H.organs_by_name[name]
+				if (e && H.lying)
+					if (((e.status & ORGAN_BROKEN && !(e.status & ORGAN_SPLINTED)) || e.status & ORGAN_BLEEDING) && (H.getBruteLoss() + H.getBurnLoss() >= 100))
+						return TRUE
+						break
+		return FALSE
 
 /mob/MouseDrop(mob/M as mob)
 	..()
@@ -680,9 +691,10 @@
 	if (.)
 		if (client.status_tabs && statpanel("Status") && ticker)
 			stat("")
-			stat(stat_header("Server"))
+			stat("Server")
 			stat("")
-			stat("Players Online (Playing, Observing, Lobby):", "[clients.len] ([human_clients_mob_list.len], [clients.len-human_clients_mob_list.len-new_player_mob_list.len], [new_player_mob_list.len])")
+			stat("Players Online:", "[clients.len]")
+			stat("Playing, Observing, Lobby:", "[human_clients_mob_list.len], [clients.len-human_clients_mob_list.len-new_player_mob_list.len], [new_player_mob_list.len]")
 			stat("Round Duration:", roundduration2text_days())
 			stat("Game ID:", "<b>[game_id]</b>")
 			stat("")
@@ -690,7 +702,7 @@
 			if (map && !map.civilizations)
 				var/grace_period_string = ""
 				for (var/faction in map.faction_organization)
-					if (!list(BRITISH, PIRATES, INDIANS, PORTUGUESE, SPANISH, FRENCH, DUTCH, ITALIAN, CIVILIAN, ROMAN, GREEK, ARAB, JAPANESE, RUSSIAN, GERMAN, AMERICAN, FILIPINO, CHECHEN, CHINESE, FINNISH, NORWEGIAN, SWEDISH, DANISH, VIETNAMESE, POLISH).Find(faction))
+					if (!list(BRITISH, PIRATES, INDIANS, PORTUGUESE, SPANISH, FRENCH, DUTCH, ITALIAN, CIVILIAN, ROMAN, GREEK, ARAB, JAPANESE, RUSSIAN, GERMAN, AMERICAN, FILIPINO, CHECHEN, CHINESE, FINNISH, NORWEGIAN, SWEDISH, DANISH, VIETNAMESE, POLISH, BLUEFACTION, REDFACTION).Find(faction))
 						continue
 					if (grace_period_string)
 						grace_period_string += ", "
@@ -736,7 +748,7 @@
 		if (client.holder && client.status_tabs)
 			if (statpanel("Status"))
 				stat("")
-				stat(stat_header("Developer"))
+				stat("Developer")
 				stat("")
 				if (processes.time_track && movementMachine)
 					stat("CPU (Average) (Movement Scheduler (Average)):","[world.cpu]% ([ceil(processes.time_track.stored_averages["cpu"])]%) ([ceil(movementMachine.last_cpu)]% ([ceil(movementMachine.average_cpu)]%))")
@@ -778,6 +790,9 @@
 
 //Updates canmove, lying and icons. Could perhaps do with a rename but I can't think of anything to describe it.
 /mob/proc/update_canmove()
+	if(cannot_stand() && using_object && istype(using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+		var/obj/item/weapon/gun/projectile/automatic/stationary/HMG = using_object
+		HMG.stopped_using(src)
 
 	var/gallows = FALSE
 	for (var/obj/structure/noose/N in get_turf(src))
@@ -834,6 +849,7 @@
 		else if (cannot_stand())
 			lying = TRUE
 			canmove = FALSE
+			facing_dir = null
 		else if (stunned)
 			canmove = FALSE
 		else if (captured)
@@ -927,11 +943,11 @@ mob/proc/yank_out_object()
 	usr.setClickCooldown(20)
 
 	if (usr.stat == TRUE)
-		usr << "You are unconcious and cannot do that!"
+		to_chat(usr, "You are unconscious and cannot do that!")
 		return
 
 	if (usr.restrained())
-		usr << "You are restrained and cannot do that!"
+		to_chat(usr, "You are restrained and cannot do that!")
 		return
 
 	var/mob/S = src
@@ -945,17 +961,17 @@ mob/proc/yank_out_object()
 	valid_objects = get_visible_implants(0)
 	if (!valid_objects.len)
 		if (self)
-			src << "You have nothing stuck in your body that is large enough to remove."
+			to_chat(src, "You have nothing stuck in your body that is large enough to remove.")
 		else
-			U << "[src] has nothing stuck in their wounds that is large enough to remove."
+			to_chat(U, "[src] has nothing stuck in their wounds that is large enough to remove.")
 		return
 
 	var/obj/item/weapon/selection = input("What do you want to yank out?", "Embedded objects") in valid_objects
 
 	if (self)
-		src << "<span class='warning'>You attempt to get a good grip on [selection] in your body.</span>"
+		to_chat(src, SPAN_WARNING("You attempt to get a good grip on [selection] in your body."))
 	else
-		U << "<span class='warning'>You attempt to get a good grip on [selection] in [S]'s body.</span>"
+		to_chat(U, SPAN_WARNING("You attempt to get a good grip on [selection] in [S]'s body."))
 
 	if (!do_mob(U, S, 30))
 		return
@@ -963,12 +979,14 @@ mob/proc/yank_out_object()
 		return
 
 	if (self)
-		visible_message("<span class='warning'><b>[src] rips [selection] out of their body.</b></span>","<span class='warning'><b>You rip [selection] out of your body.</b></span>")
+		visible_message(SPAN_WARNING("<b>[src] rips [selection] out of their body.</b></span>"))
+		to_chat(usr, SPAN_WARNING("You rip [selection] out of your body."))
 	else
-		visible_message("<span class='warning'><b>[usr] rips [selection] out of [src]'s body.</b></span>","<span class='warning'><b>[usr] rips [selection] out of your body.</b></span>")
+		visible_message(SPAN_WARNING("<b>[usr] rips [selection] out of [src]'s body.</b></span>"))
+		to_chat(usr, SPAN_WARNING("[usr] rips [selection] out of your body."))
 	valid_objects = get_visible_implants(0)
 	if (valid_objects.len == TRUE) //Yanking out last object - removing verb.
-		verbs -= /mob/proc/yank_out_object
+		verbs -= /mob/proc/yank_out_object	
 
 	if (ishuman(src))
 		var/mob/living/human/H = src
@@ -1062,12 +1080,16 @@ mob/proc/yank_out_object()
 	set category = "IC"
 	set src = usr
 
+	if (!ishuman(usr)) // Prevents ghosts from using this verb, it doesn't even set their face_dir as a ghost, so it just leads to unexpec-bugs down the line.
+		to_chat(usr, SPAN_WARNING("You must be human to use this verb."))
+		return
+
 	set_face_dir()
 
 	if (!facing_dir)
-		usr << "You are no longer facing anything."
+		to_chat(usr, "You are no longer facing anything.")
 	else
-		usr << "You are now facing [dir2text(facing_dir)]."
+		to_chat(usr, "You are now facing [dir2text(facing_dir)].")
 	if (ishuman(src))
 		var/mob/living/human/H = src
 		if (H.HUDneed.Find("fixeye"))

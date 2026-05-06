@@ -242,7 +242,7 @@
 	return ..()
 
 /turf/floor/dirt/proc/soil_nutrition_recover()
-	spawn(12000) // Every 20 minutes the soil will recover
+	spawn(rand(12000,12010)) // Every 20 minutes the soil will recover. Randomised values to prevent all the turfs from running it at the same time lagging the game
 		if(!istype(src, /turf/floor/dirt)) // It could be that the turf has ceased to be dirt during the wait
 			return
 		if(soil_nutrition < max_soil_nutrition)
@@ -296,7 +296,7 @@
 	name = "flood plains dirt"
 	icon = 'icons/turf/floors.dmi'
 	icon_state = "flood_dirt"
-	desc = "a fertile dirt patch, flooded during the wet season."
+	desc = "A fertile dirt patch, flooded during the wet season."
 	uses_winter_overlay = FALSE
 	may_become_muddy = TRUE
 	available_dirt = 3
@@ -324,7 +324,7 @@
 	initial_flooring = null
 
 /turf/floor/dirt/burned
-	name = "burned ground"
+	name = "burnt ground"
 	icon_state = "burned_dirt"
 	uses_winter_overlay = TRUE
 	may_become_muddy = TRUE

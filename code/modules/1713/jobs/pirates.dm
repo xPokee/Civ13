@@ -35,7 +35,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Captain of the Pirate ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Pirate ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the ship.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -75,7 +75,7 @@
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/piratehat(H), slot_head)
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Quartermaster of the Pirate ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Quartermaster of the Pirate ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the ship's supply allocation. You are also the second in command, after the <b>Captain</b>.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -118,7 +118,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Boatswain of the Pirate ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Boatswain of the Pirate ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the crew and their job allocation. The whole ship relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -394,8 +394,9 @@
 	spawn_location = "JoinLateDM"
 
 	is_deathmatch = TRUE
-	can_be_female = TRUE
+	is_1713 = TRUE
 
+	can_be_female = TRUE
 	min_positions = 0
 	max_positions = 0
 	total_positions = 0
@@ -468,6 +469,8 @@
 	spawn_location = "JoinLateDM"
 
 	is_deathmatch = TRUE
+	is_medieval = TRUE
+
 	can_be_female = TRUE
 	min_positions = 0
 	max_positions = 0
@@ -516,14 +519,16 @@
 
 
 /datum/job/pirates/battleroyale/modern
-	title = "Battle Royale Fighter"
+	title = "Modern Battle Royale Fighter"
 	en_meaning = ""
 	rank_abbreviation = ""
-	can_be_female = TRUE
+
 	spawn_location = "JoinLateDM"
 
 	is_deathmatch = TRUE
+	is_modernday = TRUE
 
+	can_be_female = TRUE
 	min_positions = 0
 	max_positions = 0
 	total_positions = 0
@@ -537,34 +542,36 @@
 		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/jackboots(H), slot_shoes)
 //clothes
 	var/randcloth = rand(1,6)
-	if (randcloth == 1)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial2(H), slot_w_uniform)
-	else if (randcloth == 2)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial1(H), slot_w_uniform)
-	else if (randcloth == 3)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/wastelander(H), slot_w_uniform)
-	else if (randcloth == 4)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial3(H), slot_w_uniform)
-	else if (randcloth == 5)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/mechanic_outfit(H), slot_w_uniform)
-	else if (randcloth == 6)
-		H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial5(H), slot_w_uniform)
+	switch (randcloth)
+		if (1)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial2(H), slot_w_uniform)
+		if (2)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial1(H), slot_w_uniform)
+		if (3)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/wastelander(H), slot_w_uniform)
+		if (4)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial3(H), slot_w_uniform)
+		if (5)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/mechanic_outfit(H), slot_w_uniform)
+		if (6)
+			H.equip_to_slot_or_del(new /obj/item/clothing/under/industrial5(H), slot_w_uniform)
 //suit
 	var/randsuit = rand(1,7)
-	if (randsuit == 1)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/hawaiian/orange(H), slot_wear_suit)
-	else if (randsuit == 2)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/hawaiian/green(H), slot_wear_suit)
-	else if (randsuit == 3)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/jacket/blackvest(H), slot_wear_suit)
-	else if (randsuit == 4)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/bomberjacketbrown(H), slot_wear_suit)
-	else if (randsuit == 5)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/biker(H), slot_wear_suit)
-	else if (randsuit == 6)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/servicejacket(H), slot_wear_suit)
-	else if (randsuit == 7)
-		H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/oldyjacket(H), slot_wear_suit)
+	switch (randsuit)
+		if (1)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/hawaiian/orange(H), slot_wear_suit)
+		if (2)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/hawaiian/green(H), slot_wear_suit)
+		if (3)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/jacket/blackvest(H), slot_wear_suit)
+		if (4)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/bomberjacketbrown(H), slot_wear_suit)
+		if (5)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/biker(H), slot_wear_suit)
+		if (6)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/ww2/servicejacket(H), slot_wear_suit)
+		if (7)
+			H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/coat/oldyjacket(H), slot_wear_suit)
 //bandages
 	H.equip_to_slot_or_del(new /obj/item/stack/medical/bruise_pack/bint(H), slot_l_store)
 
@@ -593,6 +600,8 @@
 	spawn_location = "JoinLateDM"
 
 	is_deathmatch = TRUE
+	is_cowboy = TRUE
+
 	can_be_female = TRUE
 	min_positions = 0
 	max_positions = 0

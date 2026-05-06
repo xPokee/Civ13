@@ -9,7 +9,7 @@ var/list/ban_types = list("Faction Ban", "Job Ban", "Server Ban", "Playing Ban",
 /datum/quickBan_handler/Topic(href,href_list[])
 	..()
 	if (href_list["quickBan_removeBan"])
-		var/client/caller = locate(href_list["caller"])
+		var/client/callers = locate(href_list["caller"])
 		var/UID = href_list["quickBan_removeBan_UID"]
 		var/ckey = href_list["quickBan_removeBan_ckey"]
 		var/cID = href_list["quickBan_removeBan_cID"]
@@ -33,8 +33,8 @@ var/list/ban_types = list("Faction Ban", "Job Ban", "Server Ban", "Playing Ban",
 							for(var/L in details_lines)
 								text2file("[L]|||", bans_file)
 
-			log_admin("[key_name(caller)] removed a ban for '[UID]/[ckey]/[cID]/[ip]'.")
-			message_admins("[key_name(caller)] removed a ban for '[UID]/[ckey]/[cID]/[ip]'.", key_name(caller))
+			log_admin("[key_name(callers)] removed a ban for '[UID]/[ckey]/[cID]/[ip]'.")
+			message_admins("[key_name(callers)] removed a ban for '[UID]/[ckey]/[cID]/[ip]'.", key_name(callers))
 			for (var/client/C in clients)
 				if (C.ckey == ckey)
 					C << "<span class = 'good'>href_list["Your ban has been lifted."]</span>"
@@ -237,7 +237,7 @@ var/datum/quickBan_handler/quickBan_handler = null
 			var/datum/job/J = input("What job?") in possibilities
 			fields["type_specific_info"] = J.title
 		if ("Faction")
-			var/faction = input("What faction?") in list(BRITISH, PIRATES, CIVILIAN, INDIANS, PORTUGUESE, SPANISH, FRENCH, DUTCH, ITALIAN, GREEK, ROMAN, ARAB, JAPANESE, RUSSIAN, GERMAN, AMERICAN, VIETNAMESE, FINNISH, NORWEGIAN, SWEDISH, DANISH, CHECHEN, FILIPINO, CHINESE, POLISH)
+			var/faction = input("What faction?") in list(BRITISH, PIRATES, CIVILIAN, INDIANS, PORTUGUESE, SPANISH, FRENCH, DUTCH, ITALIAN, GREEK, ROMAN, ARAB, JAPANESE, RUSSIAN, GERMAN, AMERICAN, VIETNAMESE, FINNISH, NORWEGIAN, SWEDISH, DANISH, CHECHEN, FILIPINO, CHINESE, POLISH, BLUEFACTION, REDFACTION, CAFR, TSFSR)
 			fields["type_specific_info"] = faction
 
 	reenter_bantime

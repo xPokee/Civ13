@@ -14,6 +14,7 @@
 	wall = TRUE
 	flammable = FALSE
 	explosion_resistance = 4
+	buildstack = /obj/item/weapon/barrier
 
 /obj/covers/dirt_wall/blocks/incomplete
 	name = "dirt blocks wall"
@@ -34,6 +35,10 @@
 	flammable = FALSE
 
 /obj/covers/dirt_wall/blocks/incomplete/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
 		return prob(30 + (P.penetrating*2))
@@ -44,7 +49,7 @@
 			return TRUE
 
 /obj/covers/dirt_wall/blocks/incomplete/attackby(obj/item/W as obj, mob/user as mob)
-	if (istype(W, /obj/item/weapon/barrier))
+	if (W.type == /obj/item/weapon/barrier)
 		if (stage == 3)
 			user << "You start adding dirt to the wall..."
 			if (do_after(user, 20, src) && W)
@@ -116,6 +121,10 @@
 	material = "Stone"
 
 /obj/covers/clay_wall/incomplete/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
 		return prob(20 + (P.penetrating*2))
@@ -203,6 +212,10 @@
 	material = "Stone"
 
 /obj/covers/clay_wall/sumerian/incomplete/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
 		return prob(20 + (P.penetrating*2))
@@ -396,6 +409,10 @@
 	buildstack = /obj/item/weapon/clay/advclaybricks/fired/cement
 
 /obj/covers/cement_wall/incomplete/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
 		return prob(20 + (P.penetrating*2))
@@ -438,6 +455,10 @@
 	material = "Stone"
 
 /obj/covers/brick_wall/incomplete/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
 		return prob(20 + (P.penetrating*2))

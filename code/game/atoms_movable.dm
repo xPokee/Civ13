@@ -40,7 +40,7 @@
 
 /atom/movable/Del()
 	if (!gcDestroyed && loc)
-		testing("GC: -- [type] was deleted via del() rather than qdel() --")
+//		testing("GC: -- [type] was deleted via del() rather than qdel() --")
 		crash_with("GC: -- [type] was deleted via del() rather than qdel() --") // stick a stack trace in the runtime logs
 //	else if (!gcDestroyed))
 //		testing("GC: [type] was deleted via GC without qdel()") //Not really a huge issue but from now on, please qdel()
@@ -271,6 +271,19 @@
 		if (istype(B))
 			B.throw_impact(new_loc, speed)
 
+/atom/movable/proc/dropInto(atom/destination)
+	while(istype(destination))
+		var/atom/drop_destination = destination.onDropInto(src)
+		if(!istype(drop_destination) || drop_destination == destination)
+			return forceMove(destination)
+		destination = drop_destination
+	return forceMove(null)
+
+/atom/proc/onDropInto(atom/movable/AM)
+	return // If onDropInto returns null, then dropInto will forceMove AM into us.
+
+/atom/movable/onDropInto(atom/movable/AM)
+	return loc // If onDropInto returns something, then dropInto will attempt to drop AM there.
 
 //Overlays
 /atom/movable/overlay

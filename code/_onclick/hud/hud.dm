@@ -21,6 +21,7 @@ var/list/global_huds = list(
 /datum/hud/var/obj/screen/disarm_intent
 /datum/hud/var/obj/screen/help_intent
 */
+
 /datum/global_hud
 	var/obj/screen/druggy
 	var/obj/screen/blurry
@@ -33,6 +34,7 @@ var/list/global_huds = list(
 	var/obj/screen/fishbed
 	var/obj/screen/noise
 	var/obj/screen/cover
+	var/obj/screen/aim_cross
 
 /datum/global_hud/proc/setup_overlay(var/icon_state)
 	var/obj/screen/screen = new /obj/screen()
@@ -101,6 +103,12 @@ var/list/global_huds = list(
 	fov.mouse_opacity = FALSE
 	fov.layer = 18
 
+	aim_cross = new /obj/screen/aiming_cross()
+	aim_cross.name = " "
+	aim_cross.screen_loc = "1,1"
+	aim_cross.mouse_opacity = FALSE
+	aim_cross.layer = 21
+
 	cover = new /obj/screen/cover()
 	noise = new /obj/screen/noise()
 	fishbed = new /obj/screen/fishbed()
@@ -166,15 +174,15 @@ var/list/global_huds = list(
 	set hidden = TRUE
 
 	if (!hud_used)
-		usr << "<span class='warning'>This mob type does not use a HUD.</span>"
+		to_chat(usr, SPAN_WARNING("This mob type does not use a HUD."))
 		return
 
 	if (!ishuman(src))
-		usr << "<span class='warning'>Inventory hiding is currently only supported for human mobs, sorry.</span>"
+		to_chat(usr, SPAN_WARNING("Inventory hiding is currently only supported for human mobs, sorry."))
 		return
 
 	if (!client) return
-	if (client.view != world.view)
+	if (client.view != WORLD_VIEW)
 		return
 
 //	hud_used.hidden_inventory_update()
@@ -189,7 +197,7 @@ var/list/global_huds = list(
 		return
 	if (!client)
 		return
-	if (client.view != world.view)
+	if (client.view != WORLD_VIEW)
 		return
 
 	update_action_buttons()
@@ -197,7 +205,50 @@ var/list/global_huds = list(
 /datum/hud
 	var/mob/mymob
 	var/list/obj/screen/plane_master/plane_masters = list()
-/datum/hud/New(mob/owner)
+	var/list/obj/screen/vehicle/vehicle_hud = list()
+
+/datum/hud/proc/add_vehicle_hud(var/mob/living/human/H)
+	if (vehicle_hud.len)
+		return
+	var/obj/screen/vehicle/V
+	V = new /obj/screen/vehicle/direction()
+	V.screen_loc = "14,15"
+	V.parentmob = H
+	vehicle_hud += V
+	H.HUDprocess += V
+	V = new /obj/screen/vehicle/turn_left()
+	V.screen_loc = "13,15"
+	V.parentmob = H
+	vehicle_hud += V
+	V = new /obj/screen/vehicle/turn_right()
+	V.screen_loc = "15,15"
+	V.parentmob = H
+	vehicle_hud += V
+	V = new /obj/screen/vehicle/gear_down()
+	V.screen_loc = "13,14"
+	V.parentmob = H
+	vehicle_hud += V
+	V = new /obj/screen/vehicle/current_gear()
+	V.screen_loc = "14,14"
+	V.parentmob = H
+	vehicle_hud += V
+	H.HUDprocess += V
+	V = new /obj/screen/vehicle/gear_up()
+	V.screen_loc = "15,14"
+	V.parentmob = H
+	vehicle_hud += V
+	if (mymob && mymob.client)
+		mymob.client.screen |= vehicle_hud
+
+/datum/hud/proc/remove_vehicle_hud(var/mob/living/human/H)
+	if (!vehicle_hud.len)
+		return
+	if (H && H.client)
+		H.client.screen -= vehicle_hud
+	for (var/obj/screen/vehicle/V in vehicle_hud)
+		H.HUDprocess -= V
+		qdel(V)
+	vehicle_hud.Cut()
 
 /datum/hud/New(mob/owner)
 	mymob = owner
@@ -209,9 +260,13 @@ var/list/global_huds = list(
 		if (mymob)
 			mymob.client.screen |= instance
 	..()
+
 /datum/hud/Destroy()
 	if(plane_masters.len)
 		for(var/thing in plane_masters)
 			qdel(plane_masters[thing])
 		plane_masters.Cut()
+	if(vehicle_hud.len)
+		remove_vehicle_hud()
 	return ..()
+

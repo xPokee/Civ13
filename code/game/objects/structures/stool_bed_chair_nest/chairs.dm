@@ -63,7 +63,7 @@
 	set src in oview(1)
 
 	if (config.ghost_interaction)
-		set_dir(turn(dir, 90))
+		set_dir(turn(dir, -90))
 
 		return
 
@@ -75,7 +75,7 @@
 		if (usr.stat || usr.restrained())
 			return
 
-		set_dir(turn(dir, 90))
+		set_dir(turn(dir, -90))
 
 		return
 
@@ -85,7 +85,7 @@
 	set src in oview(1)
 
 	if (config.ghost_interaction)
-		set_dir(turn(dir, -90))
+		set_dir(turn(dir, 90))
 
 		return
 
@@ -97,7 +97,7 @@
 		if (usr.stat || usr.restrained())
 			return
 
-		set_dir(turn(dir, -90))
+		set_dir(turn(dir, 90))
 
 		return
 
@@ -220,6 +220,9 @@
 
 /obj/structure/bed/chair/office/dark
 	icon_state = "officechair_dark"
+
+/obj/structure/bed/chair/office/dark/anchored
+	anchored = TRUE
 
 /obj/structure/bed/chair/office/New()
 	..()

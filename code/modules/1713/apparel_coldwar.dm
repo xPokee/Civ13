@@ -200,7 +200,7 @@
 	item_state = "swat"
 	worn_state = "swat"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
-	armor = list(melee = 80, arrow = 80, gun = 90, energy = 40, bomb = 20, bio = 44, rad = 40)
+	armor = list(melee = 70, arrow = 80, gun = 78, energy = 40, bomb = 20, bio = 44, rad = 40)
 	var/slots = 6
 	ripable = FALSE
 	flags = CONDUCT
@@ -212,7 +212,7 @@
 	item_state = "policevest"
 	worn_state = "policevest"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
-	armor = list(melee = 80, arrow = 80, gun = 90, energy = 40, bomb = 20, bio = 44, rad = 40)
+	armor = list(melee = 70, arrow = 80, gun = 78, energy = 40, bomb = 20, bio = 44, rad = 40)
 	var/slots = 6
 	ripable = FALSE
 	ripable = FALSE
@@ -676,6 +676,7 @@
 	icon_state = "chinese_ushanka_up"
 	item_state = "chinese_ushanka_up"
 	worn_state = "chinese_ushanka_up"
+	cold_protection = HEAD
 
 /obj/item/clothing/head/chinese_ushanka/down
 	icon_state = "chinese_ushanka"
@@ -743,6 +744,7 @@
 	item_state = "ushanka_new_up"
 	worn_state = "ushanka_new_up"
 	flags_inv = BLOCKHEADHAIR
+	cold_protection = HEAD
 
 /obj/item/clothing/head/sov_ushanka_new/down
 	icon_state = "ushanka_new"
@@ -773,6 +775,13 @@
 	item_state = "sov_officercap2"
 	worn_state = "sov_officercap2"
 
+/obj/item/clothing/head/coldwar/cafr_officer
+	name = "cafr officer cap"
+	desc = "A cap worn by CAFR officers."
+	icon_state = "cafr_officercap"
+	item_state = "cafr_officercap"
+	worn_state = "cafr_officercap"
+
 /obj/item/clothing/head/fieldcap/afghanka
 	name = "Afghanka field cap"
 	desc = "A field cap issued to Soviet forces in the 1980s."
@@ -780,13 +789,20 @@
 	item_state = "fieldcap_afghanka"
 	worn_state = "fieldcap_afghanka"
 	body_parts_covered = HEAD
+	cold_protection = HEAD
 
 /obj/item/clothing/head/beret_rus_vdv
 	name = "VDV beret"
-	desc = "A beret worn by the Russian Airborn Forces."
+	desc = "A beret worn by the Soviet and Russian Airborne Forces."
 	icon_state = "beret_rus_vdv"
 	item_state = "beret_rus_vdv"
 	body_parts_covered = HEAD
+
+/obj/item/clothing/head/beret_rus_vdv/modern
+	name = "VDV beret"
+	desc = "A beret worn by the Russian Airborne Forces."
+	icon_state = "beret_rus_vdv_modern"
+	item_state = "beret_rus_vdv_modern"
 
 /obj/item/clothing/head/beret_rus_spez
 	name = "Spetznaz beret"
@@ -1368,7 +1384,7 @@
 /obj/item/weapon/storage/belt/smallpouches/green/m14
 /obj/item/weapon/storage/belt/smallpouches/green/m14/New()
 	..()
-	new /obj/item/weapon/grenade/smokebomb(src)
+	new /obj/item/weapon/grenade/smokebomb/m18smoke(src)
 	new /obj/item/ammo_magazine/m14(src)
 	new /obj/item/ammo_magazine/m14(src)
 	new /obj/item/stack/medical/bruise_pack/gauze(src)
@@ -1429,7 +1445,8 @@
 	new /obj/item/ammo_magazine/sten2(src)
 	new /obj/item/weapon/grenade/smokebomb/m18smoke(src)
 	new /obj/item/stack/medical/bruise_pack/gauze(src)
-/* Cold War Balaclavas*/
+
+/* Cold War Balaclavas */
 
 /obj/item/clothing/mask/balaclava
 	name = "black balaclava"
@@ -1449,12 +1466,14 @@
 	icon_state = "snowclava"
 	item_state = "snowclava"
 	worn_state = "snowclava"
+
 /obj/item/clothing/mask/balaclava/green
 	name = "snow balaclava"
 	desc = "A green balaclava, covering the face."
 	icon_state = "swatclava"
 	item_state = "swatclava"
 	worn_state = "swatclava"
+
 /obj/item/clothing/mask/balaclava/skull
 	name = "skull face balaclava"
 	desc = "A balaclava with a skull imprint, covering the face."
@@ -1475,6 +1494,8 @@
 	min_cold_protection_temperature = HELMET_MIN_COLD_PROTECTION_TEMPERATURE*2
 	flammable = TRUE
 	cold_protection = HEAD|FACE
+
+/* Headscarves */
 
 /obj/item/clothing/mask/headscarfgrey/asbestos
 	name = "Asbestos headscarf"
@@ -1531,54 +1552,6 @@
 		..()
 		hold.can_hold = list(/obj/item/weapon/material/kitchen/utensil,/obj/item/weapon/key,/obj/item/ammo_casing, /obj/item/ammo_magazine, /obj/item/weapon/grenade,/obj/item/weapon/attachment,/obj/item/weapon/gun/projectile/pistol,/obj/item/weapon/gun/projectile/revolver,/obj/item/weapon/handcuffs,/obj/item/weapon/reagent_containers/food/drinks/bottle/canteen,/obj/item/stack/medical/bruise_pack)
 
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/sksm
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new /obj/item/ammo_magazine/sksm(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/svd
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new /obj/item/ammo_magazine/svd(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/ak
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/ak47(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/ak74
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/ak74(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/akdrum
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/ak47/drum(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/blue/nomads
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/emptymagazine/rifle/ak47/filled(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/red/m16
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/m16(hold)
-
-/obj/item/clothing/accessory/storage/webbing/green_webbing/red/nomads
-	New()
-		..()
-		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/emptymagazine/rifle/m16/filled(hold)
-
 /obj/item/clothing/accessory/storage/webbing/green_webbing/mosin
 	New()
 		..()
@@ -1595,7 +1568,7 @@
 	New()
 		..()
 		for (var/i=1, i<= 3, i++)
-			new/obj/item/ammo_magazine/mosin(hold)
+			new/obj/item/ammo_magazine/m24(hold)
 
 /obj/item/clothing/accessory/storage/webbing/khaki_webbing
 	name = "khaki chest webbing"
@@ -1705,7 +1678,7 @@
 
 /obj/item/clothing/accessory/storage/webbing/light
 	name = "light webbing"
-	desc = "a light webbing, with lower capacity but permitting fast movement."
+	desc = "A light webbing, with lower capacity but permitting fast movement."
 	slots = 3
 	icon_state = "german_vest"
 	item_state = "german_vest"
@@ -1960,7 +1933,7 @@
 
 /obj/item/clothing/suit/nbcponcho
 	name = "NBC poncho"
-	desc = "a NBC poncho,very light and easy to put on, made to protect against biological, chemical and nuclear threats."
+	desc = "A NBC poncho,very light and easy to put on, made to protect against biological, chemical and nuclear threats."
 	icon_state = "nbcponcho"
 	item_state = "nbcponcho"
 	worn_state = "nbcponcho"
@@ -2096,6 +2069,16 @@ obj/item/clothing/head/chinaguardcap
 	worn_state = "sov_klmk"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
 
+/obj/item/clothing/under/sov_klmk/alt
+	icon_state = "sov_klmk_alt"
+	item_state = "sov_klmk_alt"
+	worn_state = "sov_klmk_alt"
+
+/obj/item/clothing/under/sov_klmk/yellow
+	icon_state = "sov_klmk_yellow"
+	item_state = "sov_klmk_yellow"
+	worn_state = "sov_klmk_yellow"
+
 /obj/item/clothing/under/sov_kzs
 	name = "KZS camo uniform"
 	desc = "A suit in the KZS camo pattern, issued by the Soviet Union in the late 1970s."
@@ -2183,7 +2166,7 @@ obj/item/clothing/head/chinaguardcap
 
 /obj/item/clothing/suit/heavyvest1 // Is designative of armor grade/type but not a armor itself. Please replace with identifiable/recognizable armor.
 	name = "heavy vest"
-	desc = "a heavy NIJ level IV vest."
+	desc = "A heavy NIJ level IV vest."
 	icon_state = "heavypolice"
 	item_state = "heavypolice"
 	worn_state = "heavypolice"
@@ -2195,7 +2178,7 @@ obj/item/clothing/head/chinaguardcap
 
 /obj/item/clothing/suit/medvest // Is designative of armor grade/type but not a armor itself. Please replace with identifiable/recognizable armor.
 	name = "medium vest"
-	desc = "a heavy NIJ level III vest."
+	desc = "A heavy NIJ level III vest."
 	icon_state = "mediumvest"
 	item_state = "mediumvest"
 	worn_state = "mediumvest"

@@ -98,26 +98,26 @@
 	flags = FALSE
 
 /obj/item/weapon/melee/nightbaton/sandman
-    name = "Heavy duty"
-    desc = "A baton held by the camp commander nicknamed the sandman by prisoners because of how hard it hits."
-    icon = 'icons/obj/weapons.dmi'
-    icon_state = "kombaton"
-    item_state = "nightbaton"
-    slot_flags = SLOT_BELT
-    force = WEAPON_FORCE_WEAK+2
-    weakens = 0
-    flammable = TRUE
-    var/cooldown = FALSE
+	name = "Heavy duty"
+	desc = "A baton held by the camp commander nicknamed the sandman by prisoners because of how hard it hits."
+	icon = 'icons/obj/weapons.dmi'
+	icon_state = "kombaton"
+	item_state = "nightbaton"
+	slot_flags = SLOT_BELT
+	force = WEAPON_FORCE_WEAK+2
+	weakens = 0
+	flammable = TRUE
+	var/cooldown = FALSE
 
 /obj/item/weapon/melee/nightbaton/sandman/attack(mob/M as mob, mob/living/user as mob)
-    if(!cooldown)
-        M.SetWeakened(50)
-        src.cooldown = TRUE
-        spawn(100)
-            src.cooldown = FALSE
-    else
-        user << "<span class='notice'>You have used this batton not long ago. Chill out!</span>"
-    ..()
+	if(!cooldown)
+		M.SetWeakened(50)
+		src.cooldown = TRUE
+		spawn(100)
+			src.cooldown = FALSE
+	else
+		user << "<span class='notice'>You have used this batton not long ago. Chill out!</span>"
+	..()
 
 /obj/item/weapon/melee/classic_baton/club
 	name = "wood club"
@@ -293,7 +293,7 @@
 		update_icon()
 		garroting_process(user,target,GR)
 		next_garrote = world.time + 40
-		visible_message(
+		user.visible_message(
 			"<span class='danger'>[user] has grabbed \the [target] with \the [src]!</span>",\
 			"<span class='danger'>You grab \the [target] with \the [src]!</span>",\
 			"You hear some struggling and muffled cries of surprise")
@@ -334,8 +334,8 @@
 				target.forcesay(list("-hrk!", "-hrgh!", "-urgh!", "-kh!", "-hrnk!"))
 
 		if (garroting) //Only do oxyloss if in agreesive grab to prevent passive grab choking or something.
-			target.adjustOxyLoss(6) //Stack the chokes with additional oxyloss for quicker death
-			if(prob(40))
+			target.adjustOxyLoss(10) //Stack the chokes with additional oxyloss for quicker death
+			if(prob(5))
 				target.stuttering = max(target.stuttering, 3) //It will hamper your voice, being choked and all.
 				target.losebreath = max(target.losebreath, 3)
 		return TRUE
@@ -387,3 +387,22 @@
 		generate_blood_overlay(TRUE) // Force recheck.
 		overlays.Cut()
 		overlays += blood_overlay
+
+/obj/item/weapon/soviet_flag // To be placed elsewhere in the code
+	desc = "The Soviet flag."
+	name = "soviet flag"
+	icon = 'icons/obj/flags.dmi'
+	icon_state = "sov_flag_object"
+	item_icons = list(
+		slot_l_hand_str = 'icons/mob/items/lefthand.dmi',
+		slot_r_hand_str = 'icons/mob/items/righthand.dmi',
+		)
+	item_state = "sov_flag"
+	force = WEAPON_FORCE_NORMAL
+	throwforce = WEAPON_FORCE_NORMAL
+	throw_speed = 5
+	throw_range = 3
+	w_class = ITEM_SIZE_GARGANTUAN
+	attack_verb = list("poked", "bashed", "bludgeoned", "whacked")
+	flammable = TRUE
+	slot_flags = null

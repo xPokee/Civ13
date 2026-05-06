@@ -7,6 +7,15 @@
 #define ONE_ATMOSPHERE			 101.325 // kPa.
 #define IDEAL_GAS_ENTROPY_CONSTANT 1164	// (mol^3 * s^3) / (kg^3 * L).
 
+#define TICK_DELTA_TO_MS(percent_of_tick_used) ((percent_of_tick_used) * world.tick_lag)
+#define TICK_USAGE_TO_MS(starting_tickusage) (TICK_DELTA_TO_MS(world.tick_usage-starting_tickusage))
+
+// The highest number supported is a signed 32-bit floating point number.
+// Integers beyond the 24 bit range are represented as single-precision floating points, and thus will lose accuracy beyond the range of +/- 16777216
+#define SHORT_REAL_LIMIT 16777216
+
+#define CEILING(x, y) ( -round(-(x) / (y)) * (y) )
+
 // Radiation constants.
 #define STEFAN_BOLTZMANN_CONSTANT	5.6704e-8 // W/(m^2*K^4).
 #define COSMIC_RADIATION_TEMPERATURE 3.15	  // K.
@@ -17,7 +26,7 @@
 #define RADIATOR_EXPOSED_SURFACE_AREA_RATIO 0.04 // (3 cm + 100 cm * sin(3deg))/(2*(3+100 cm)). Unitless ratio.
 #define HUMAN_EXPOSED_SURFACE_AREA		  5.2 //m^2, surface area of 1.7m (H) x 0.46m (D) cylinder
 
-#define Clamp(x, y, z) 	(x <= y ? y : (x >= z ? z : x))
+#define Clamp(x, y, z) 	(x <= y ? y : (x >= z ? z : x)) // Ensures that a value (x) is within a specified range (y to z). If x is less than y, it returns y; if x is greater than z, it returns z; otherwise, it returns x. This effectively clamps the value of x within the range specified by y and z.
 #define CLAMP01(x) max(0, min(1, x))
 #define CLAMP0100(x) max(0, min(100, x))
 
@@ -25,9 +34,6 @@
 
 #define TICKS_IN_DAY 		24*60*60*10
 #define TICKS_IN_SECOND 	10
-
-#define SIMPLE_SIGN(X) ((X) < 0 ? -1 : 1)
-#define SIGN(X)		((X) ? SIMPLE_SIGN(X) : 0)
 
 #define ROOT2_FAST 1.41421
 
@@ -86,3 +92,6 @@
 // Note that amount=0 returns a, amount=1 returns b, and
 // amount=0.5 returns the mean of a and b.
 #define LERP(a, b, amount) ( amount ? ((a) + ((b) - (a)) * (amount)) : a )
+
+// Returns true if val is from min to max, inclusive.
+#define ISINRANGE(val, min, max) (min <= val && val <= max)

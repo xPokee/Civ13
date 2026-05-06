@@ -7,6 +7,7 @@
 	desc = "A simple rifle using a lever-action mechanism."
 	icon_state = "winchester"
 	item_state = "shotgun"
+	base_icon = "shotgun"
 	w_class = ITEM_SIZE_LARGE
 	throw_range = 4
 	throw_speed = 2
@@ -15,14 +16,14 @@
 	max_shells = 15
 	slot_flags = SLOT_SHOULDER
 	caliber = "a44"
-	recoil = 0 //extra kickback
+	shake_strength = 0 //extra kickback
 	load_method = SINGLE_CASING
 	ammo_type = /obj/item/ammo_casing/a44
 //	magazine_type = /obj/item/ammo_magazine/musketball
+	fire_sound = 'sound/weapons/guns/fire/winchester.ogg'
 	load_shell_sound = 'sound/weapons/guns/interact/shotgun_insert.ogg'
 	cocked_sound = 'sound/weapons/guns/interact/lever_action.ogg'
 	//+2 accuracy over the LWAP because only one shot
-	accuracy = TRUE
 //	scoped_accuracy = 2
 	gun_type = GUN_TYPE_RIFLE
 	attachment_slots = ATTACH_IRONSIGHTS | ATTACH_BARREL
@@ -36,52 +37,6 @@
 	handle_casings = HOLD_CASINGS
 	equiptimer = 15
 	gtype = "rifle"
-	// 5x as accurate as MGs for now
-	accuracy_list = list(
-
-		// small body parts: head, hand, feet
-		"small" = list(
-			SHORT_RANGE_STILL = 83,
-			SHORT_RANGE_MOVING = 42,
-
-			MEDIUM_RANGE_STILL = 73,
-			MEDIUM_RANGE_MOVING = 37,
-
-			LONG_RANGE_STILL = 53,
-			LONG_RANGE_MOVING = 27,
-
-			VERY_LONG_RANGE_STILL = 43,
-			VERY_LONG_RANGE_MOVING = 23),
-
-		// medium body parts: limbs
-		"medium" = list(
-			SHORT_RANGE_STILL = 88,
-			SHORT_RANGE_MOVING = 44,
-
-			MEDIUM_RANGE_STILL = 78,
-			MEDIUM_RANGE_MOVING = 39,
-
-			LONG_RANGE_STILL = 68,
-			LONG_RANGE_MOVING = 34,
-
-			VERY_LONG_RANGE_STILL = 58,
-			VERY_LONG_RANGE_MOVING = 29),
-
-		// large body parts: chest, groin
-		"large" = list(
-			SHORT_RANGE_STILL = 93,
-			SHORT_RANGE_MOVING = 47,
-
-			MEDIUM_RANGE_STILL = 83,
-			MEDIUM_RANGE_MOVING = 42,
-
-			LONG_RANGE_STILL = 73,
-			LONG_RANGE_MOVING = 37,
-
-			VERY_LONG_RANGE_STILL = 63,
-			VERY_LONG_RANGE_MOVING = 32),
-	)
-
 	load_delay = 8
 	aim_miss_chance_divider = 2.50
 
@@ -124,6 +79,9 @@
 	if (world.time >= recentpump + 8)
 		pump(user)
 		recentpump = world.time
+		return
+	else
+		return
 
 /obj/item/weapon/gun/projectile/leveraction/handle_post_fire()
 	..()
@@ -134,11 +92,11 @@
 /obj/item/weapon/gun/projectile/leveraction/proc/pump(mob/M as mob)
 	playsound(M, cocked_sound, 60, TRUE)
 	if (!chambered)
-		visible_message("<span class='warning'>[M] cycles the [src]!</span>","<span class='warning'>You cycle the [src]!</span>")
+		M.visible_message("<span class='warning'>[M] cycles the [src]!</span>","<span class='warning'>You cycle the [src]!</span>")
 	else if (chambered && chambered.BB == null)
-		visible_message("<span class='warning'>[M] cycles the [src], ejecting a spent casing!</span>","<span class='warning'>You cycle the [src], ejecting a spent casing!</span>")
+		M.visible_message("<span class='warning'>[M] cycles the [src], ejecting a spent casing!</span>","<span class='warning'>You cycle the [src], ejecting a spent casing!</span>")
 	else
-		visible_message("<span class='warning'>[M] cycles the [src], ejecting an unused casing!</span>","<span class='warning'>You cycle the [src], ejecting an unused casing!</span>")
+		M.visible_message("<span class='warning'>[M] cycles the [src], ejecting an unused casing!</span>","<span class='warning'>You cycle the [src], ejecting an unused casing!</span>")
 
 	if (chambered)//We have a shell in the chamber
 		chambered.loc = get_turf(src)//Eject casing
@@ -169,103 +127,110 @@
 	name = "Winchester M1873"
 	desc = "A lever-action rifle with a 14-round tube, chambered in .44-40 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "winchester1873"
 	caliber = "a44"
 	max_shells = 14
 	weight = 5.0
-	effectiveness_mod = 0.96
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/leveraction/winchesterm1876
 	name = "Winchester M1876"
 	desc = "A lever-action rifle with a 13-round tube, chambered in .44-40 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "winchester1876"
 	caliber = "a44"
 	max_shells = 13
 	weight = 6.0
-	effectiveness_mod = 0.97
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4.2
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/leveraction/winchesterm1886
 	name = "Winchester M1886"
 	desc = "A lever-action rifle with a 9-round tube, chambered in .45-70 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "winchester1886"
 	caliber = "a4570"
 	max_shells = 9
 	weight = 6.1
-	effectiveness_mod = 0.99
 	ammo_type = /obj/item/ammo_casing/a4570
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4.4
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/leveraction/winchesterm1892
 	name = "Winchester M1892"
 	desc = "A lever-action rifle with a 12-round tube, chambered in .44-40 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "winchester1886"
 	caliber = "a44"
 	max_shells = 12
 	weight = 5.6
-	effectiveness_mod = 0.97
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4.1
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/leveraction/winchesterm1873/gold
 	name = "Golden Winchester M1873"
 	desc = "A lever-action rifle with a 14-round tube, chambered in .44-40 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "goldwinchester"
 	caliber = "a44"
 	max_shells = 14
 	weight = 5.0
-	effectiveness_mod = 0.96
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4
+	accuracy = 4
 
 /obj/item/weapon/gun/projectile/leveraction/evansrepeater
 	name = "Evans repeating rifle"
 	desc = "A lever-action rifle with a 28-round tube, chambered in .44-40 rounds."
 	force = 9
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "evans_repeating_rifle"
 	caliber = "a44"
 	max_shells = 28
 	weight = 5.9
-	effectiveness_mod = 0.87
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 4.2
+	accuracy = 5
 
 /obj/item/weapon/gun/projectile/leveraction/henryrepeater
 	name = "Henry repeating rifle"
 	desc = "A lever-action rifle with a 15-round tube, chambered in .44-40 rounds."
 	force = 8
-	fire_sound = 'sound/weapons/guns/fire/shotgun.ogg'
 	icon_state = "henry_rifle"
 	caliber = "a44"
 	max_shells = 15
 	weight = 5.5
-	effectiveness_mod = 0.94
 	ammo_type = /obj/item/ammo_casing/a44
 	value = 150
 	blackpowder = TRUE
 	load_delay = 3.5
+	accuracy = 4
+
+/obj/item/weapon/gun/projectile/leveraction/cowboy_repeater
+	name = "Cowboy Repeater"
+	desc = "A lever-action rifle with a 7-round tube, chambered in .357 Magnum rounds."
+	force = 9
+	icon_state = "cowboy_repeater"
+	caliber = "a357"
+	max_shells = 7
+	weight = 5.0
+	ammo_type = /obj/item/ammo_casing/a357
+	value = 150
+	blackpowder = TRUE
+	load_delay = 4
+	accuracy = 4

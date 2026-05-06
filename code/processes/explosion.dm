@@ -7,7 +7,7 @@
 
 /process/explosion/setup()
 	name = "explosion"
-	schedule_interval = 0.5 SECONDS
+	schedule_interval = 0.1 SECONDS
 	work_queue = list()
 	fires_at_gamestates = list(GAME_STATE_PLAYING, GAME_STATE_FINISHED)
 	priority = PROCESS_PRIORITY_HIGH
@@ -54,6 +54,7 @@
 	var/z_transfer = data.z_transfer
 	var/power = data.rec_pow
 	var/sound = data.sound
+	var/create_smoke = data.create_smoke
 
 	if (!sound)
 		sound = get_sfx("explosion")
@@ -92,7 +93,7 @@
 		log_game("Explosion with size ([devastation_range], [heavy_impact_range], [light_impact_range]) in area [epicenter.loc.name] ")
 
 	if (heavy_impact_range > 0)
-		var/datum/effect/system/explosion/E = new/datum/effect/system/explosion()
+		var/datum/effect/system/explosion/E = new/datum/effect/system/explosion(create_smoke)
 		E.set_up(epicenter)
 		E.start()
 
@@ -127,8 +128,6 @@
 								if (1)
 									if (H)
 										H.maim()
-										H.maim()
-										H.adjustBurnLoss(rand(35,70))
 								if (2)
 									if (H)
 										if (prob(50))
@@ -203,7 +202,7 @@
 	T = get_step(s, turn(direction,90))
 	explosion_spread(T, spread_power, turn(direction,90))
 	T = get_step(s, turn(direction,-90))
-	explosion_spread(T, spread_power, turn(direction,90))
+	explosion_spread(T, spread_power, turn(direction,-90))
 
 /process/explosion/proc/queue(var/datum/explosiondata/data)
 	if (!data) return
@@ -229,3 +228,4 @@
 	var/rec_pow
 	var/list/objects_with_immunity = list()
 	var/sound = null
+	var/create_smoke = TRUE

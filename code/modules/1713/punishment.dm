@@ -20,7 +20,7 @@
 /obj/structure/noose/bullet_act(var/obj/item/projectile/P)
 	if (hanging)
 		hanging.bullet_act(P)
-		visible_message("<span class = 'danger'>[hanging] is hit by the [P.name]!</span>")
+		visible_message("<span class = 'danger'>[hanging] is hit by \the [P.name]!</span>")
 	else
 		..()
 
@@ -126,7 +126,7 @@
 /obj/structure/gallows/bullet_act(var/obj/item/projectile/P)
 	if (hanging)
 		hanging.bullet_act(P)
-		visible_message("<span class = 'danger'>[hanging] is hit by the [P.name]!</span>")
+		visible_message("<span class = 'danger'>[hanging] is hit by \the [P.name]!</span>")
 	else
 		..()
 
@@ -268,7 +268,7 @@
 /obj/structure/cross
 	icon = 'icons/obj/obj32x64.dmi'
 	name = "greek cross"
-	desc = "a cross for hanging criminals."
+	desc = "A cross for hanging criminals."
 	icon_state = "greekcross"
 	var/base_icon = "greekcross"
 	layer = MOB_LAYER - 0.1
@@ -297,7 +297,7 @@
 /obj/structure/cross/bullet_act(var/obj/item/projectile/P)
 	if (hanging)
 		hanging.bullet_act(P)
-		visible_message("<span class = 'danger'>[hanging] is hit by the [P.name]!</span>")
+		visible_message("<span class = 'danger'>[hanging] is hit by \the [P.name]!</span>")
 	else
 		..()
 
@@ -370,7 +370,7 @@
 /obj/structure/pillory
 	icon = 'icons/obj/structures.dmi'
 	name = "pillory"
-	desc = "a wood stock with three holes, for both hands and the head. Used to display criminals to the public."
+	desc = "A wood stock with three holes, for both hands and the head. Used to display criminals to the public."
 	icon_state = "pillory"
 	layer = MOB_LAYER - 0.1
 	anchored = TRUE
@@ -394,7 +394,7 @@
 /obj/structure/pillory/bullet_act(var/obj/item/projectile/P)
 	if (hanging && prob(30))
 		hanging.bullet_act(P)
-		visible_message("<span class = 'danger'>[hanging] is hit by the [P.name]!</span>")
+		visible_message("<span class = 'danger'>[hanging] is hit by \the [P.name]!</span>")
 	else
 		..()
 
@@ -461,7 +461,7 @@
 			hanging.anchored = 0
 			hanging = null
 			overlays.Cut()
-			desc = "a wood stock with three holes, for both hands and the head. Used to display criminals to the public."
+			desc = "A wood stock with three holes, for both hands and the head. Used to display criminals to the public."
 
 /obj/structure/pillory/attackby(obj/item/W as obj, mob/user as mob)
 	if (istype(W, /obj/item/weapon/pen) && hanging)
@@ -486,7 +486,7 @@
 /obj/structure/post_execution
 	icon = 'icons/obj/structures.dmi'
 	name = "execution post"
-	desc = "a wood stock with a rope to tie prisoners to in preparation for a firing squad."
+	desc = "A wood stock with a rope to tie prisoners to in preparation for a firing squad."
 	icon_state = "post_execution"
 	layer = MOB_LAYER - 0.11
 	anchored = TRUE
@@ -510,7 +510,7 @@
 /obj/structure/post_execution/bullet_act(var/obj/item/projectile/P)
 	if (hanging && prob(30))
 		hanging.bullet_act(P)
-		visible_message("<span class = 'danger'>[hanging] is hit by the [P.name]!</span>")
+		visible_message("<span class = 'danger'>[hanging] is hit by \the [P.name]!</span>")
 	else
 		..()
 

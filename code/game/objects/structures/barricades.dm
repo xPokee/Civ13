@@ -89,7 +89,7 @@
 			user.remove_from_mob(ANCH)
 			ANCH.loc = src.loc
 			ANCH.anchored = TRUE
-			src.climbable = TRUE
+			climbable = TRUE
 			ANCH.deployed = TRUE
 			ANCH.icon_state = ANCH.depicon
 			ANCH.dir = src.dir
@@ -127,7 +127,7 @@
 	if (can_damage)
 		switch(W.damtype)
 			if ("fire")
-				health -= W.force * TRUE
+				health -= W.force * 1
 			if ("brute")
 				health -= W.force * 0.75
 
@@ -173,9 +173,18 @@
   be hit by bullets, at least sometimes - hence these changes. */
 
 /obj/structure/barricade/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)//So bullets will fly over and stuff.
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover, /obj/item/projectile))
 		var/obj/item/projectile/P = mover
-		return prob(100 - protection_chance + (P.penetrating*4))
+		var/hitchance = protection_chance - (P.penetrating*4)
+		P.on_impact(loc)
+		if(get_turf(target) == loc)
+			return prob(100 - hitchance)
+		else
+			return prob(hitchance)
 	else
 		if (density)
 			return FALSE
@@ -183,13 +192,13 @@
 			return TRUE
 
 /obj/structure/barricade/bullet_act(var/obj/item/projectile/proj)
-	health -= proj.damage/3
-	visible_message(SPAN_NOTICE("\The [src] is hit by the [proj.name]!"))
+	health -= proj.damage * 0.05
+	visible_message(SPAN_DANGER("\The [src] is hit by \the [proj.name]!"))
 	try_destroy()
 
 /obj/structure/barricade/horizontal
 	name = "wood barrier"
-	desc = "A wood wall made of vines and logs roped together."
+	desc = "A wood wall constructed from interwoven logs."
 	icon_state = "woodbarricade_horizontal"
 	flammable = TRUE
 	protection_chance = 85
@@ -197,7 +206,7 @@
 
 /obj/structure/barricade/vertical
 	name = "wood barrier"
-	desc = "A wood wall made of vines and logs roped together."
+	desc = "A wood wall constructed from interwoven logs."
 	icon_state = "woodbarricade_vertical"
 	flammable = TRUE
 	protection_chance = 85
@@ -236,6 +245,7 @@
 	material_name = "stone"
 	protection_chance = 90
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/sandstone_v
 	name = "sandstone wall"
@@ -248,6 +258,7 @@
 	material_name = "stone"
 	protection_chance = 90
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/sandstone_h/crenelated
 	name = "crenelated sandstone wall"
@@ -369,6 +380,7 @@
 	maxhealth = 2709
 	material_name = "steel"
 	protection_chance = 50
+	crushable = FALSE
 
 /obj/structure/barricade/antitank/attackby(obj/item/W, mob/user)
 	if (istype(W, /obj/item/weapon/weldingtool))
@@ -392,6 +404,7 @@
 	maxhealth = 500
 	material_name = "stone"
 	protection_chance = 90
+	crushable = FALSE
 	New()
 		..()
 		icon_state = "debris[rand(1,4)]"
@@ -417,6 +430,7 @@
 	material_name = "stone"
 	protection_chance = 90
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/stone_v
 	name = "stone wall"
@@ -429,6 +443,7 @@
 	material_name = "stone"
 	protection_chance = 90
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/stone_h/crenelated
 	name = "crenelated stone wall"
@@ -545,6 +560,20 @@
 	else
 		return
 
+/obj/structure/barricade/stone_h/cliffside
+	name = "cliffside"
+	desc = "A cliffside. It seems like you can put a ladder on this."
+	icon = 'icons/obj/structures.dmi'
+	icon_state = "cliffside"
+	health = 30000
+	maxhealth = 30000
+	pixel_y = -4
+
+/obj/structure/barricade/stone_h/cliffside/New()
+	return
+
+/obj/structure/barricade/stone_h/cliffside/corner
+	icon_state = "cliffside_corner"
 
 /obj/structure/barricade/jap_h
 	name = "shingled stone wall"
@@ -557,6 +586,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_h/New()
 	..()
@@ -592,6 +622,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_h_l/New()
 	..()
@@ -627,6 +658,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_h_r/New()
 	..()
@@ -662,6 +694,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_v/New()
 	..()
@@ -697,6 +730,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_v_t/New()
 	..()
@@ -732,6 +766,7 @@
 	material_name = "stone"
 	protection_chance = 100
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap_v_b/New()
 	..()
@@ -782,6 +817,7 @@
 	protection_chance = 100
 	opacity = TRUE
 	density = TRUE
+	crushable = FALSE
 
 /obj/structure/barricade/hescobastion/New()
 	..()
@@ -887,6 +923,7 @@
 	protection_chance = 80
 	bound_width = 64
 	layer = MOB_LAYER + 0.4
+	crushable = FALSE
 
 /obj/structure/barricade/car/New()
 	..()
@@ -908,6 +945,7 @@
 	var/adjusts = TRUE
 	applies_material_colour = FALSE
 	can_damage = FALSE
+	crushable = FALSE
 
 /obj/structure/barricade/jap/check_relatives(var/update_self = FALSE, var/update_others = FALSE)
 	if (!adjusts)
@@ -975,3 +1013,4 @@
 	adjusts = TRUE
 	layer = MOB_LAYER + 0.1
 	can_damage = FALSE
+	crushable = FALSE

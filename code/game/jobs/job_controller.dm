@@ -44,6 +44,8 @@ var/global/datum/controller/occupations/job_master
 		job_master.faction_organized_occupations |= faction_organized_occupations_separate_lists[AMERICAN]
 		job_master.faction_organized_occupations |= faction_organized_occupations_separate_lists[FILIPINO]
 		job_master.faction_organized_occupations |= faction_organized_occupations_separate_lists[POLISH]
+		job_master.faction_organized_occupations |= faction_organized_occupations_separate_lists[BLUEFACTION]
+		job_master.faction_organized_occupations |= faction_organized_occupations_separate_lists[REDFACTION]
 	else
 		for (var/faction in map.faction_organization)
 			if (job_master)
@@ -72,14 +74,14 @@ var/global/datum/controller/occupations/job_master
 			var/b = pick(randomfaction-a)
 			var/c = pick(randomfaction-a-b)
 			map.availablefactions = list(a,b,c)
-//			world << "Three tribes are enabled: <b>[replacetext(a, " tribesman", "")], [replacetext(b, " tribesman", "")], [replacetext(c, " tribesman", "")]</b>."
+//			to_chat(world, "Three tribes are enabled: <b>[replacetext(a, " tribesman", "")], [replacetext(b, " tribesman", "")], [replacetext(c, " tribesman", "")]</b>.")
 		else
 			var/a = pick(randomfaction)
 			var/b = pick(randomfaction-a)
 			var/c = pick(randomfaction-a-b)
 			var/d = pick(randomfaction-a-b-c)
 			map.availablefactions = list(a,b,c,d)
-//			world << "Four tribes are enabled: <b>[replacetext(a, " tribesman", "")], [replacetext(b, " tribesman", "")], [replacetext(c, " tribesman", "")], [replacetext(d, " tribesman", "")]</b>."
+//			to_chat(world, "Four tribes are enabled: <b>[replacetext(a, " tribesman", "")], [replacetext(b, " tribesman", "")], [replacetext(c, " tribesman", "")], [replacetext(d, " tribesman", "")]</b>.")
 */
 	map.availablefactions_run = FALSE
 	return
@@ -87,24 +89,25 @@ var/global/datum/controller/occupations/job_master
 /datum/controller/occupations/proc/set_factions2(var/autobalance_nr = 0)
 	var/list/randomfaction = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen","Civilization D Citizen","Civilization E Citizen","Civilization F Citizen")
 	if (map.availablefactions_run == TRUE)
-		if (autobalance_nr <= 8)
-			map.availablefactions = list("Civilization A Citizen")
-			world << "Only one civilization is enabled: <b>[civname_a]</b>."
-		else if (autobalance_nr > 8 && autobalance_nr <= 16)
-			map.availablefactions = list("Civilization A Citizen","Civilization B Citizen")
-			world << "Two civilizations are enabled: <b>[civname_a], [civname_b]</b>."
-		else if (autobalance_nr > 16 && autobalance_nr <= 24)
-			map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen")
-			world << "Three civilizations are enabled: <b>[civname_a], [civname_b], [civname_c]</b>."
-		else if (autobalance_nr > 24 && autobalance_nr <= 30)
-			map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen","Civilization D Citizen")
-			world << "Four civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d]</b>."
-		else if (autobalance_nr > 30 && autobalance_nr <= 36)
-			map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen","Civilization D Citizen","Civilization E Citizen")
-			world << "Five civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d], [civname_e]</b>."
-		else if (autobalance_nr > 36)
-			map.availablefactions = randomfaction
-			world << "All the 6 civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d], [civname_e], [civname_f]</b>."
+		switch(autobalance_nr)
+			if (0 to 8)
+				map.availablefactions = list("Civilization A Citizen")
+				to_chat(world, "Only one civilization is enabled: <b>[civname_a]</b>.")
+			if (9 to 16)
+				map.availablefactions = list("Civilization A Citizen","Civilization B Citizen")
+				to_chat(world, "Two civilizations are enabled: <b>[civname_a], [civname_b]</b>.")
+			if (17 to 24)
+				map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen")
+				to_chat(world, "Three civilizations are enabled: <b>[civname_a], [civname_b], [civname_c]</b>.")
+			if (25 to 30)
+				map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen","Civilization D Citizen")
+				to_chat(world, "Four civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d]</b>.")
+			if (31 to 36)
+				map.availablefactions = list("Civilization A Citizen","Civilization B Citizen","Civilization C Citizen","Civilization D Citizen","Civilization E Citizen")
+				to_chat(world, "Five civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d], [civname_e]</b>.")
+			if (37 to INFINITY)
+				map.availablefactions = randomfaction
+				to_chat(world, "All the 6 civilizations are enabled: <b>[civname_a], [civname_b], [civname_c], [civname_d], [civname_e], [civname_f]</b>.")
 
 	map.availablefactions_run = FALSE
 	return
@@ -162,17 +165,17 @@ var/global/datum/controller/occupations/job_master
 		civilians_forceEnabled = TRUE
 
 	if (map && map.faction_organization.Find(INDIANS) && (map.ID == MAP_COLONY || map.ID == MAP_JUNGLE_COLONY))
-		world << "<font size = 3><span class = 'notice'><i>All factions besides <b>Colonists</b> start disabled by default. Admins can enable them.</i></span></font>"
+		to_chat(world, SPAN_NOTICE("<font size = 3><i>All factions besides <b>Colonists</b> start disabled by default. Admins can enable them.</i></font>"))
 		indians_toggled = FALSE
 		pirates_toggled = FALSE
 		spanish_toggled = FALSE
 		civilians_forceEnabled = TRUE
 	if (map && map.faction_organization.Find(INDIANS) && (map.ID == MAP_PIONEERS || map.ID == MAP_PIONEERS_WASTELAND_2))
-		world << "<font size = 3><span class = 'notice'><i>All factions besides <b>Pioneers</b> start disabled by default. Admins can enable them.</i></span></font>"
+		to_chat(world, SPAN_NOTICE("<font size = 3><i>All factions besides <b>Pioneers</b> start disabled by default. Admins can enable them.</i></font>"))
 		indians_toggled = FALSE
 		civilians_forceEnabled = TRUE
 	if (map && map.faction_organization.Find(CIVILIAN) && (map.ID == MAP_FOREST))
-		world << "<font size = 3><span class = 'notice'><i>All factions besides <b>UPA</b> start enabled by default. Admins can enable the UPA.</i></span></font>"
+		to_chat(world, SPAN_NOTICE("<font size = 3><i>All factions besides <b>UPA</b> start disabled by default. Admins can enable them.</i></font>"))
 		civilians_toggled = FALSE
 	if (map.civilizations)
 		civilians_forceEnabled = TRUE
@@ -226,6 +229,7 @@ var/global/datum/controller/occupations/job_master
 						HSL = HM
 			else if (map.faction2_squad_leaders[H.squad] && !map.faction2_squad_leaders[H.squad].original_job.is_tankcom)
 				HSL = map.faction2_squad_leaders[H.squad]
+		
 		if (HSL && HSL.stat == CONSCIOUS)
 			var/found = FALSE
 			for(var/mob/living/human/EN in range(6,HSL))
@@ -250,7 +254,8 @@ var/global/datum/controller/occupations/job_master
 							spawnloc = get_turf(HSL)
 							break
 				H.forceMove(spawnloc)
-				HSL << "<big><font color='green'>[H] has arrived at your squad.</font></big>"
+				to_chat(HSL, "<big><font color='green'>[H] has arrived at your squad.</font></big>")
+				
 				// make sure we have the right ambience for our new location
 				spawn (1)
 					var/area/H_area = get_area(H)
@@ -264,40 +269,29 @@ var/global/datum/controller/occupations/job_master
 		SpawnAtFob(H)
 	if (!H.spawned_at_fob)
 		if (map.ID == MAP_GULAG13)
-			if(H.nationality == "German")
-				spawn_location = "JoinLateCivG"
-			else if(H.nationality == "Polish")
-				spawn_location = "JoinLateCivP"
-			else if(H.nationality == "Ukrainian")
-				spawn_location = "JoinLateCivU"
-		if (!spawn_location && H.original_job)
-			spawn_location = H.original_job.spawn_location
+			switch(H.nationality)
+				if ("German")
+					spawn_location = "JoinLateCivG"
+				if ("Polish")
+					spawn_location = "JoinLateCivP"
+				if ("Ukrainian")
+					spawn_location = "JoinLateCivU"
 		if (map.ID == MAP_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_THREE_TRIBES)
 			if (H.original_job_title in map.availablefactions)
-				if (H.original_job_title == "Human tribesman")
-					spawn_location = "JoinLateIND1"
-				else if (H.original_job_title == "Crustacean tribesman")
-					spawn_location = "JoinLateIND2"
-				else if (H.original_job_title == "Orc tribesman")
-					spawn_location = "JoinLateIND3"
-				else if (H.original_job_title == "Lizard tribesman")
-					spawn_location = "JoinLateIND4"
+				switch(H.original_job_title)
+					if ("Human tribesman")
+						spawn_location = "JoinLateIND1"
+					if ("Crustacean tribesman")
+						spawn_location = "JoinLateIND2"
+					if ("Orc tribesman")
+						spawn_location = "JoinLateIND3"
+					if ("Lizard tribesman")
+						spawn_location = "JoinLateIND4"
 			else
 				spawn_location = "JoinLateIND5"
-
-		if(map && map.ID == MAP_CAMPAIGN && istype(map, /obj/map_metadata/campaign/campaign5))
-			if (findtext(H.original_job_title,"RDF"))
-				spawn_location = "JoinLateRedN"
-				if(findtext(H.original_job_title,"Squad 2"))
-					spawn_location = "JoinLateRedS"
-				else if(findtext(H.original_job_title,"Engineer"))
-					spawn_location = "JoinLateRedS"
-				else if(findtext(H.original_job_title,"Anti-Tank"))
-					spawn_location = "JoinLateRedS"
-				else if(findtext(H.original_job_title,"Recon"))
-					spawn_location = "JoinLateRedS"
-				else if(findtext(H.original_job_title,"Armored"))
-					spawn_location = "JoinLateRedS"
+		
+		if (!spawn_location && H.original_job)
+			spawn_location = H.original_job.spawn_location
 
 		var/turf/spawnpoint = null
 		var/list/turfs = latejoin_turfs[spawn_location]
@@ -315,21 +309,6 @@ var/global/datum/controller/occupations/job_master
 			var/area/H_area = get_area(H)
 			if (H_area)
 				H_area.play_ambience(H)
-		/*
-		if (map.ID == MAP_NOMADS_PERSISTENCE_BETA)
-			new /obj/structure/vehicle/boat/rhib/premade/arrival(H.loc)
-			var/spawned = 0
-			for (var/obj/structure/vehicle/boat/rhib/premade/arrival/rhib in range(1,H))
-				if (spawned < 1)
-					if (H.faction_text == "PIRATES")
-						rhib.dir = EAST
-					else if (H.faction_text == "CIVILIAN")
-						rhib.dir = WEST
-					rhib.faststart(H)
-					spawned++
-				else
-					qdel(rhib)
-		*/
 
 /datum/controller/occupations/proc/SpawnAtFob(var/mob/living/human/H)
 	var/list/spawnable_points = list()
@@ -357,11 +336,13 @@ var/global/datum/controller/occupations/job_master
 				continue
 			if (T.density)
 				spawnable_turf = FALSE
+			if (istype(T, /turf/floor/beach/water/deep))
+				spawnable_turf = FALSE
 			if (spawnable_turf && !blocked)
 				valid_spawns += T
 
 		if (blocked)
-			H << SPAN_WARNING("<big>Cannot spawn at FOB because enemy is closeby.</big>")
+			to_chat(H, SPAN_WARNING("<big>Cannot spawn at this FOB because an enemy is nearby.</big>"))
 			SpawnAtFob(H)
 			return
 
@@ -374,7 +355,7 @@ var/global/datum/controller/occupations/job_master
 					H_area.play_ambience(H)
 			return
 		else
-			H << SPAN_WARNING("<big>No valid spawnpoints were found at this FOB.</big>")
+			to_chat(H, SPAN_WARNING("<big>No valid spawnpoints were found at this FOB.</big>"))
 			SpawnAtFob(H)
 			return
 
@@ -382,7 +363,7 @@ var/global/datum/controller/occupations/job_master
 	occupations = list()
 	var/list/all_jobs = typesof(/datum/job)
 	if (!all_jobs.len)
-		world << SPAN_DANGER("Error setting up jobs, no job datums found.")
+		to_chat(world, SPAN_DANGER("Error setting up jobs, no job datums found."))
 		return FALSE
 	for (var/J in all_jobs)
 		var/datum/job/job = new J()
@@ -499,30 +480,6 @@ var/global/datum/controller/occupations/job_master
 
 		job.apply_fingerprints(H)
 		job.assign_faction(H)
-
-		if(map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT)
-			if(istype(job, /datum/job/pirates/redfaction))
-				H.remove_language("English")
-				H.add_language("Redmenian",FALSE)
-				for (var/datum/language/redmenian/A in H.languages)
-					H.default_language = A
-
-			else if (istype(job, /datum/job/civilian/bluefaction))
-				H.remove_language("English")
-				H.add_language("Blugoslavian",FALSE)
-				for (var/datum/language/blugoslavian/A in H.languages)
-					H.default_language = A
-		if(map.ID == MAP_FOOTBALL_CAMPAIGN)
-			if(istype(job, /datum/job/civilian/football_red_campaign) || istype(job, /datum/job/civilian/football_red_campaign/goalkeeper))
-				H.remove_language("English")
-				H.add_language("Redmenian",FALSE)
-				for (var/datum/language/redmenian/A in H.languages)
-					H.default_language = A
-			else if (istype(job, /datum/job/civilian/football_blue_campaign) || istype(job, /datum/job/civilian/football_blue_campaign/goalkeeper))
-				H.remove_language("English")
-				H.add_language("Blugoslavian",FALSE)
-				for (var/datum/language/blugoslavian/A in H.languages)
-					H.default_language = A
 					
 		// removed /mob/living/job since it was confusing; it wasn't a job, but a job title
 		H.original_job = job
@@ -545,6 +502,10 @@ var/global/datum/controller/occupations/job_master
 			H.wolfman = 1
 		if (map && H && (H.faction_text in map.crab))
 			H.crab = 1
+		if (map && H && (H.faction_text in map.goblin))
+			H.goblin = 1
+		if (map && H && (H.faction_text in map.droid))
+			H.droid = 1
 		var/spawn_location = H.original_job.spawn_location
 		H.job_spawn_location = spawn_location
 
@@ -600,6 +561,10 @@ var/global/datum/controller/occupations/job_master
 					spawn_location = "JoinLateFP"
 				if (POLISH)
 					spawn_location = "JoinLatePOL"
+				if (BLUEFACTION)
+					spawn_location = "JoinLateBlue"
+				if (REDFACTION)
+					spawn_location = "JoinLateRed"
 		// fixes spawning at 1,1,1
 
 		if (!spawn_location)
@@ -625,6 +590,10 @@ var/global/datum/controller/occupations/job_master
 				spawn_location = "JoinLateAR"
 			else if (findtext(H.original_job.spawn_location, "JoinLatePOL"))
 				spawn_location = "JoinLatePOL"
+			else if (findtext(H.original_job.spawn_location, "JoinLateRed"))
+				spawn_location = "JoinLateRed"
+			else if (findtext(H.original_job.spawn_location, "JoinLateBlue"))
+				spawn_location = "JoinLateBlue"
 		H.job_spawn_location = spawn_location
 
 		if (H.mind)
@@ -651,7 +620,7 @@ var/global/datum/controller/occupations/job_master
 					H.stopDumbDamage = FALSE
 
 			spawn(12)
-				if(map.ID != MAP_CAMPAIGN)
+				if(map.ID != MAP_CAMPAIGN && map.ID != MAP_BATTLE_SHIPS && map.ID != CAMPAIGN_MAP_LIST_AND_NOT_MAPID)
 					H.memory()
 
 			return H
@@ -685,6 +654,8 @@ var/global/datum/controller/occupations/job_master
 	var/chinese = alive_n_of_side(CHINESE)
 	var/filipino = alive_n_of_side(FILIPINO)
 	var/polish = alive_n_of_side(POLISH)
+	var/bluefaction = alive_n_of_side(BLUEFACTION)
+	var/redfaction = alive_n_of_side(REDFACTION)
 
 	// by default no sides are hardlocked
 	var/max_british = INFINITY
@@ -712,6 +683,8 @@ var/global/datum/controller/occupations/job_master
 	var/max_chinese = INFINITY
 	var/max_filipino = INFINITY
 	var/max_polish = INFINITY
+	var/max_bluefaction = INFINITY
+	var/max_redfaction = INFINITY
 
 	// see job_data.dm
 	var/relevant_clients = clients.len
@@ -790,6 +763,10 @@ var/global/datum/controller/occupations/job_master
 			max_filipino = ceil(relevant_clients * map.faction_distribution_coeffs[FILIPINO])
 		if (map.faction_distribution_coeffs.Find(POLISH))
 			max_polish = ceil(relevant_clients * map.faction_distribution_coeffs[POLISH])
+		if (map.faction_distribution_coeffs.Find(BLUEFACTION))
+			max_bluefaction = ceil(relevant_clients * map.faction_distribution_coeffs[BLUEFACTION])
+		if (map.faction_distribution_coeffs.Find(REDFACTION))
+			max_redfaction = ceil(relevant_clients * map.faction_distribution_coeffs[REDFACTION])
 	switch (side)
 		if (CIVILIAN)
 			if (civilians_forceEnabled)
@@ -936,5 +913,16 @@ var/global/datum/controller/occupations/job_master
 			if (polish_forceEnabled)
 				return FALSE
 			if (polish >= max_polish)
+				return TRUE
+		
+		if (BLUEFACTION)
+			if (bluefaction_forceEnabled)
+				return FALSE
+			if (bluefaction >= max_bluefaction)
+				return TRUE
+		if (REDFACTION)
+			if (redfaction_forceEnabled)
+				return FALSE
+			if (redfaction >= max_redfaction)
 				return TRUE
 	return FALSE

@@ -8,6 +8,11 @@
 #define BIT_TEST_ALL(bitfield, req_mask) ((~(bitfield) & (req_mask)) == FALSE)
 #define PASS pass()
 
+GLOBAL_DATUM_INIT(has_discord_embeddable_links, /regex, regex("(https?://\[^\\s|<\]{2,})"))
+
+//datum may be null, but it does need to be a typed var
+#define NAMEOF(datum, X) (#X || ##datum.##X)
+
 // get rid of vars causing warnings or just do nothing
 /proc/pass(arg1, arg2, arg3, arg4, arg5)
 	return TRUE
@@ -65,6 +70,26 @@
 	else if (dx<0)
 		.+=360
 */
+
+//gives us the stack trace from CRASH() without ending the current proc.
+/proc/stack_trace(msg)
+	CRASH(msg)
+
+// \ref behaviour got changed in 512 so this is necesary to replicate old behaviour.
+// If it ever becomes necesary to get a more performant REF(), this lies here in wait
+// #define REF(thing) (thing && istype(thing, /datum) && (thing:datum_flags & DF_USE_TAG) && thing:tag ? "[thing:tag]" : "\ref[thing]")
+/proc/REF(input)
+	if(istype(input, /datum))
+		var/datum/thing = input
+		if(thing.datum_flags & DF_USE_TAG)
+			if(!thing.tag)
+				stack_trace("A ref was requested of an object with DF_USE_TAG set but no tag: [thing]")
+				thing.datum_flags &= ~DF_USE_TAG
+			else
+				return "\[[url_encode(thing.tag)]\]"
+	return "\ref[input]"
+
+
 //Returns location. Returns null if no location was found.
 /proc/get_teleport_loc(turf/location,mob/target,distance = TRUE, density = FALSE, errorx = FALSE, errory = FALSE, eoffsetx = FALSE, eoffsety = FALSE)
 /*
@@ -198,9 +223,6 @@ Turf and target are seperate in case you want to teleport some distance from a t
 			return TRUE
 	return FALSE
 
-/proc/sign(x)
-	return x!=0?x/abs(x):0
-
 //Ultra-Fast Bresenham Line-Drawing Algorithm
 /proc/getline(atom/M,atom/N, var/exclude_m_turf = FALSE)
 	var/px=M.x		//starting x
@@ -214,8 +236,8 @@ Turf and target are seperate in case you want to teleport some distance from a t
 	var/dy=N.y-py
 	var/dxabs=abs(dx)//Absolute value of x distance
 	var/dyabs=abs(dy)
-	var/sdx=sign(dx)	//Sign of x distance (+ or -)
-	var/sdy=sign(dy)
+	var/sdx=((dx) ? ((dx) < 0 ? -1 : 1) : 0)	//Sign of x distance (+ or -)
+	var/sdy=((dy) ? ((dy) < 0 ? -1 : 1) : 0)
 	var/x=dxabs>>1	//Counters for steps taken, setting to distance/2
 	var/y=dyabs>>1	//Bit-shifting makes me l33t.  It also makes getline() unnessecarrily fast.
 	var/j			//Generic integer for counting
@@ -850,10 +872,10 @@ proc/get_mob_with_client_list()
 
 //gets the turf the atom is located in (or itself, if it is a turf).
 //returns null if the atom is not in a turf.
-/proc/get_turf(atom/A)
+/*/proc/get_turf(atom/A)
 	if (!istype(A)) return
 	for (A, A && !isturf(A), A=A.loc);
-	return A
+	return A*/
 
 /proc/get(atom/loc, type)
 	while (loc)
@@ -890,7 +912,7 @@ var/global/list/common_tools = list(
 	return FALSE
 
 /proc/isscrewdriver(O)
-	if (istype(O, /obj/item/weapon/hammer) || istype(O, /obj/item/weapon/screwdriver)) // TO DO: separate hammers and screwdrivers in the whole codebase
+	if (istype(O, /obj/item/weapon/hammer)|| istype(O, /obj/item/weapon/screwdriver)) // TO DO: separate hammers and screwdrivers in the whole codebase
 		return TRUE
 	return FALSE
 /*
@@ -1065,4 +1087,6 @@ var/mob/dview/dview_mob = new
 	else
 		return FALSE
 
-
+/proc/CallAsync(datum/source, proctype, list/arguments)
+	set waitfor = FALSE
+	return call(source, proctype)(arglist(arguments))

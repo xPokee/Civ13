@@ -319,6 +319,14 @@
 /area/caribbean/sea/bottom/roofed
 	location = AREA_INSIDE
 
+/area/caribbean/sea/middle
+	name = "sea"
+	base_turf = /turf/floor/beach/water/deep/saltwater
+	icon_state = "blue3"
+
+/area/caribbean/sea/middle/roofed
+	location = AREA_INSIDE
+
 /area/caribbean/sea/beach
 	name = "Beach"
 	base_turf = /turf/floor/beach/sand
@@ -1239,6 +1247,100 @@
 
 /area/caribbean/pirates/ship/voyage/lower/storage/magazine
 	name = "Magazine"
+
+// Battle Ships //
+
+// Faction 1
+/area/caribbean/faction1
+	name = "Base"
+	icon_state = "red2"
+	location = AREA_OUTSIDE
+	base_turf = /turf/floor/dirt
+
+/area/caribbean/faction1/collector
+	name = "Collection Area"
+
+/area/caribbean/faction1/inside
+	icon_state = "red3"
+	location = AREA_INSIDE
+
+/area/caribbean/faction1/ship
+	name = "Ship"
+	icon_state = "red2"
+	base_turf = /turf/floor/beach/water/deep/saltwater
+	location = AREA_OUTSIDE
+
+/area/caribbean/faction1/ship/upper
+	base_turf = /turf/floor/broken_floor
+
+/area/caribbean/faction1/ship/upper/inside
+	location = AREA_INSIDE
+
+
+/area/caribbean/faction1/ship/lower
+	base_turf =/turf/floor/beach/water/deep/saltwater
+	location = AREA_INSIDE
+
+/area/caribbean/faction1/ship/lower/engine
+	name = "Engine Room"
+	icon_state = "red3"
+
+/area/caribbean/faction1/ship/lower/storage
+	name = "Storage Area"
+	icon_state = "red3"
+
+/area/caribbean/faction1/ship/lower/storage/kitchen
+	name = "Kitchen Storage Area"
+
+/area/caribbean/faction1/ship/lower/storage/magazine
+	name = "Magazine"
+
+// Faction 2
+/area/caribbean/faction2
+	name = "Base"
+	icon_state = "blue2"
+	location = AREA_OUTSIDE
+	base_turf = /turf/floor/dirt
+
+/area/caribbean/faction2/collector
+	name = "Collection Area"
+
+/area/caribbean/faction2/inside
+	icon_state = "blue3"
+	location = AREA_INSIDE
+
+/area/caribbean/faction2/ship
+	name = "Ship"
+	icon_state = "blue2"
+	base_turf = /turf/floor/beach/water/deep/saltwater
+	location = AREA_OUTSIDE
+
+/area/caribbean/faction2/ship/upper
+	base_turf = /turf/floor/broken_floor
+
+/area/caribbean/faction2/ship/upper/inside
+	location = AREA_INSIDE
+
+
+/area/caribbean/faction2/ship/lower
+	base_turf =/turf/floor/beach/water/deep/saltwater
+	location = AREA_INSIDE
+
+/area/caribbean/faction2/ship/lower/engine
+	name = "Engine Room"
+	icon_state = "blue3"
+
+/area/caribbean/faction2/ship/lower/storage
+	name = "Storage Area"
+	icon_state = "blue3"
+
+/area/caribbean/faction2/ship/lower/storage/kitchen
+	name = "Kitchen Storage Area"
+
+/area/caribbean/faction2/ship/lower/storage/magazine
+	name = "Magazine"
+
+
 
 /area/caribbean/indians
 	name = "Natives"

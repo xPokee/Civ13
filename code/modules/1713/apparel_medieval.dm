@@ -101,28 +101,28 @@
 
 /obj/item/clothing/head/artisan
 	name = "artisan hat"
-	desc = "a large artisan hat."
+	desc = "A large artisan hat."
 	icon_state = "artisan"
 	item_state = "artisan"
 	worn_state = "artisan"
 
 /obj/item/clothing/head/feathered_hat
 	name = "feathered hat"
-	desc = "a feathered hat."
+	desc = "A feathered hat."
 	icon_state = "feathered_hat"
 	item_state = "feathered_hat"
 	worn_state = "feathered_hat"
 
 /obj/item/clothing/head/count_hat
 	name = "count hat"
-	desc = "a fancy, feathered hat."
+	desc = "A fancy, feathered hat."
 	icon_state = "medieval_count_hat"
 	item_state = "medieval_count_hat"
 	worn_state = "medieval_count_hat"
 
 /obj/item/clothing/head/cavalier
 	name = "cavalier hat"
-	desc = "a free willled and fanciful leather feathered hat."
+	desc = "A free willled and fanciful leather feathered hat."
 	icon_state = "cavalier"
 	item_state = "cavalier"
 	worn_state = "cavalier"
@@ -139,7 +139,7 @@
 
 /obj/item/clothing/head/phrigian_hat
 	name = "phrigian hat"
-	desc = "a knob ended hat of the ancient phrigian design. Often worn by merchants or peasants of jewish descent."
+	desc = "A knob ended hat of the ancient phrigian design. Often worn by merchants or peasants of jewish descent."
 	icon_state = "phrigian_hat"
 	item_state = "phrigian_hat"
 	worn_state = "phrigian_hat"
@@ -158,7 +158,7 @@
 
 /obj/item/clothing/head/phrigian_hat/doge
 	name = "doge hat"
-	desc = "a ornate knob ended hat banded in gold of the ancient phrigian design. Often worn by republic rulers over many petty merchantile aristocrats."
+	desc = "A ornate knob ended hat banded in gold of the ancient phrigian design. Often worn by republic rulers over many petty merchantile aristocrats."
 	icon_state = "doge"
 	item_state = "doge"
 	worn_state = "doge"
@@ -192,7 +192,7 @@
 
 /obj/item/clothing/head/turban
 	name = "turban"
-	desc = "a colored, light fabric turban."
+	desc = "A colored, light fabric turban."
 	icon_state = "turban1"
 	item_state = "turban1"
 	worn_state = "turban1"
@@ -206,7 +206,7 @@
 
 /obj/item/clothing/head/turban/imam
 	name = "white turban"
-	desc = "a simple white turban."
+	desc = "A simple white turban."
 	icon_state = "turban_w"
 	item_state = "turban_w"
 	worn_state = "turban_w"
@@ -218,7 +218,7 @@
 
 /obj/item/clothing/head/turban/sultan
 	name = "grand turban"
-	desc = "a large turban often worn by figures of importance.."
+	desc = "A large turban often worn by figures of importance.."
 	icon_state = "sultan"
 	item_state = "sultan"
 	worn_state = "sultan"
@@ -838,7 +838,7 @@
 
 /obj/item/clothing/head/helmet/brown_eisenbruck
 	name = "brown padded head-cap"
-	desc = "a padded brown coif, applies practical if modest protection."
+	desc = "A padded brown coif, applies practical if modest protection."
 	icon_state = "brown_eisenbruck"
 	item_state = "brown_eisenbruck"
 	worn_state = "brown_eisenbruck"
@@ -848,7 +848,7 @@
 
 /obj/item/clothing/head/helmet/grey_eisenbruck
 	name = "grey padded head-cap"
-	desc = "a padded grey coif, applies practical if modest protection."
+	desc = "A padded grey coif, applies practical if modest protection."
 	icon_state = "grey_eisenbruck"
 	item_state = "grey_eisenbruck"
 	worn_state = "grey_eisenbruck"
@@ -858,7 +858,7 @@
 
 /obj/item/clothing/head/helmet/aged_eisenbruck
 	name = "ratty old padded head-cap"
-	desc = "a ratty, old padded coif, its color faded but remains protective."
+	desc = "A ratty, old padded coif, its color faded but remains protective."
 	icon_state = "aged_eisenbruck"
 	item_state = "aged_eisenbruck"
 	worn_state = "aged_eisenbruck"
@@ -1031,7 +1031,7 @@
 	body_parts_covered = HEAD|FACE|EYES
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
 	flags_inv = BLOCKHAIR
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1217,6 +1217,7 @@
 	item_state = "emir_turban"
 	worn_state = "emir_turban"
 	body_parts_covered = HEAD|FACE
+	item_flags = FLEXIBLEMATERIAL // The emirate helmet does not block the face. body_parts_covered is used in armor calculation, masks with this flag will not prevent eating even if they are covering your "face".
 	flags_inv = BLOCKHEADHAIR
 	armor = list(melee = 55, arrow = 45, gun = 5, energy = 15, bomb = 60, bio = 30, rad = FALSE)
 	health = 45
@@ -1243,7 +1244,7 @@
 	worn_state = "crusader"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1268,7 +1269,7 @@
 	icon_state = "new_knight_templar"
 	item_state = "new_knight_templar"
 	worn_state = "new_knight_templar"
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1295,7 +1296,7 @@
 	worn_state = "crusader_king"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1323,7 +1324,7 @@
 	worn_state = "baltic_crusader"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1349,7 +1350,7 @@
 	worn_state = "baltic_crusader_grandmaster"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1375,7 +1376,7 @@
 	worn_state = "baltic_crusader_king"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1403,7 +1404,7 @@
 	worn_state = "templar_priest"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 60, arrow = 70, gun = 5, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 35
 	slowdown = 0.20
 
@@ -1429,7 +1430,7 @@
 	worn_state = "baltic_priest"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 60, arrow = 70, gun = 5, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 35
 	slowdown = 0.20
 
@@ -1475,14 +1476,14 @@
 
 /obj/item/clothing/head/mayan_headdress
 	name = "mayan headdress"
-	desc = "a mayan style headdress."
+	desc = "A mayan style headdress."
 	icon_state = "mayan_headdress"
 	item_state = "mayan_headdress"
 	worn_state = "mayan_headdress"
 
 /obj/item/clothing/under/huipil
 	name = "huipil"
-	desc = "a light cloth, with blue trimmings."
+	desc = "A light cloth, with blue trimmings."
 	icon_state = "huipil"
 	item_state = "huipil"
 	worn_state = "huipil"
@@ -1490,7 +1491,7 @@
 
 /obj/item/clothing/under/halfhuipil
 	name = "half huipil"
-	desc = "a light cloth, covering the lower part of the body. With red trimmings."
+	desc = "A light cloth, covering the lower part of the body. With red trimmings."
 	icon_state = "halfhuipil"
 	item_state = "halfhuipil"
 	worn_state = "halfhuipil"
@@ -1578,7 +1579,7 @@
 	flags_inv = BLOCKHAIR
 	body_parts_covered = HEAD|FACE|EYES
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 55
 	slowdown = 0.25
 
@@ -1686,7 +1687,7 @@
 
 /obj/item/clothing/head/steppe_shaman
 	name = "steppe shaman wool hat"
-	desc = "a dyed red wool hat of steppe nomad design. Often worn by shamans to protect themselves from the elements on the steppe whilst performing rituals"
+	desc = "A dyed red wool hat of steppe nomad design. Often worn by shamans to protect themselves from the elements on the steppe whilst performing rituals"
 	icon_state = "steppe_shaman_wool_hat"
 	item_state = "steppe_shaman_wool_hat"
 	worn_state = "steppe_shaman_wool_hat"
@@ -2296,7 +2297,7 @@ obj/item/clothing/head/helmet/samurai/black
 	worn_state = "penlianal_whitestrake"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 60
 	slowdown = 0.10
 
@@ -2308,7 +2309,7 @@ obj/item/clothing/head/helmet/samurai/black
 	worn_state = "hell_champion"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 60
 	slowdown = 0.10
 
@@ -2320,7 +2321,7 @@ obj/item/clothing/head/helmet/samurai/black
 	worn_state = "crusader_saint"
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 60
 	slowdown = 0.10
 
@@ -2386,7 +2387,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD|FACE|EYES
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 90, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 80
 	slowdown = 0.10
 
@@ -2473,7 +2474,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD|FACE|EYES
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 50, arrow = 30, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 60
 	slowdown = 0.05
 
@@ -2486,7 +2487,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 35, arrow = 20, gun = 10, energy = 15, bomb = 20, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 60
 	slowdown = 0.01
 
@@ -2499,7 +2500,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD|FACE
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 45, arrow = 30, gun = 15, energy = 25, bomb = 30, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 100
 	slowdown = 0.02
 
@@ -2538,7 +2539,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD|FACE|EYES
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 60, arrow = 45, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 80
 	slowdown = 0.05
 
@@ -2563,7 +2564,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 45, arrow = 40, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 80
 	slowdown = 0.01
 
@@ -2576,7 +2577,7 @@ obj/item/clothing/head/helmet/samurai/black
 	body_parts_covered = HEAD
 	flags_inv = BLOCKHAIR
 	armor = list(melee = 70, arrow = 50, gun = 10, energy = 15, bomb = 60, bio = 20, rad = FALSE)
-	restricts_view = 2
+	restricts_view = 1
 	health = 80
 	slowdown = 0.03
 

@@ -1,4 +1,3 @@
-
 /mob/new_player
 	var/client/my_client // Need to keep track of this ourselves, since by the time Logout() is called the client has already been nulled
 
@@ -8,9 +7,9 @@
 
 	/* if our client was deleted (for example if we're banned), don't show the MOTD */
 	if (join_motd)
-		spawn (1)
-			if (client)
-				src << "<div class='info'>Game ID: <div class='danger'>[game_id]</div></div>"
+		spawn (10)
+			if (src && src.client)
+				to_chat(src, "<div class='info'>Game ID: <div class='danger'>[game_id ? game_id : "Unknown"]</div></div>")
 				see_personalized_MOTD()
 
 	if (!mind)
@@ -19,16 +18,39 @@
 		mind.current = src
 
 	loc = null
-	client.screen += lobby_image
+
+	// Safe handling for adding lobby image
+	if (client && lobby_image)
+		client.screen += lobby_image
+	else if (lobby_image)
+		// Fallback if client is not ready yet
+		spawn(3)
+			if (src && src.client && lobby_image)
+				src.client.screen += lobby_image
+
 	my_client = client
 	sight |= SEE_TURFS
 	player_list |= src
-
+	if (config && config.opendream)
+		src.client?.load_pregame()
 	new_player_panel()
 
 	if (client.is_preference_enabled(/datum/client_preference/fit_viewport))
 		client.fit_viewport()
 
-	spawn (10)
+	spawn (1)
 		if (client)
 			client.playtitlemusic()
+			if (client.is_preference_enabled(/datum/client_preference/fit_viewport))
+				client.fit_viewport()
+
+	spawn while(client)
+		sleep(35)
+		updateTimeToStart()
+
+/mob/new_player/proc/updateTimeToStart()
+	if(!client)
+		return
+//	if(!client.pigReady)
+//		return
+	client << output(list2params(list("#timestart", "[ticker?.pregame_timeleft]")), "outputwindow.browser:change")

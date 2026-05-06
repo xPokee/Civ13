@@ -4,6 +4,7 @@
 	icon = 'icons/obj/policetape.dmi'
 	icon_state = "tape"
 	w_class = ITEM_SIZE_SMALL
+	var/can_be_used = TRUE
 	var/turf/start
 	var/turf/end
 	var/tape_type = /obj/item/tape
@@ -11,6 +12,10 @@
 
 var/list/image/hazard_overlays
 var/list/tape_roll_applications = list()
+
+/obj/item/taperoll/no_tape
+	name = "tape roll"
+	can_be_used = FALSE
 
 /obj/item/tape
 	name = "tape"
@@ -55,48 +60,6 @@ var/list/tape_roll_applications = list()
 	desc = "A length of police tape.  Do not cross."
 	color = COLOR_YELLOW
 
-/*
-/obj/item/taperoll/engineering
-	name = "engineering tape"
-	desc = "A roll of engineering tape used to block off working areas from the public."
-	tape_type = /obj/item/tape/engineering
-	color = COLOR_ORANGE
-/obj/item/tape/engineering
-	name = "engineering tape"
-	desc = "A length of engineering tape. Better not cross it."
-	req_one_access = list(access_engine,access_atmospherics)
-	color = COLOR_ORANGE
-/obj/item/taperoll/atmos
-	name = "atmospherics tape"
-	desc = "A roll of atmospherics tape used to block off working areas from the public."
-	tape_type = /obj/item/tape/atmos
-	color = COLOR_BLUE_LIGHT
-/obj/item/tape/atmos
-	name = "atmospherics tape"
-	desc = "A length of atmospherics tape. Better not cross it."
-	req_one_access = list(access_engine,access_atmospherics)
-	color = COLOR_BLUE_LIGHT
-/obj/item/taperoll/research
-	name = "research tape"
-	desc = "A roll of research tape used to block off working areas from the public."
-	tape_type = /obj/item/tape/research
-	color = COLOR_PURPLE
-/obj/item/tape/research
-	name = "research tape"
-	desc = "A length of research tape. Better not cross it."
-	req_one_access = list(access_research)
-	color = COLOR_PURPLE
-/obj/item/taperoll/medical
-	name = "medical tape"
-	desc = "A roll of medical tape used to block off working areas from the public."
-	tape_type = /obj/item/tape/medical
-	color = COLOR_GREEN
-/obj/item/tape/medical
-	name = "medical tape"
-	desc = "A length of medical tape. Better not cross it."
-	req_one_access = list(access_medical)
-	color = COLOR_GREEN
-*/
 /obj/item/taperoll/update_icon()
 	overlays.Cut()
 	var/image/overlay = image(icon = src.icon)
@@ -121,6 +84,8 @@ var/list/tape_roll_applications = list()
 	return ..()
 
 /obj/item/taperoll/attack_self(mob/user as mob)
+	if(!can_be_used)
+		return
 	if(!start)
 		start = get_turf(src)
 		usr << "<span class='notice'>You place the first end of \the [src].</span>"
@@ -231,6 +196,8 @@ var/list/tape_roll_applications = list()
 		return
 
 /obj/item/taperoll/afterattack(var/atom/A, mob/user as mob, proximity)
+	if(!can_be_used)
+		return
 	if(!proximity)
 		return
 
@@ -266,6 +233,10 @@ var/list/tape_roll_applications = list()
 		name = "crumpled [name]"
 
 /obj/item/tape/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if(!lifted && ismob(mover))
 		var/mob/M = mover
 		add_fingerprint(M)

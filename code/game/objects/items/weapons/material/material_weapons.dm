@@ -57,7 +57,7 @@
 	force = round(force*force_divisor)*min(crafting_quality,2)
 	throwforce = round(material.get_blunt_damage()*thrown_force_divisor)*min(crafting_quality,2)
 	//spawn(1)
-	//	world << "[src] has force [force] and throwforce [throwforce] when made from default material [material.name]"
+	//	to_chat(world, "[src] has force [force] and throwforce [throwforce] when made from default material [material.name]")
 
 /obj/item/weapon/material/proc/set_material(var/new_material)
 	material = get_material_by_name(new_material)
@@ -145,7 +145,7 @@
 		var/health_percentage = (health/maxhealth)*100
 		switch (health_percentage)
 			if (-100 to 21)
-				user << "<font color='#7f0000'>Is pratically falling apart!</font>"
+				user << "<font color='#7f0000'>Is practically falling apart!</font>"
 			if (22 to 49)
 				user << "<font color='#a74510'>Seems to be in very bad condition.</font>"
 			if (50 to 69)

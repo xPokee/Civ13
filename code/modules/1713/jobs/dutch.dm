@@ -34,7 +34,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Captain of the Dutch Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Dutch Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the ship.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -75,7 +75,7 @@
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/tricorne_dutch(H), slot_head)
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Quartermaster of the Dutch Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Quartermaster of the Dutch Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the ship's supply allocation. You are also the second in command, after the <b>Capitaine</b>.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -119,7 +119,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Boatswain of the Dutch Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Boatswain of the Dutch Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the crew and their job allocation. The whole ship relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -797,14 +797,14 @@
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/modern/m95_dpm(H), slot_head)
 
 	var/obj/item/weapon/gun/projectile/submachinegun/c7/HGUN = new/obj/item/weapon/gun/projectile/submachinegun/c7(H)
-	H.equip_to_slot_or_del(HGUN, slot_shoulder)
+	H.equip_to_slot_or_del(HGUN, slot_l_hand)
 	var/obj/item/weapon/attachment/under/foregrip/FP = new/obj/item/weapon/attachment/under/foregrip(src)
 	FP.attached(null,HGUN,TRUE)
 
-	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/shotgun/pump/remington870(H), slot_l_hand)
+	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/shotgun/pump/remington870(H), slot_shoulder)
 
 	H.equip_to_slot_or_del(new /obj/item/ammo_magazine/shellbox(H), slot_l_store)
-	H.equip_to_slot_or_del(new /obj/item/ammo_magazine/shellbox(H), slot_r_store)
+	H.equip_to_slot_or_del(new /obj/item/weapon/grenade/coldwar/hg85(H), slot_r_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/storage/belt/smallpouches/olive/m16_breacher(H), slot_belt)
 
 	if (time_of_day == "Night" || time_of_day == "Evening" || time_of_day == "Early Morning")
@@ -897,6 +897,8 @@
 	uniform.attackby(plates2, H)
 //equipment
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/modern/ushelmet/crewman(H), slot_head)
+	var/obj/item/clothing/accessory/holster/hip/holsterh = new /obj/item/clothing/accessory/holster/hip(null)
+	uniform.attackby(holsterh, H)
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/glock17(H), slot_l_hand)
 	H.equip_to_slot_or_del(new /obj/item/weapon/key/dutch(H), slot_l_store)

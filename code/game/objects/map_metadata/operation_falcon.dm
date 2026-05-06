@@ -2,7 +2,7 @@
 /obj/map_metadata/operation_falcon
 	ID = MAP_OPERATION_FALCON
 	title = "Operation Falcon"
-	lobby_icon = "icons/lobby/operation_falcon.png"
+	lobby_icon = 'icons/lobby/operation_falcon.png'
 	no_winner = "The battle for the city is still going on."
 	caribbean_blocking_area_types = list(/area/caribbean/no_mans_land/invisible_wall,/area/caribbean/no_mans_land/invisible_wall/one,/area/caribbean/no_mans_land/invisible_wall/two)
 	respawn_delay = 90 SECONDS
@@ -24,7 +24,7 @@
 	faction2 = RUSSIAN
 	valid_weather_types = list(WEATHER_NONE, WEATHER_WET, WEATHER_EXTREME)
 	songs = list(
-		"Doe Maar - The Bomb (De Bom):1" = "sound/music/de_bom.ogg",)
+		"Doe Maar - The Bomb (De Bom):1" = 'sound/music/de_bom.ogg',)
 	gamemode = "Area Control"
 	ambience = list('sound/ambience/battle1.ogg')
 	var/rus_points = 0
@@ -38,7 +38,7 @@
 	var/a1_name = "Radio Post"
 
 	var/a2_control = "nobody"
-	var/a2_name = "North City"
+	var/a2_name = "Central Town"
 
 	var/a3_control = "nobody"
 	var/a3_name = "Factory"
@@ -88,16 +88,15 @@
 			return "Russian"
 
 /obj/map_metadata/operation_falcon/cross_message(faction)
-	var/warning_sound = sound('sound/effects/siren_once.ogg', repeat = FALSE, wait = TRUE, channel = 777)
-	for (var/mob/M in player_list)
-		M.client << warning_sound
-
-	if (faction == DUTCH)
-		return "<font size = 4>Operation Falcon has begun!</font>"
-	else if (faction == RUSSIAN)
-		return "<font size = 4>Operation Falcon has begun!</font>"
-	else
-		return ""
+	switch (faction)
+		if (DUTCH)
+			var/warning_sound = sound('sound/effects/siren_once.ogg', repeat = FALSE, wait = TRUE, channel = 780)
+			for (var/mob/M in player_list)
+				if (M.client)
+					M.client << warning_sound
+			return "<font size = 4>Operation Falcon has begun!</font>"
+		else
+			return ""
 
 /obj/map_metadata/operation_falcon/proc/points_check()
 	if (processes.ticker.playtime_elapsed > 3000)
@@ -272,10 +271,10 @@
 			for (var/obj/structure/flag/objective/four/F in world)
 				F.icon_state = "white"
 
-	spawn(600)
+	spawn(600) // 1 minute
 		points_check()
 		spawn(5)
-			world << "<big><b>Current Points:</big></b>"
+			world << "<big><b>Current Points:</b></big>"
 			world << "<big>Dutch: [dutch_points]</big>"
 			world << "<big>Russian: [rus_points]</big>"
 
@@ -289,6 +288,12 @@
 			ticker.finished = TRUE
 			var/message = "The <b>Russians</b> have reached [rus_points] points and claimed victory in Operation Falcon!"
 			world << "<font size = 4><span class = 'notice'>[message]</span></font>"
+
+			var/anthem = sound('sound/music/russian_anthem.ogg', repeat = FALSE, wait = FALSE, volume = 100, channel = 775)
+			for (var/mob/M in player_list)
+				if (M.client)
+					M.client << anthem
+
 			show_global_battle_report(null)
 			win_condition_spam_check = TRUE
 			return FALSE
@@ -298,6 +303,12 @@
 			ticker.finished = TRUE
 			var/message = "The <b>Dutch</b> have reached [dutch_points] points and claimed victory in Operation Falcon!"
 			world << "<font size = 4><span class = 'notice'>[message]</span></font>"
+			
+			var/anthem = sound('sound/music/dutch_anthem.ogg', repeat = FALSE, wait = FALSE, volume = 100, channel = 775)
+			for (var/mob/M in player_list)
+				if (M.client)
+					M.client << anthem
+
 			show_global_battle_report(null)
 			win_condition_spam_check = TRUE
 			return FALSE
@@ -444,6 +455,10 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 
 				new /obj/structure/flag/russian(get_turf(src))
 				new /obj/item/weapon/storage/ammo_can/ak74(locate(src.x, src.y-1, src.z))
+			else
+				pickedfrom = fob_names_nato
+				pickedname = pick(pickedfrom)
+				fob_names_nato -= pickedname
 
 		for (var/obj/structure/flag/F in range(1, src))
 			F.pixel_x += 20
@@ -467,7 +482,7 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 
 /obj/structure/supply_crate
 	name = "supply crate"
-	desc = "A supply crate used to make FOBs. This crate belongs to nobody."
+	desc = "A supply crate used to make FOBs and other various structures. This crate belongs to nobody."
 	icon = 'icons/obj/junk.dmi'
 	icon_state = "supply_crate"
 	anchored = FALSE
@@ -486,7 +501,7 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 	..()
 	if (faction_text)
 		name = "[map.roundend_condition_def2name(faction_text)] [name]"
-		desc = "A supply crate used to make FOBs. This crate belongs to the <b>[map.roundend_condition_def2army(faction_text)]!</b>"
+		desc = "A supply crate used to make FOBs and other various structures. This crate belongs to the <b>[map.roundend_condition_def2army(faction_text)]!</b>"
 	spawn(2)
 		update_icon()
 
@@ -517,14 +532,18 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 	try_destroy()
 
 /obj/structure/supply_crate/bullet_act(var/obj/item/projectile/proj)
-	health -= proj.damage/3
-	visible_message(SPAN_NOTICE("\The [src] is hit by the [proj.name]!"))
+	health -= proj.damage * 0.01
+	visible_message(SPAN_DANGER("\The [src] is hit by \the [proj.name]!"))
 	try_destroy()
 
 
 /obj/structure/supply_crate/attack_hand(mob/living/human/H as mob)
 	if (!faction_text) // Claim a crate if it isn't assigned to a faction.
 		faction_text = H.faction_text
+		name = "[map.roundend_condition_def2name(faction_text)] [name]"
+		desc = "A supply crate used to make FOBs and other various structures. This crate belongs to the <b>[map.roundend_condition_def2army(faction_text)]!</b>"
+		spawn(2)
+			update_icon()
 	if (faction_text != H.faction_text) // Check if the user's faction is the same as the crate's faction.
 		to_chat(H, SPAN_WARNING("This supply crate does not belong to your faction!"))
 		return
@@ -607,7 +626,7 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 	opacity = FALSE
 	density = TRUE
 	layer = 5
-	var/health = 1000
+	var/health = 500
 
 /obj/structure/milsim/proc/try_destroy()
 	if (health <= 0)
@@ -631,7 +650,7 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 
 /obj/structure/milsim/anti_air
 	name = "Anti-Air SAM site"
-	desc = "This is an Anti-Air Surface to Air Missile site for defence against jets and the like."
+	desc = "This is an Anti-Air Surface to Air Missile site for defence against aircraft."
 	icon_state = "namas_open"
 	health = 1000
 	bound_width = 64
@@ -639,7 +658,7 @@ var/global/list/fob_names_russian = list("Anna", "Boris", "Dmitri", "Yelena", "I
 	var/faction_text = null // To what faction does it belong?
 
 /obj/structure/milsim/anti_air/attack_hand(mob/living/human/H as mob)
-	if (!faction_text)
+	if (!faction_text && map.ID != MAP_PEPELSIBIRSK)
 		faction_text = H.faction_text
 		name = "[map.roundend_condition_def2name(faction_text)] [name]"
 		message_admins("[H.ckey] ([H.faction_text]) has built an Anti-Air at ([src.x], [src.y], [src.z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>).", H.ckey)

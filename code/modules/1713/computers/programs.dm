@@ -2058,13 +2058,13 @@
 
 	var/list/dutch_choice = list(
 		"2A6 Leopard Tank (1000)",
+		"CV90 IFV (800)",
 		"Mercedes-Benz Jeep with MG (400)",
 		"DAF YA-4442 Supply Truck (300)",
 		"Mercedes-Benz Jeep (200)",
 		)
 	var/list/rus_choice = list(
 		"T-90A Tank (1200)",
-		"BMD-2 IFV with ATGM (1200)",
 		"BMD-2 IFV (900)",
 		"BTR-80 APC (700)",
 		"Tigr-M Humvee with MG (400)",
@@ -2246,6 +2246,8 @@
 		switch (href_list["vehiclegiver"])
 			if ("2A6 Leopard Tank (1000)")
 				PV = new /obj/effects/premadevehicles/tank/leopard2a6(locate(origin.x+3,origin.y-5,origin.z))
+			if ("CV90 IFV (800)")
+				PV = new /obj/effects/premadevehicles/apc/cv90(locate(origin.x+3,origin.y-5,origin.z))
 			if ("Mercedes-Benz Jeep with MG (400)")
 				PV = new /obj/effects/premadevehicles/car/mercedes/mg(locate(origin.x+3,origin.y-5,origin.z))
 			if ("DAF YA-4442 Supply Truck (300)")
@@ -2255,10 +2257,8 @@
 
 			if ("T-90A Tank (1200)")
 				PV = new /obj/effects/premadevehicles/tank/t90a(locate(origin.x+3,origin.y-5,origin.z))
-			if ("BMD-2 IFV with ATGM (1200)")
-				PV = new /obj/structure/vehicleparts/axis/heavy/bmd2/atgm(locate(origin.x+3,origin.y-5,origin.z))
 			if ("BMD-2 IFV (900)")
-				PV = new /obj/structure/vehicleparts/axis/heavy/bmd2(locate(origin.x+3,origin.y-5,origin.z))
+				PV = new /obj/effects/premadevehicles/apc/bmd2(locate(origin.x+3,origin.y-5,origin.z))
 			if ("BTR-80 APC (700)")
 				PV = new /obj/effects/premadevehicles/apc/btr80(locate(origin.x+3,origin.y-5,origin.z))
 			if ("Tigr-M Humvee with MG (400)")

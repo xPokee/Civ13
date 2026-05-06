@@ -11,7 +11,7 @@
 		U = src
 	else
 		return
-	if (map.civilizations == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_COLONY || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.civilizations == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_COLONY || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		var/choosename = input(U, "Choose a name for the company:") as text|null
 		create_company_pr(choosename)
 		return
@@ -25,7 +25,7 @@
 	var/mob/living/human/H = src
 	for(var/i = 1, i <= map.custom_company_nr.len, i++)
 		if (map.custom_company_nr[i] == newname || newname == "Global")
-			usr << "<span class='danger'>That company already exists. Choose another name.</span>"
+			to_chat(usr, SPAN_DANGER("That company already exists. Choose another name."))
 			return
 	if (newname != null && newname != "none")
 		var/choosecolor1 = "#000000"
@@ -42,7 +42,7 @@
 		var/list/newnamev = list("[newname]" = list(list(H,100,0)))
 		map.custom_company += newnamev
 		map.custom_company_colors += list("[newname]" = list(choosecolor1,choosecolor2))
-		usr << "<big>You now own <b>100%</b> of the new company [newname].</big>"
+		to_chat(usr, "<big>You now own <b>100%</b> of the new company [newname].</big>")
 		return
 	else
 		return
@@ -55,7 +55,7 @@
 		H = src
 	else
 		return
-	if (map.civilizations == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_COLONY || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.civilizations == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_COLONY || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		var/found = FALSE
 		var/list/currlist = list()
 		var/list/currlist_ind = list("Cancel")
@@ -66,7 +66,7 @@
 					currlist_ind += cname
 					found = TRUE
 		if (!found)
-			usr << "You do not own any stocks."
+			to_chat(usr, "You do not own any stocks.")
 			return
 		else
 			var/compchoice = WWinput(H, "Which company to transfer stock ownership?", "Stock Transfer", "Cancel", currlist_ind)
@@ -103,7 +103,7 @@
 					CM << "<big>You received [compchoice_amt]% of [compchoice] from [H].</big>"
 					return
 	else
-		usr << "<span class='danger'>You cannot transfer company ownership on this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot transfer company ownership on this map."))
 		return
 
 //searches company members for a player

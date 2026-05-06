@@ -59,7 +59,7 @@
 		W.loc = src
 		if (istype(W, /obj/item/weapon/paper))
 			toppaper = W
-		user << "<span class='notice'>You clip the [W] onto \the [src].</span>"
+		to_chat(user, SPAN_NOTICE("You clip the [W] onto \the [src]."))
 		update_icon()
 
 	else if (istype(toppaper) && istype(W, /obj/item/weapon/pen))

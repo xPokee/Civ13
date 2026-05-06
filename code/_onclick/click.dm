@@ -4,7 +4,7 @@
 /*	Alternately, you could hardcode every mob's variation in a flat ClickOn() proc; however,
 	that's a lot of code duplication and is hard to maintain.
 	Note that this proc can be overridden, and is in the case of screen objects.*/
-/atom/Click(var/location, var/control, var/params) 
+/atom/Click(var/location, var/control, var/params)
 	if (src)
 		usr.ClickOn(src, params)
 
@@ -13,7 +13,7 @@
 		usr.DblClickOn(src, params)
 
 /*	Standard mob ClickOn()
-	Handles exceptions: Buildmode, middle click, modified clicks, mech actions
+	Handles exceptions: Buildmode (unused), middle click, modified clicks, mech actions
 	  After that, mostly just check your state, check whether you're holding an item,
 	  check whether you're adjacent to the target, then pass off the click to whoever
 	  is recieving it.
@@ -24,7 +24,7 @@
 	* mob/RangedAttack(atom,params) - used only ranged, only used for tk and laser eyes but could be changed */
 /mob/proc/ClickOn(var/atom/A, var/params)
 	if (world.time <= next_click) // Hard check, before anything else, to avoid crashing
-		return 
+		return
 	next_click = world.time + 1
 	/*if (client.buildmode)  //unused now
 		build_click(src, client.buildmode, params, A)
@@ -37,23 +37,23 @@
 		return
 	if (modifiers["shift"] && modifiers["middle"])
 		ShiftMiddleClickOn(A)
-		return 
+		return
 	if (modifiers["middle"])
 		MiddleClickOn(A)
-		return 
+		return
 	if (modifiers["shift"])
 		ShiftClickOn(A)
-		return 
+		return
 	if (modifiers["alt"])
 		AltClickOn(A)
-		return 
+		return
 	if (modifiers["ctrl"])
 		CtrlClickOn(A)
-		return 
+		return
 	if (ishuman(src)) //src is user who is click and human
 		var/mob/living/human/H = src
 		if (istype(H.shoes, /obj/item/clothing/shoes/football)) //TODO TO DO: move it to football.dm
-			if (H.football)  
+			if (H.football)
 				var/obj/item/football/FB = H.football
 				H.do_attack_animation(H.football)
 				H.football = null
@@ -77,7 +77,7 @@
 						opponent_has_ball = HM.football
 					if (prob(35) && opponent_has_ball)
 						H.visible_message("<font color='red'>[H] takes the ball from [HM]!</font>")
-						playsound(get_turf(H), 'sound/weapons/punch1.ogg', 50, 1)
+						playsound(H.loc, 'sound/weapons/punch1.ogg', 50, 1)
 						HM.football = null
 						opponent_has_ball.last_owner = H
 						opponent_has_ball.owner = H
@@ -86,7 +86,7 @@
 					else
 						H.visible_message("<font color='yellow'>[H] pressures [HM]!</font>")
 						H.do_attack_animation(HM)
-						playsound(get_turf(H), 'sound/weapons/punchmiss.ogg', 50, 1)
+						playsound(H.loc, 'sound/weapons/punchmiss.ogg', 50, 1)
 					return
 		if (istype(H.get_active_hand(), /obj/item/weapon/flamethrower)) //TO DO TODO: move it to flamethrower.dm
 			var/obj/item/weapon/flamethrower/FL = H.get_active_hand()
@@ -96,6 +96,21 @@
 			var/obj/item/weapon/reagent_containers/glass/fire_extinguisher/FE = H.get_active_hand()
 			var/cdir = get_dir(H,A)
 			FE.fire(H,cdir,A)
+		if (istype(H.get_active_hand(), /obj/item/weapon/gun))
+			var/obj/item/weapon/gun/GN = H.get_active_hand()
+			var/is_firing_from_vehicle = FALSE
+			var/turf/firer_turf = H.loc
+			for (var/obj/structure/vehicleparts/frame/F in firer_turf)
+				is_firing_from_vehicle = TRUE
+			if (is_firing_from_vehicle)
+				if ((H.loc != A.loc) && (A.x != 0 && A.y != 0))
+					H.dir = get_dir(H,A)
+					var/dt = world.time - GN.last_shot_time
+					if(dt > GN.firemodes[GN.sel_mode].burst_delay)
+						GN.Fire(A,H,params)
+					else
+						spawn(GN.last_shot_time + GN.firemodes[GN.sel_mode].burst_delay - world.time)
+							GN.Fire(A,H,params)
 		if (istype(H.buckled, /obj/structure/bed/chair/commander)) //TO DO TODO: move it to wheels.dm
 			var/obj/item/weapon/attachment/scope/adjustable/binoculars/periscope/P
 			if (istype(H.l_hand,/obj/item/weapon/attachment/scope/adjustable/binoculars/periscope))
@@ -105,8 +120,22 @@
 				P = H.r_hand
 				P.rangecheck(H,A)
 		if (istype(H.get_active_hand(), /obj/item/weapon/attachment/scope/adjustable/binoculars/laser_designator))
-			var/obj/item/weapon/attachment/scope/adjustable/binoculars/laser_designator/P = H.get_active_hand()
-			P.rangecheck(H,A)
+			if (istype(H.back, /obj/item/weapon/radio) || istype(H.wear_id, /obj/item/weapon/radio/walkietalkie))
+				if (!map.faction1_can_cross_blocks() && !map.faction2_can_cross_blocks())
+					to_chat(H, SPAN_DANGER("You can't use this yet."))
+					return
+				else
+					var/obj/item/weapon/attachment/scope/adjustable/binoculars/laser_designator/P = H.get_active_hand()
+					if (P.needs_instruments)
+						if (istype(H.get_inactive_hand(), /obj/item/weapon/compass))
+							P.rangecheck(H,A)
+						else
+							to_chat(H, SPAN_DANGER("You need to have a compass in your other hand to this!"))
+					else
+						P.rangecheck(H,A)
+			else
+				to_chat(H, SPAN_DANGER("You need to have a radio to use this!"))
+				return
 		if (istype(H.get_active_hand(), /obj/item/weapon/attachment/scope/adjustable/binoculars/binoculars))
 			var/obj/item/weapon/attachment/scope/adjustable/binoculars/binoculars/P = H.get_active_hand()
 			P.rangecheck(H,A)
@@ -120,9 +149,7 @@
 			return
 	if (stat || paralysis || stunned || weakened)
 		return
-	if (!prone)
-		face_atom(A) // change direction to face what you clicked on
-	else
+	if (prone)
 		var/cdir = get_dir(src, A)
 		if (cdir == NORTH || cdir == NORTHWEST || cdir == NORTHEAST || cdir == WEST)
 			dir = WEST
@@ -136,8 +163,23 @@
 			M.Turn(90)
 			M.Translate(1,-6)
 			transform = M
+	else
+		if (!using_drone)
+			face_atom(A) // change direction to face what you clicked on
+	
 	if (!canClick()) // in the year 2000...
 		return
+
+	if(using_object && istype(using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+		var/obj/item/weapon/gun/projectile/automatic/stationary/HMG = using_object
+		if (HMG.full_auto)
+			var/datum/firemode/F = HMG.firemodes[HMG.sel_mode]
+			spawn(F.burst_delay)
+				HMG.afterattack(A, src, FALSE, params)
+		else
+			HMG.afterattack(A, src, FALSE, params)
+		return TRUE
+
 	if (istype(A, /obj/structure/multiz/ladder/ww2)) // stop looking down a ladder 
 		var/mob/living/human/H = src
 		if (istype(H) && H.laddervision)
@@ -153,42 +195,7 @@
 			throw_item(A)
 			return
 		throw_mode_off()
-
 	var/obj/item/W = get_active_hand() //trying to resolve an item in hand
-	if (!W)
-		if (using_MG) //TO DO TODO: move to mg.dm
-			if (istype(using_MG, /obj/item/weapon/gun/projectile/automatic/stationary))
-				var/obj/item/weapon/gun/projectile/automatic/stationary/G = using_MG
-				var/can_fire = FALSE
-				switch (G.dir)
-					if (EAST)
-						if (A.x > G.x)
-							can_fire = TRUE
-						else
-							can_fire = FALSE
-					if (WEST)
-						if (A.x < G.x)
-							can_fire = TRUE
-						else
-							can_fire = FALSE
-					if (NORTH, NORTHEAST, NORTHWEST)
-						if (A.y > G.y)
-							can_fire = TRUE
-						else
-							can_fire = FALSE
-					if (SOUTH, SOUTHEAST, SOUTHWEST)
-						if (A.y < G.y)
-							can_fire = TRUE
-						else
-							can_fire = FALSE
-				if (can_fire)
-					if (G.full_auto)
-						var/datum/firemode/F = G.firemodes[G.sel_mode]
-						spawn(F.burst_delay)
-							G.afterattack(A, src, FALSE, params)
-					else
-						G.afterattack(A, src, FALSE, params)
-
 	if (W && W == A) // Handle attack_self (using item in hand)
 		W.attack_self(src, icon_x, icon_y)
 		if (hand)
@@ -196,7 +203,7 @@
 		else
 			update_inv_r_hand(0)
 		return TRUE
-	for(var/obj/structure/vehicleparts/frame/F in src.loc) 
+	for(var/obj/structure/vehicleparts/frame/F in src.loc)
 		var/found = FALSE
 		if(istype(F, /obj/structure/vehicleparts/frame/ship))
 			continue
@@ -236,16 +243,13 @@
 	// A is a turf or is on a turf, or in something on a turf (pen in a box); but not something in something on a turf (pen in a box in a backpack)
 	sdepth = A.storage_depth_turf()
 	if (isturf(A) || isturf(A.loc) || (sdepth != -1 && sdepth <= 1))
-		if (A.Adjacent(src) || (W && W == get_active_hand() && (istype(W, /obj/item/weapon/barrier))) && A.rangedAdjacent(src)) // see adjacent.dm
+		if (A.Adjacent(src)) // see adjacent.dm
 			dir = get_dir(src, A)
-			if (W && istype(W, /obj/item/weapon/barrier) && A.rangedAdjacent(src) && (isturf(A) || istype(A, /obj/structure/window/barrier/incomplete)))
+			if (W && A.rangedAdjacent(src))
 				if (get_active_hand() != W)
 					return
-				if (!istype(A, /obj/structure/window/barrier/incomplete))
-					A = get_turf(A)
-				else
-					if (!A.Adjacent(src)) // if we're adding to a sandbag wall, let us stand anywhere in range(1)
-						return
+				if (!A.Adjacent(src)) // if we're not adjacent.
+					return	
 				var/needs_to_be_in_front = istype(A, /turf)
 				if (needs_to_be_in_front) // but if we're making a new sandbag wall, we have to click right in front of us.
 					if (A != get_step(src, dir))
@@ -255,11 +259,8 @@
 				if (!resolved && A && W)
 					if (istype(W, /obj/item/weapon/gun))
 						var/obj/item/weapon/gun/G = W
-						if (G.full_auto)
-							var/datum/firemode/F = G.firemodes[G.sel_mode]
-							spawn(F.burst_delay)
-								W.afterattack(A, src, TRUE, params) // TRUE indicates adjacency
-						else
+						var/dt = world.time - G.last_shot_time
+						if(dt > G.firemodes[G.sel_mode].burst_delay)
 							W.afterattack(A, src, TRUE, params) // TRUE indicates adjacency
 					else
 						W.afterattack(A, src, TRUE, params) // TRUE indicates adjacency
@@ -272,11 +273,8 @@
 			if (W)
 				if (istype(W, /obj/item/weapon/gun))
 					var/obj/item/weapon/gun/G = W
-					if (G.full_auto)
-						var/datum/firemode/F = G.firemodes[G.sel_mode]
-						spawn(F.burst_delay)
-							W.afterattack(A, src, FALSE, params)
-					else
+					var/dt = world.time - G.last_shot_time
+					if(dt > G.firemodes[G.sel_mode].burst_delay)
 						W.afterattack(A, src, FALSE, params)
 				else
 					W.afterattack(A, src, FALSE, params)
@@ -501,7 +499,7 @@
 				H.football.last_owner = H
 				H.football = null
 		jump_act(src, M)
-	if (map && map.ID == MAP_FOOTBALL_CAMPAIGN)
+	if (map && map.ID == MAP_FOOTBALL_CMP)
 		if (ishuman(M))
 			var/mob/living/human/H = M
 			if (H.football)
@@ -518,3 +516,70 @@
 			bite_act(M)
 		else
 			M.swap_hand()
+
+// AUTOMATIC CLICKS
+
+///////////////////////////
+/////AUTOMATIC CLICKS//////
+///////////////////////////
+/client/MouseDown(object, location, control, params)
+	if (object == mob)
+		return ..(object, location, control, params)
+	var/delay = mob.CanMobAutoclick(object, location, params)
+	if (delay)
+		selected_target[1] = object
+		selected_target[2] = params
+		while (selected_target[1] && mob && !mob.lying && mob.stat == CONSCIOUS)
+			if (mob.using_object && istype(mob.using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+				Click(selected_target[1], location, control, selected_target[2])
+			else
+				var/obj/item/weapon/gun/G = mob.get_active_hand()
+				if (G && istype(G))
+					G.next_fire_time = 0 // no 'you can't fire' spam
+					Click(selected_target[1], location, control, selected_target[2])
+			sleep(delay)
+	else
+		return ..(object, location, control, params)
+
+/client/MouseUp(object, location, control, params)
+	selected_target[1] = null
+
+/client/MouseDrag(src_object,atom/over_object,src_location,over_location,src_control,over_control,params)
+	if (selected_target[1] && over_object && over_object.IsAutoclickable())
+		selected_target[1] = over_object
+		selected_target[2] = params
+
+/mob/proc/CanMobAutoclick(object, location, params)
+	return
+
+/mob/living/human/CanMobAutoclick(atom/object, location, params)
+	if (object)
+		if (!object.IsAutoclickable())
+			return
+	if (using_object && istype(using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+		var/obj/item/weapon/gun/projectile/automatic/stationary/HMG = using_object
+		if (HMG.used_by_mob == src)
+			return HMG.CanItemAutoclick(object, location, params)
+	else
+		var/obj/item/H = get_active_hand()
+		if (H)
+			return H.CanItemAutoclick(object, location, params)
+
+/obj/item/proc/CanItemAutoclick(object, location, params)
+	return
+
+/obj/item/weapon/gun/CanItemAutoclick(object, location, params)
+	if (full_auto)
+		var/datum/firemode/F = firemodes[sel_mode]
+		return F.burst_delay
+	else
+		return FALSE
+
+/atom/proc/IsAutoclickable()
+	return TRUE
+
+/obj/screen/IsAutoclickable()
+	return FALSE
+
+/obj/screen/click_catcher/IsAutoclickable()
+	return TRUE

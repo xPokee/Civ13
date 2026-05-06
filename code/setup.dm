@@ -56,10 +56,13 @@
 		for (var/i in flist_temp)
 			if (findtext(i, ";"))
 				var/list/current = splittext(i, ";")
-				if (current[2] == "red")
-					faction_list_red += current[1]
-				else if (current[2] == "blue")
-					faction_list_blue += current[1]
+				switch (current[2])
+					if ("Blue Faction")
+						faction_list_blue += current[1]
+					if ("Red Faction")
+						faction_list_red += current[1]
+					if ("Faction Organizer")
+						faction_list_organizer += current[1]
 	else
 		admin_notice("<span class='danger'>Failed to load factionlist!</span>", R_DEBUG)
 	
@@ -124,7 +127,7 @@
 				map.default_research = 19
 			map.gamemode = "Persistent (Auto-Research)"
 			config.allow_vote_restart = FALSE
-			world << "<big><b>The current round has been set as a Persistent Round.</b></big>"
+			to_chat(world, "<big><b>The current round has been set as a Persistent Round.</b></big>")
 */
 	if (config.allowedgamemodes == "PERSISTENCE")
 		map.persistence = TRUE
@@ -138,7 +141,7 @@
 			map.default_research = 19
 		map.gamemode = "Persistent (Auto-Research)"
 		config.allow_vote_restart = FALSE
-		world << "<big><b>The current round has been set as a Persistent Round.</b></big>"
+		to_chat(world, "<big><b>The current round has been set as a Persistent Round.</b></big>")
 
 	//////////////////////////////////////////////////////
 	admin_notice("<span class='danger'>Initializations complete.</span>", R_DEBUG)

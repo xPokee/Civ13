@@ -96,7 +96,7 @@
 				name = sanitize(_name, 50)
 				return
 		else
-			usr << "You can't name this [src], as it does not belong to you or your faction."
+			to_chat(usr, "You can't name this [src], as it does not belong to you or your faction.")
 			return
 	else
 		if (name == initial(name) && !istype(src, /mob/living/simple_animal/hostile) && !istype(src, /mob/living/simple_animal/mosquito))
@@ -303,7 +303,7 @@
 						if ("patrol", "stop patrolling", "follow")
 							command_levels["patrol"] = command_level_to_dog
 							command_levels["anything"] = command_level_to_dog
-s
+
 /mob/living/simple_animal/complex_animal/dog/can_wander_specialcheck()
 	if (faction && pulledby && check_can_command(list("master", "team"), pulledby))
 		return FALSE

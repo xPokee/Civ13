@@ -8,6 +8,7 @@
 	opacity = FALSE
 	not_movable = TRUE
 	not_disassemblable = FALSE
+	crushable = FALSE
 	flammable = FALSE
 	layer = 2.5
 	var/switched = "forward"
@@ -57,7 +58,7 @@
 				if (R.dir == EAST)
 					icon_state = "rails_split1"
 					dir = OPPOSITE_DIR(R.dir)
-	spawn(10) 
+	spawn(10)
 		update_icon()
 
 /obj/structure/rails/regular/horizontal/New()
@@ -317,7 +318,7 @@
 	for (var/mob/living/L in oldloc)
 		L.loc = loc
 	for (var/obj/O in oldloc)
-		if (O.anchored && O in transporting)
+		if (O.anchored && (O in transporting))
 			O.loc = loc
 	if (connected)
 		connected.Move(oldloc, dir)
@@ -482,7 +483,7 @@
 	..()
 
 /obj/structure/trains/storage/attack_hand(mob/user as mob)
-	if (istype(user, /mob/living/human) && user in range(1,src))
+	if (istype(user, /mob/living/human) && (user in range(1,src)))
 		storage.open(user)
 		update_icon()
 	else
@@ -726,7 +727,7 @@
 			qdel(W)
 			user << "You refuel \the [src]."
 			return
-		else if (istype(S, /obj/item/stack/material/wood))
+		else if (istype(S, /obj/item/stack/material/wood || /material/wood/soft))
 			if (fuel>=max_fuel)
 				user << "<span class = 'notice'>The combustion chamber is full!</span>"
 				return

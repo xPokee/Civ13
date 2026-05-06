@@ -41,7 +41,9 @@
 	if (map && map.nomads)
 		verbs += /mob/proc/faction_list
 		verbs += /mob/proc/religion_list
-/////////////FACTIONS////////////////////////////
+
+/////////////   FACTIONS   /////////////
+
 /mob/living/human/proc/create_faction()
 	set name = "Create Faction"
 	set category = "Faction"
@@ -52,9 +54,9 @@
 	else
 		return
 
-	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.civilization != "none")
-			usr << "<span class='danger'>You are already in a faction. Abandon it first.</span>"
+			to_chat(usr, SPAN_DANGER("You are already in a faction. Abandon it first."))
 			return
 		else
 			var/choosename = input(src, "Choose a name for the faction:") as text|null
@@ -64,7 +66,7 @@
 				make_title_changer()
 				return
 	else
-		usr << "<span class='danger'>You cannot create a faction in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot create a faction in this map."))
 		return
 
 /mob/living/human/proc/create_faction_pr(var/newname = "none")
@@ -73,7 +75,7 @@
 	var/mob/living/human/H = src
 	for(var/i = 1, i <= map.custom_faction_nr.len, i++)
 		if (map.custom_faction_nr[i] == newname)
-			usr << "<span class='danger'>That faction already exists. Choose another name.</span>"
+			to_chat(usr, SPAN_DANGER("That faction already exists. Choose another name."))
 			return
 	if (newname != null && newname != "none")
 		var/choosecolor1 = "#000000"
@@ -97,7 +99,7 @@
 												//ind						mil					med			leader money	symbol	main color	backcolor, sales tax, business tax
 		var/newnamev = list("[newname]" = list(map.default_research,map.default_research,map.default_research,H,0,choosesymbol,choosecolor1,choosecolor2,10,10))
 		map.custom_civs += newnamev
-		usr << "<big>You are now the leader of the <b>[newname]</b> faction.</big>"
+		to_chat(usr, "<big>You are now the leader of the <b>[newname]</b> faction.</big>")
 		return
 	else
 		return
@@ -112,9 +114,9 @@
 		U = src
 	else
 		return
-	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.civilization == "none")
-			usr << "You are not part of any faction."
+			to_chat(usr, "You are not part of any faction.")
 			return
 		else
 			var/confirmation = WWinput(src, "Are you sure you want to leave your faction? You won't be able to re-join it for 24 hours, and everyone will know you're a former member.", "", "Stay in faction", list("Leave", "Stay in faction"))
@@ -123,7 +125,7 @@
 			else
 				faction_leaving_proc()
 	else
-		usr << "<span class='danger'>You cannot leave a faction in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot leave a faction in this map."))
 		return
 
 
@@ -152,9 +154,9 @@
 		U = src
 	else
 		return
-	if (map.civilizations == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.civilizations == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.civilization == "none")
-			usr << "You are not part of any faction."
+			to_chat(usr, "You are not part of any faction.")
 			return
 		else
 			if (map.custom_civs[U.civilization][4] != null)
@@ -179,13 +181,13 @@
 						U.remove_title_changer()
 						U.remove_commander()
 				else
-					usr << "<span class='danger'You are not the Leader, so you can't transfer the faction's leadership.</span>"
+					to_chat(usr, SPAN_DANGER("You are not the Leader, so you can't transfer the faction's leadership."))
 					return
 			else
-				usr << "<span class='danger'There is no Leader, so you can't transfer the faction's leadership.</span>"
+				to_chat(usr, SPAN_DANGER("There is no Leader, so you can't transfer the faction's leadership."))
 
 	else
-		usr << "<span class='danger'>You cannot transfer leadership of a faction in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot transfer leadership of a faction in this map."))
 		return
 
 /mob/living/human/proc/become_leader()
@@ -197,13 +199,13 @@
 		U = src
 	else
 		return
-	if (map.civilizations == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.civilizations == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.civilization == "none")
-			usr << "You are not part of any faction."
+			to_chat(usr, "You are not part of any faction.")
 			return
 		else
 			if (map.custom_civs[U.civilization][4] != null)
-				usr << "<span class='danger'>There already is a Leader of the faction. He must transfer the leadership or be removed first.</span>"
+				to_chat(usr, SPAN_DANGER("There already is a Leader of the faction. He must transfer the leadership or be removed first."))
 				return
 
 			else if (map.custom_civs[U.civilization][4] == null)
@@ -214,7 +216,7 @@
 				U.make_title_changer()
 				make_commander()
 	else
-		usr << "<span class='danger'>You cannot become a Leader in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot become a Leader in this map."))
 		return
 
 
@@ -227,11 +229,11 @@
 		if (istype(usr, /mob/living/human))
 			var/mob/living/human/H = usr
 			if (H.civilization == "none")
-				usr << "You are not part of any faction."
+				to_chat(usr, "You are not part of any faction.")
 				return
 			else
 				if (H.faction_perms[3] == 0)
-					usr << "<span class='danger'>You don't have the permissions to give titles.</span>"
+					to_chat(usr, SPAN_DANGER("You don't have the permissions to give titles."))
 					return
 
 				else
@@ -250,7 +252,7 @@
 						else
 							U.title = inp
 							U.name = "[U.title] [U.name]"
-							usr << "[src] is now a [U.title]."
+							to_chat(src, "[src] is now a [U.title].")
 							return
 	else if (map.ID == MAP_VOYAGE)
 		var/list/closemobs = list("Cancel")
@@ -276,12 +278,12 @@
 					U.title = inp
 					U.original_job_title = inp
 					U.name = "[U.title] [U.name]"
-				usr << "[U.real_name] has been assigned the job of [inp]."
+				to_chat(usr, "[U.real_name] has been assigned the job of [inp].")
 				var/job_msg = "You have been assigned to the job of [inp]."
 				WWalert(U, job_msg, "Job Assignment")
 				return
 	else
-		usr << "<span class='danger'>You cannot give titles in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot give titles in this map."))
 		return
 
 /mob/living/human/proc/Remove_Title()
@@ -293,11 +295,11 @@
 		if (istype(usr, /mob/living/human))
 			var/mob/living/human/H = usr
 			if (H.civilization == "none")
-				usr << "You are not part of any faction."
+				to_chat(usr, "You are not part of any faction.")
 				return
 			else
 				if (H.faction_perms[3] == 0)
-					usr << "<span class='danger'>You don't have the permissions to remove titles.</span>"
+					to_chat(usr, SPAN_DANGER("You don't have the permissions to remove titles."))
 					return
 
 				else
@@ -312,11 +314,11 @@
 						U = choice2
 						if (U && U.title != "")
 							U.fully_replace_character_name(U.real_name,replacetext(U.real_name,"[U.title] ",""))
-							usr << "[src]'s title of [U.title] has been removed by [usr]."
+							to_chat(usr, "[src]'s title of [U.title] has been removed by [usr].")
 							U.title = ""
 							return
 						else
-							usr << "[src] has no title."
+							to_chat(usr, "[src] has no title.")
 							return
 	else if (map.ID == MAP_VOYAGE)
 		var/list/closemobs = list("Cancel")
@@ -330,16 +332,16 @@
 			U = choice2
 			if (U && U.title != "")
 				U.fully_replace_character_name(U.real_name,replacetext(U.real_name,"[U.title] ",""))
-				usr << "[U]'s job of [U.title] has been removed by [usr]."
+				to_chat(usr, "[U]'s job of [U.title] has been removed by [usr].")
 				U.original_job_title = "Pirate"
 				U.title = ""
 				WWalert(U,"Your job has been removed. You are now a basic sailor.","Job Assignment")
 				return
 			else
-				usr << "[U] has no job assigned."
+				to_chat(usr, "[U] has no job assigned.")
 				return
 	else
-		usr << "<span class='danger'>You cannot give titles in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot give titles in this map."))
 		return
 
 ////////////////POSTERS, BANNERS, ETC//////////////////////////////
@@ -386,12 +388,13 @@
 
 /obj/structure/banner/faction/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if (W.sharp)
-		user << "You start ripping off the [src]..."
+		user.visible_message("<span class ='danger'>[user] starts ripping off \the [src]!</span>", "<span class ='danger'>You start ripping off \the [src]!</span>")
 		if (do_after(user, 130, src))
-			visible_message("[user] rips the [src]!")
+			user.visible_message("<span class ='warning'>[user] rips \the [src]!</span>", "<span class = 'warning'>You rip off \the [src]!</span>")
 			qdel(src)
 	else
 		..()
+
 /obj/structure/banner/faction/team
 	var/team = null
 	name = "team banner"
@@ -525,11 +528,12 @@
 			overlays += overs
 		update_icon()
 		invisibility = 0
+
 /obj/structure/poster/faction/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if (W.sharp)
-		user << "You start ripping off the [src]..."
+		user.visible_message("<span class ='danger'>[user] starts ripping off \the [src]!</span>", "<span class ='danger'>You start ripping off \the [src]!</span>")
 		if (do_after(user, 70, src))
-			visible_message("[user] rips the [src]!")
+			user.visible_message("<span class ='warning'>[user] rips \the [src]!</span>", "<span class = 'warning'>You rip off \the [src]!</span>")
 			overlays.Cut()
 			icon_state = "poster_ripped"
 			color = color2

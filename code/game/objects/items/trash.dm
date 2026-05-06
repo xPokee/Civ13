@@ -10,14 +10,14 @@
 
 /obj/item/kitchen/plate
 	name = "plate"
-	desc = "a common plate."
+	desc = "A common plate."
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "plate"
 	dropsound = 'sound/effects/drop_glass.ogg'
 
 /obj/item/kitchen/snack_bowl
 	name = "bowl"
-	desc = "a common bowl."
+	desc = "A common bowl."
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "snack_bowl"
 	dropsound = 'sound/effects/drop_glass.ogg'
@@ -25,7 +25,7 @@
 
 /obj/item/kitchen/wood_bowl
 	name = "wood bowl"
-	desc = "a common wood bowl."
+	desc = "A common wood bowl."
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "wood_bowl"
 	value = 2
@@ -40,7 +40,7 @@
 	pixel_x = rand(-5,5)
 /obj/item/trash/tray
 	name = "tray"
-	desc = "a common tray."
+	desc = "A common tray."
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "tray"
 
@@ -59,12 +59,12 @@
 		if(istype(W, /obj/item/weapon/reagent_containers/glass))
 			var/obj/item/weapon/reagent_containers/glass/G = W
 			if(!G.is_open_container())
-				user << "<span class='notice'>\The [G.name] is closed.</span>"
+				to_chat(user, SPAN_NOTICE("\The [G.name] is closed."))
 				return
 			if(!G.reagents.get_free_space())
-				user << "<span class='notice'>[G.name] is full.</span>"
+				to_chat(user, SPAN_NOTICE("[G.name] is full."))
 				return
-			user << "You smash the [src.name] inside the [G.name], creating lard."
+			to_chat(user, "You smash the [src.name] inside the [G.name], creating lard.")
 			G.reagents.add_reagent("lard", 1)
 			qdel(src)
 			return

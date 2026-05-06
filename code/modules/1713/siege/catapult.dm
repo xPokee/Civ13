@@ -230,7 +230,7 @@
 							hit = TRUE
 
 					if (hit)
-						playsound(target, "artillery_in", 70, TRUE)
+						playsound(target, "artillery_in", 100, FALSE)
 						spawn (10)
 							var/target_area_original_integrity = target_area.artillery_integrity
 							if (target_area.location == AREA_INSIDE && !target_area.arty_act(25))
@@ -283,7 +283,7 @@
 		Distance: <a href='?src=\ref[src];set_angle=1'>[angle] meters</a><br><br>
 		<br>
 		<center>
-		<a href='?src=\ref[src];fire=1'><b><big>FIRE!</big></b></a>
+		<a href='?src=\ref[src];fire=1'><big><b>FIRE!</b></big></a>
 		</center>
 
 		</body>
@@ -299,7 +299,7 @@
 	if (anchored)
 		user << "<span class='notice'>You need to unsecure the catapult first!</span>"
 	else
-		set_dir(turn(dir, -90))
+		set_dir(turn(dir, 90))
 	return
 
 /obj/structure/catapult/verb/rotate_right()
@@ -309,7 +309,7 @@
 	if (anchored)
 		user << "<span class='notice'>You need to unsecure the catapult first!</span>"
 	else
-		set_dir(turn(dir, 90))
+		set_dir(turn(dir, -90))
 
 	return
 

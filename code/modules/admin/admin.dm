@@ -66,7 +66,8 @@ proc/admin_notice(var/message, var/rights)
 		<b>Mob type</b> = [M.type]<br><br>
 		<A href='?src=\ref[src];boot2=\ref[M]'>Kick</A> |
 		<A href='?_src_=holder;warn=[M.ckey]'>Warn</A> |
-		<A href='?src=\ref[src];notes=show;mob=\ref[M]'>Notes</A>
+		<A href='?src=\ref[src];notes=show;mob=\ref[M]'>Notes</A> |
+		<A href='?_src_=holder;CentCom=[M.ckey]'>CentCom Ban DB</A>
 	"}
 
 // <A href='?src=\ref[src];newban=\ref[M]'>Ban</A> |
@@ -119,6 +120,7 @@ proc/admin_notice(var/message, var/rights)
 				<A href='?src=\ref[src];simplemake=wolfman;mob=\ref[M]'>Werewolf</A> |
 				<A href='?src=\ref[src];simplemake=ant;mob=\ref[M]'>Ant</A> |
 				<A href='?src=\ref[src];simplemake=orc;mob=\ref[M]'>Orc</A> |
+				<A href='?src=\ref[src];simplemake=droid;mob=\ref[M]'>Droid</A> |
 				<br>"}
 	body += {"<br><br>
 			<b>Other actions:</b>
@@ -262,9 +264,8 @@ proc/admin_notice(var/message, var/rights)
 	if (!check_rights(R_ADMIN))	return
 
 	var/dat = {"
-		[common_browser_style]
 		<br>
-		<center><b><big>Game Panel</big></b></center><hr>\n
+		<center><big><b>Game Panel</b></big></center><hr>\n
 		"}
 		//		<A href='?src=\ref[src];c_mode=1'>Change Game Mode</A><br>
 /*	if (master_mode == "secret")
@@ -283,7 +284,7 @@ proc/admin_notice(var/message, var/rights)
 		<A href='?src=\ref[src];modify_world_var=1'>Modify a World Variable (may not be an object or list)</A><br><br>
 		"}
 
-	dat = "<center><big>[dat]</big></center>"
+	dat = "<html>[common_browser_style]<center><big>[dat]</big></center></html>"
 
 	usr << browse(dat, "window=admin2;size=400x500")
 	return
@@ -452,8 +453,9 @@ proc/admin_notice(var/message, var/rights)
 	set category = "Server"
 	set desc = "People can't enter"
 	set name = "Toggle Entering"
-	config.enter_allowed = !(config.enter_allowed)
-	if (!(config.enter_allowed))
+	set desc = "People can't enter"
+	GLOB.enter_allowed = !(GLOB.enter_allowed)
+	if (!(GLOB.enter_allowed))
 		world << "<b>New players may no longer enter the game.</b>"
 	else
 		world << "<b>New players may now enter the game.</b>"
@@ -466,13 +468,13 @@ proc/admin_notice(var/message, var/rights)
 	set category = "Server"
 	set desc = "Respawn basically"
 	set name = "Toggle Respawn"
-	config.abandon_allowed = !(config.abandon_allowed)
-	if (config.abandon_allowed)
+	GLOB.abandon_allowed = !(GLOB.abandon_allowed)
+	if (GLOB.abandon_allowed)
 		world << "<b>You may now respawn.</b>"
 	else
 		world << "<b>You may no longer respawn :(</b>"
-	message_admins("<span class = 'notice'>[key_name_admin(usr)] toggled respawn to [config.abandon_allowed ? "On" : "Off"].</span>", key_name_admin(usr))
-	log_admin("[key_name(usr)] toggled respawn to [config.abandon_allowed ? "On" : "Off"].")
+	message_admins("<span class = 'notice'>[key_name_admin(usr)] toggled respawn to [GLOB.abandon_allowed ? "On" : "Off"].</span>", key_name_admin(usr))
+	log_admin("[key_name(usr)] toggled respawn to [GLOB.abandon_allowed ? "On" : "Off"].")
 	world.update_status()
 
 /datum/admins/proc/delay()
@@ -763,7 +765,6 @@ proc/admin_notice(var/message, var/rights)
 			usr << "- name: [item.name] icon: [item.item_icon] path: [item.item_path] desc: [item.item_desc]"
 */
 
-var/list/atom_types = null
 /datum/admins/proc/spawn_atom(var/object as text)
 	set category = "Debug"
 	set desc = "(atom path) Spawn an atom"
@@ -771,12 +772,10 @@ var/list/atom_types = null
 
 	if (!check_rights(R_SPAWN))	return
 
-	if (!atom_types)
-		atom_types = typesof(/atom)
+	var/list/types = typesof(/atom)
+	var/list/matches = new()
 
-	var/list/matches = list()
-
-	for (var/path in atom_types)
+	for (var/path in types)
 		if (findtext("[path]", object))
 			matches += path
 
@@ -788,7 +787,7 @@ var/list/atom_types = null
 		chosen = matches[1]
 	else
 		chosen = WWinput(usr, "Select an atom type", "Spawn Atom", matches[1], WWinput_list_or_null(matches))
-		if (!chosen || chosen == "")
+		if (!chosen)
 			return
 
 	if (ispath(chosen,/turf))
@@ -1058,10 +1057,13 @@ var/list/atom_types = null
 		for (var/i in flist_temp)
 			if (findtext(i, ";"))
 				var/list/current = splittext(i, ";")
-				if (current[2] == "red")
-					faction_list_red += current[1]
-				else if (current[2] == "blue")
-					faction_list_blue += current[1]
+				switch (current[2])
+					if ("Blue Faction")
+						faction_list_blue += current[1]
+					if ("Red Faction")
+						faction_list_red += current[1]
+					if ("Faction Organizer")
+						faction_list_organizer += current[1]
 	else
 		message_admins("<span class='danger'>Failed to load factionlist!</span>", key_name(usr))
 
@@ -1100,37 +1102,43 @@ var/list/atom_types = null
 
 	if (!check_rights(R_SERVER))	return
 	if (!map || map.ID != MAP_VOYAGE)
-		WWalert(usr, "This only works on Voyage!","Wrong Map")
+		WWalert(usr, "This only works on Voyage!", "Wrong Map")
 		return
+
 	var/obj/map_metadata/voyage/nmap = map
 	var/do_clear = FALSE
 	var/do_load = FALSE
-	var/checking = WWinput(usr, "Do you just want to clear the map, load, or load without clearing?","Load Map","Cancel",list("Clear and load","Load without clearing","Just clear","Cancel"))
-	switch(checking)
-		if("Clear and load")
+	var/checking = WWinput(usr, "Do you just want to clear the map, load, or load without clearing?", "Load Map", "Cancel",list("Clear and load", "Load without clearing", "Just clear", "Cancel"))
+	switch (checking)
+		if ("Clear and load")
 			do_clear = TRUE
 			do_load = TRUE
-		if("Load without clearing")
+		if ("Load without clearing")
 			do_clear = FALSE
 			do_load = TRUE
-		if("Just clear")
+		if ("Just clear")
 			do_clear = TRUE
 			do_load = FALSE
-			nmap.clear_map()
-			message_admins("[key_name(usr)] manually cleared the map.", key_name(usr))
 			return
-		if("Cancel")
+		if ("Cancel")
 			return
+
+	if (do_clear)
+		nmap.clear_map()
+		message_admins("[key_name(usr)] manually cleared the map.", key_name(usr))
+
 	if (do_load)
-		var/loct = WWinput(usr, "Which location to load into?","Load Map","Random",list("north","south","random"))
+		var/loct = WWinput(usr, "Which location to load into?", "Load Map", "Random",list("north", "south", "random"))
 		var/options = list("manual input")
-		var/t_options = flist("maps/zones/[loct]/")
+		var/t_options = flist("maps/zones/voyage/[loct]/")
 		for(var/i in t_options)
 			if(findtext(i,"dmm"))
 				options += replacetext(i, ".dmm", "")
-		var/nam = WWinput(usr, "Which map to load?","Load Map","manual input",options)
+
+		var/nam = WWinput(usr, "Which map to load?", "Load Map", "manual input",options)
 		if (nam == "manual input")
-			nam = input(usr, "which map?","Manual Input","") as text
+			nam = input(usr, "which map?", "Manual Input", "") as text
+
 		nmap.navmoving = FALSE
 		for(var/obj/effect/sailing_effect/S in world)
 			S.icon_state = "sailing_effect_stopped"
@@ -1139,15 +1147,61 @@ var/list/atom_types = null
 		nmap.ship_anchored = TRUE
 		for(var/obj/structure/voyage/anchor_capstan/VAC in world)
 			VAC.update_icon()
-		world << "<font size=4 color='yellow'>The ship arrives at the destination.</font>"
-		if (do_clear)
-			nmap.clear_map()
-			message_admins("[key_name(usr)] manually cleared the map.", key_name(usr))
-		if (do_load)
-			nmap.load_map(nam,loct)
-			message_admins("[key_name(usr)] manually loaded an event.", key_name(usr))
+		to_chat(world, "<font size=4 color='yellow'>The ship arrives at the destination.</font>")
+		
+		nmap.load_map(nam,loct)
+		message_admins("[key_name(usr)] manually loaded an event.", key_name(usr))
 
-client/proc/debug_variables_map()
+/client/proc/load_battle_ship()
+	set name = "Load Battle Ship"
+	set category = "Debug"
+
+	if (!check_rights(R_SERVER))	return
+	if (!map || map.ID != MAP_BATTLE_SHIPS)
+		WWalert(usr, "This only works on Battle Ships!", "Wrong Map")
+		return
+
+	var/obj/map_metadata/battle_ships/nmap = map
+	var/do_clear = FALSE
+	var/do_load = FALSE
+	var/checking = WWinput(usr, "Do you want to clear the map or load?", "Load Map", "Cancel", list("Clear and load", "Just clear", "Cancel"))
+	switch (checking)
+		if ("Clear and load")
+			do_clear = TRUE
+			do_load = TRUE
+		if ("Just clear")
+			do_clear = TRUE
+			return
+		if ("Cancel")
+			return
+
+	if (do_clear)
+		var/clear_loc = WWinput(usr, "Clear which location?", "Clear Map", "middle", list("north","south","middle"))
+		switch (clear_loc)
+			if ("south")
+				nmap.clear_faction1()
+			if ("north")
+				nmap.clear_faction2()
+			if ("middle")
+				nmap.clear_middle()
+		message_admins("[key_name(usr)] manually cleared the map.", key_name(usr))
+
+	if (do_load)
+		var/loct = WWinput(usr, "Which location to load into?", "Load Map", "middle", list("north","south","middle"))
+		var/options = list("manual input")
+		var/t_options = flist("maps/zones/battle_ships/[loct]/")
+		for(var/i in t_options)
+			if(findtext(i, "dmm"))
+				options += replacetext(i, ".dmm", "")
+
+		var/nam = WWinput(usr, "Which map to load?", "Load Map", "manual input", options)
+		if (nam == "manual input")
+			nam = input(usr, "which map?", "Manual Input", "") as text
+
+		nmap.load_map(nam,loct)
+		message_admins("[key_name(usr)] manually loaded a map.", key_name(usr))
+
+/client/proc/debug_variables_map()
 	set name = "Debug Map Variables"
 	set category = "Debug"
 
@@ -1177,6 +1231,7 @@ client/proc/debug_variables_map()
 	if (map)
 		map.load_new_recipes()
 	world.log << "Finished loading recipes."
+	
 /datum/admins/proc/toggle_ores()
 	set category = "Nomads"
 	set desc = "Toggle ore spawners on and off"
@@ -1255,7 +1310,7 @@ client/proc/debug_variables_map()
 		world.log << "[usr] set the worlds radiation to [num]."
 
 /datum/admins/proc/set_pollution()
-	set category = "Fun"
+	set category = "Debug"
 	set desc = "Set the pollution level of the world."
 	set name = "Set World Pollution"
 
@@ -1265,6 +1320,30 @@ client/proc/debug_variables_map()
 	else
 		set_global_pollution(num)
 		world.log << "[usr] set the worlds pollution to [num]."
+
+/datum/admins/proc/set_faction1_supply_points()
+	set category = "Fun"
+	set desc = "Set Faction 1 Supply Points."
+	set name = "Set Faction 1 Supply Points"
+
+	var/num = input(usr, "Enter how many supply points the faction should have, press cancel or leave blank if you change your mind.", "Set Supply Points", 0) as num
+	if (!isnum(num) || num < 0)
+		return
+	else
+		faction1_supply_points = num
+		world.log << "[usr] set faction 1 supply points to [num]."
+
+/datum/admins/proc/set_faction2_supply_points()
+	set category = "Fun"
+	set desc = "Set Faction 2 Supply Points."
+	set name = "Set Faction 2 Supply Points"
+
+	var/num = input(usr, "Enter how many supply points the faction should have, press cancel or leave blank if you change your mind.", "Set Supply Points", 0) as num
+	if (!isnum(num) || num < 0)
+		return
+	else
+		faction2_supply_points = num
+		world.log << "[usr] set faction 2 supply points to [num]."
 
 /datum/admins/proc/zombiemechanic()
 	set category = "Fun"

@@ -51,7 +51,7 @@
 			else
 				new_overlays += "[initial(icon_state)]-powered"
 
-		var/ratio = Ceiling(bcell.percent()/25) * 25
+		var/ratio = ceil(bcell.percent()/25) * 25
 		new_overlays += "[initial(icon_state)]-charge[ratio]"
 	else
 		new_overlays += "[initial(icon_state)]-nocell"
@@ -452,6 +452,7 @@
 
 	M.emote("gasp")
 	M.Weaken(rand(10,25))
+	M.never_set_faction_huds = TRUE
 	M.updatehealth()
 	apply_brain_damage(M)
 

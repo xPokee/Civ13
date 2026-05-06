@@ -1,6 +1,23 @@
 //#define Clamp(value, low, high) 	(value <= low ? low : (value >= high ? high : value))
 //#define CLAMP01(x) 		(Clamp(x, FALSE, TRUE))
 
+/*
+ Get the turf that `A` resides in, regardless of any containers.
+ 
+ Use in favor of `A.loc` or `src.loc` so that things work correctly when
+ stored inside an inventory, locker, or other container.
+ */
+
+#define get_turf(A) get_step(A,0)
+
+/*
+Get the ultimate area of `A`, similarly to [get_turf].
+
+ Use instead of `A.loc.loc`.
+ */
+
+#define get_area(A) (isarea(A) ? A : get_step(A, 0)?.loc)
+
 #define isdatum(A) istype(A, /datum)
 
 #define isimage(A) istype(A, /image)
@@ -77,14 +94,34 @@
 
 #define forrange(x) for (var/v = 1 to x)
 
-#define to_chat(target, message)							target << message
-#define to_world(message)								   world << message
-#define to_world_log(message)							   world.log << message
+#define to_chat(target, message)						to_chat_wrapper(target, message)
+#define to_world(message)								world << message
+#define to_world_log(message)							world.log << message
 #define sound_to(target, sound)							 target << sound
 #define show_browser(target, browser_content, browser_name) target << browse(browser_content, browser_name)
-#define close_browser(target, browser_name)                 target << browse(null, browser_name)
-#define show_image(target, image)                           target << (image)
-#define send_rsc(target, rsc_content, rsc_name)             target << browse_rsc(rsc_content, rsc_name)
+#define close_browser(target, browser_name)				 target << browse(null, browser_name)
+#define show_image(target, image)						 target << (image)
+#define send_rsc(target, rsc_content, rsc_name)			 target << browse_rsc(rsc_content, rsc_name)
+
+#define MAP_IMAGE_PATH "nano/images/[GLOB.using_map.path]/"
+
+#define map_image_file_name(z_level) "[GLOB.using_map.path]-[z_level].png"
+
+#define RANDOM_BLOOD_TYPE pick(4;"O-", 36;"O+", 3;"A-", 28;"A+", 1;"B-", 20;"B+", 1;"AB-", 5;"AB+")
+
+#define any2ref(x) "\ref[x]"
+
+#define CanInteract(user, state) (CanUseTopic(user, state) == STATUS_INTERACTIVE)
+
+#define CanInteractWith(user, target, state) (target.CanUseTopic(user, state) == STATUS_INTERACTIVE)
+
+#define CanPhysicallyInteract(user) CanInteract(user, GLOB.physical_state)
+
+#define CanPhysicallyInteractWith(user, target) CanInteractWith(user, target, GLOB.physical_state)
+
+#define QDEL_NULL_LIST(x) if(x) { for(var/y in x) { qdel(y) } ; x = null }
+
+#define ARGS_DEBUG log_debug("[__FILE__] - [__LINE__]") ; for(var/arg in args) { log_debug("\t[log_info_line(arg)]") }
 
 // Helper macros to aid in optimizing lazy instantiation of lists.
 // All of these are null-safe, you can use them without knowing if the list var is initialized yet
@@ -129,7 +166,9 @@
 #define SPAN_WARNING(X) SPAN("warning", X)
 #define SPAN_DANGER(X) SPAN("danger", X)
 #define SPAN_RED(X) SPAN("red", X)
-
-#define DIRECT_OUTPUT(A, B) A << B
-#define SEND_IMAGE(target, image) DIRECT_OUTPUT(target, image)
-#define SEND_SOUND(target, sound) DIRECT_OUTPUT(target, sound)
+#define SPAN_BLUE(X) SPAN("blue", X)
+#define SPAN_GREEN(X) SPAN("green", X)
+#define SPAN_GREEN_BOLD(X) SPAN("green_bold", X)
+#define SPAN_ALERT(X) SPAN("alert", X)
+#define SPAN_DEADSAY(X) SPAN("deadsay", X)
+#define SPAN_INFO(X) SPAN("info", X)

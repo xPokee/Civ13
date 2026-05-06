@@ -2,7 +2,7 @@
 	set category = "OOC"
 	set name = "Clear Cache"
 	if (mob)
-		nanomanager.close_uis(mob)
+		GLOB.nanomanager.close_uis(mob)
 	cache.Cut()
 	sending.Cut()
 	src << "<span class = 'good'>Cache successfully cleared!</span>"
@@ -12,7 +12,7 @@
 	set name = "Open Wiki"
 	if (mob)
 		var/htmlfile = "<!DOCTYPE html><HTML><HEAD><TITLE>Civ13 Wiki</TITLE><META http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"></HEAD> \
-		<BODY><iframe src=\"http://civ13.com/wiki/index.php\" style=\"position: absolute; height: 97%; width: 97%; border: none\"></iframe></BODY></HTML>"
+		<BODY><iframe src=\"https://civ13.github.io/civ13-wiki\" style=\"position: absolute; height: 97%; width: 97%; border: none\"></iframe></BODY></HTML>"
 		src << browse(htmlfile,"window=wiki;size=820x650")
 
 
@@ -84,14 +84,14 @@
 			Lines += entry
 	else
 		for (var/client/C in clients)
-			var/entry = "Player <b>[C.key]</b> - Playing as <i>[C.mob.real_name]</i>"
+			var/entry = "<b>[C.key]</b>"
 			Lines += entry
 
 	for (var/line in sortList(Lines))
 		msg += "[line]\n"
 
 	msg += "<b>Total Players: [length(Lines)]</b>"
-	src << msg
+	to_chat(src, msg)
 
 /client/verb/adminwho()
 	set category = "Help!"
@@ -329,8 +329,10 @@
 			ooc_style = "moderator"
 		if (holder.rights & R_DEBUG)
 			ooc_style = "developer"
-		if (holder.rights & R_PERMISSIONS)
+		if (holder.rights & R_ADMIN)
 			ooc_style = "admin"
+		if (holder.rights & R_PERMISSIONS)
+			ooc_style = "highstaff"
 
 	for (var/client/target in clients)
 		if (target.is_preference_enabled(/datum/client_preference/show_ooc))
@@ -435,7 +437,7 @@
 					listening |= M.client
 					continue*/
 
-			if (M.loc && M.locs[1] in hearturfs)
+			if (M.loc && (M.locs[1] in hearturfs))
 				listening |= M.client
 
 

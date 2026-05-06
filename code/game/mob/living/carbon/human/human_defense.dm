@@ -5,6 +5,8 @@ bullet_act
 
 */
 
+#define ARMOR_CLASS 20
+
 /mob/living/human/attackby(obj/item/weapon/W as obj, mob/user as mob)
 
 	if (stat != DEAD)
@@ -19,12 +21,12 @@ bullet_act
 			grabbed_by_user = TRUE
 	if (user.a_intent == I_HELP && gender == MALE && istype(W,/obj/item/weapon/material/kitchen/utensil/knife/circumcision))
 		if (circumcised)
-			user << "<span class = 'notice'>[src]is already circumcised!</span>"
+			to_chat(user, SPAN_NOTICE("[src]is already circumcised!</span>"))
 			return
 		else
-			visible_message("<span class = 'notice'>[user] starts to circumcise [src]...</span>")
+			visible_message(SPAN_NOTICE("[user] starts to circumcise [src]..."))
 			if (do_after(user, 90, src) && !circumcised)
-				visible_message("<span class = 'notice'>[user] successfully circumcises [src].</span>")
+				visible_message(SPAN_NOTICE("[user] successfully circumcises [src]."))
 				circumcised = TRUE
 				return
 
@@ -34,11 +36,11 @@ bullet_act
 			var/mob/living/human/H = user
 			if (istype(H))
 				if (map && map.ID == MAP_THE_ART_OF_THE_DEAL && H.civilization != "Professional")
-					user << "<span class = 'warning'>You're not sure about this, better call a professional...</span>"
+					to_chat(user, SPAN_WARNING("You're not sure about this, better call a professional..."))
 				else
-					user.visible_message("<span class = 'notice'>[user] starts to butcher [src].</span>")
+					user.visible_message(SPAN_NOTICE("[user] starts to butcher [src]."))
 					if (do_after(user, 1200, src))
-						user.visible_message("<span class = 'notice'>[user] butchers [src] into a few meat slabs.</span>")
+						user.visible_message(SPAN_NOTICE("[user] butchers [src] into a few meat slabs."))
 						if (!crab)
 							for(var/i=1;i<=4;i++)
 								var/obj/item/weapon/reagent_containers/food/snacks/meat/human/meat = new/obj/item/weapon/reagent_containers/food/snacks/meat/human(get_turf(src))
@@ -376,7 +378,7 @@ bullet_act
 		if (prob(P.KD_chance/2) && !KD_check && !(locate(/obj/structure/vehicleparts/frame) in get_turf(src)) && !istype(P, /obj/item/projectile/bullet/pellet/buckshot) && !istype(P, /obj/item/projectile/bullet/shotgun))
 			SpinAnimation(5,1)
 			// Get the turf behind by getting the dir from the firer to us
-			var/turf/behind = get_step(src, get_dir(P.firer_loc, src)) 
+			var/turf/behind = get_step(src, P.firer_original_dir ? P.firer_original_dir : P.dir) 
 			if (behind)
 				if (behind.density || (locate(/obj/structure) in behind) || (locate(/obj/covers) in behind))
 					var/turf/slammed_into = behind
@@ -510,6 +512,7 @@ bullet_act
 
 	return siemens_coefficient
 
+
 //this proc returns the armor value for a particular external organ.
 /mob/living/human/proc/getarmor_organ(var/obj/item/organ/external/def_zone, var/type)
 	if (!type || !def_zone) return FALSE
@@ -524,15 +527,21 @@ bullet_act
 			var/obj/item/clothing/C = gear
 			if (istype(C) && C.body_parts_covered & def_zone.body_part)
 				protection += C.armor[type]
-			if (C.accessories.len)
-				for (var/obj/item/clothing/accessory/AC in C.accessories)
-					if (AC.body_parts_covered & def_zone.body_part)
-						protection += AC.armor[type]
-						if (istype(AC, /obj/item/clothing/accessory/armor/coldwar/plates))
-							var/obj/item/clothing/accessory/armor/coldwar/plates/ACP = AC
-							for (var/obj/item/weapon/armorplates/plt in ACP.hold)
-								if (type == "melee" || type == "arrow" || type == "gun")
-									protection += 10
+				if (C.accessories.len)
+					for (var/obj/item/clothing/accessory/AC in C.accessories)
+						if (AC.body_parts_covered & def_zone.body_part)
+							protection += AC.armor[type]
+							if (istype(AC, /obj/item/clothing/accessory/armor/coldwar/plates))
+								var/obj/item/clothing/accessory/armor/coldwar/plates/ACP = AC
+								for (var/obj/item/weapon/armorplates/plt in ACP.hold)
+									if (type == "melee" || type == "arrow" || type == "gun")
+										protection += plt.protection
+				if(istype(C, /obj/item/clothing/suit/storage))
+					var/obj/item/clothing/suit/storage/S = C
+					for (var/obj/item/weapon/armorplates/P in S.pockets)
+						if (type == "melee" || type == "arrow" || type == "gun")
+							protection += P.protection
+
 	return protection
 
 /mob/living/human/proc/damage_armor(var/obj/item/organ/external/def_zone, var/dmg = 0)
@@ -545,14 +554,20 @@ bullet_act
 		if (gear && istype(gear ,/obj/item/clothing))
 			var/obj/item/clothing/C = gear
 			if (istype(C) && C.body_parts_covered & affecting.body_part)
-				C.health -= dmg
-				C.check_health()
+				if(istype(C, /obj/item/clothing/head/helmet) || istype(C, /obj/item/clothing/suit/armor))
+					C.health -= dmg
+					C.check_health()
 			if (C.accessories.len)
 				for (var/obj/item/clothing/accessory/AC in C.accessories)
 					if (AC.body_parts_covered & affecting.body_part)
 						AC.health -= dmg
+						if(AC.health <= 0)
+							C.remove_accessory(src,AC)
 						AC.check_health()
+			C.update_icon()
+			C.update_clothing_icon()
 	return TRUE
+
 /mob/living/human/proc/check_head_coverage()
 	var/list/body_parts = list(head, wear_mask, wear_suit, w_uniform)
 	for (var/bp in body_parts)
@@ -588,7 +603,7 @@ bullet_act
 	var/hit_zone = get_zone_with_miss_chance(target_zone, src)
 
 	if (!hit_zone)
-		visible_message("<span class='danger'>\The [user] misses [src] with \the [I]!</span>")
+		user.visible_message("<span class='danger'>\The [user] misses [src] with \the [I]!</span>", "<span class='danger'>You miss [src] with \the [I]!")
 		return null
 
 	if (check_shields(I.force, I, user, target_zone, "the [I.name]"))
@@ -599,7 +614,7 @@ bullet_act
 
 	var/obj/item/organ/external/affecting = get_organ(hit_zone)
 	if (!affecting || affecting.is_stump())
-		user << "<span class='danger'>They are missing that limb!</span>"
+		to_chat(user, SPAN_DANGER("They are missing that limb!"))
 		return null
 
 	return hit_zone
@@ -611,8 +626,12 @@ bullet_act
 	if (hit_zone == "l_hand" || hit_zone == "r_hand" || hit_zone == "r_foot" || hit_zone == "l_foot")
 		if (prob(50))
 			if (prob(65))
-				visible_message("<span class='notice'>[user] has tried to strike [src]'s [affecting.name] with [I.name] but missed!</span>")
-				return
+				if (user != src)
+					user.visible_message("<span class='danger'>[user] has tried to strike [src]'s [affecting.name] with \the [I.name] but missed!</span>", "<span class='danger'>You tried to strike [src]'s [affecting.name] with \the [I.name] but missed!</span>")
+					return
+				else
+					user.visible_message("<span class = 'danger'>[user] has tried to strike \his [affecting.name] with \the [I.name] but missed!</span>", "<span class = 'danger'>You tried to strike yourself with \the [I.name] but missed!</span>")
+					return
 			else
 				switch(hit_zone)
 					if ("l_hand")
@@ -628,15 +647,27 @@ bullet_act
 	else if (hit_zone == "l_leg" || hit_zone == "r_leg" || hit_zone == "r_arm" || hit_zone == "l_arm")
 		if (prob(25))
 			if (prob(60))
-				visible_message("<span class='notice'>[user] has tried to strike [src]'s [affecting.name] with [I.name] but missed!</span>")
-				return
+				if (user != src)
+					user.visible_message("<span class='danger'>[user] has tried to strike [src]'s [affecting.name] with \the [I.name] but missed!</span>", "<span class='danger'>You tried to strike [src]'s [affecting.name] with \the [I.name] but <b>missed!</span>")
+					return
+				else
+					user.visible_message("<span class = 'danger'>[user] has tried to strike \his [affecting.name] with \the [I.name] but missed!</span>", "<span class = 'danger'>You tried to strike yourself with \the [I.name] but missed!</span>")
+					return
 			else
 				affecting = get_organ("chest")
 	else if (hit_zone == "head")
 		if (prob(18))
-			visible_message("<span class='notice'>[user] has tried to strike [src]'s [affecting.name] with [I.name] but missed!</span>")
-			return
-	visible_message("<span class='danger'>[src] has been [I.attack_verb.len? pick(I.attack_verb) : "attacked"] in the [affecting.name] with [I.name] by [user]!</span>")
+			if (user != src)
+				user.visible_message("<span class='danger'>[user] has tried to strike [src]'s [affecting.name] with \the [I.name] but <b>missed!</b></span>", "<span class='danger'>You tried to strike [src]'s [affecting.name] with \the [I.name] but <b>missed!</b></span>")
+				return
+			else
+				user.visible_message("<span class = 'danger'>[user] has tried to strike \his [affecting.name] with \the [I.name] but missed!</span>", "<span class = 'danger'>You tried to strike yourself with \the [I.name] but missed!</span>")
+				return
+	if(user != src)
+		user.visible_message("<span class= 'danger'>[src] has been [I.attack_verb.len? pick(I.attack_verb) : "attacked"] in the [affecting.name] with \the [I.name] by [user]!</span>", \
+							"<span class = 'danger'>You have [I.attack_verb.len? pick(I.attack_verb) : "attacked"] [src] in the [affecting.name] with \the [I.name]")
+	else
+		user.visible_message("<span class = 'danger'>[user] has [I.attack_verb.len? pick(I.attack_verb) : "attacked"] \himself in the [affecting.name] with \the [I.name]!</span>", "<span class = 'danger'>You have [I.attack_verb.len? pick(I.attack_verb) : "attacked"] yourself in the [affecting.name] with \the [I.name]!</span>")
 	receive_damage()
 	instadeath_check()
 	var/blocked = run_armor_check(hit_zone, "melee", I.armor_penetration, "Your armor has protected your [affecting.name].", "Your armor has softened the blow to your [affecting.name].", damage_source = I)
@@ -686,13 +717,14 @@ bullet_act
 		forcesay(hit_appends)	//forcesay checks stat already
 
 	//Ok this block of text handles cutting arteries, and limbs off.
-	//First we cut an artery, the reason for that, is that arteries are funninly enough, not that lethal, and don't have the biggest impact. They'll still make you bleed out, but they're less immediately lethal.
+	//First we cut an artery, the reason for that, is that arteries are funnily enough, not that lethal, and don't have the biggest impact. They'll still make you bleed out, but they're less immediately lethal (lie).
 	if(I.sharp && prob(I.force/10) && !(affecting.status & ORGAN_ARTERY_CUT))
 		affecting.sever_artery()
 		if(affecting.artery_name == "carotid artery")
-			src.visible_message("<span class='danger'><b>[user] slices [src]'s throat!</b></span>")
+			user.visible_message("<span class='danger'><b>[user] slices [src]'s throat!</b></span>", "<span class='danger'><b>You start slicing [src]'s throat!</b></span>")
 		else
-			src.visible_message("<span class='danger'><b>[user] slices open [src]'s [affecting.artery_name] artery!</b></span>")
+			user.visible_message("<span class='danger'><b>[user] slices open [src]'s [affecting.artery_name] artery!</b></span>", "<span class='danger'><b>You slice open [src]'s [affecting.artery_name] artery!</b></span>")
+			mood -= 5
 
 	//Finally if we pass all that, we cut the limb off. This should reduce the number of one hit sword kills.
 	else if(I.sharp && I.edge)
@@ -710,26 +742,26 @@ bullet_act
 
 	if(I.damtype == BRUTE && !I.edge && prob(I.force * (hit_zone == "mouth" ? 6 : 0)) && O)//Knocking out teeth.
 		if(O.knock_out_teeth(get_dir(user, src), round(rand(28, 38) * ((I.force*1.5)/100))))
-			src.visible_message("<span class='danger'>[src]'s teeth sail off in an arc!</span>", \
-								"<span class='userdanger'>[src]'s teeth sail off in an arc!</span>")
+			user.visible_message("<span class='danger'>Some of [src]'s teeth sail off in an arc!</span>", \
+								"<span class='userdanger'>Some of your teeth sail off in an arc!</span>")
 
 	else if ((I.damtype == BRUTE || I.damtype == HALLOSS) && prob(5 + (effective_force)))
 		if (!stat)
 			if (headcheck(hit_zone))
 				//Harder to score a stun but if you do it lasts a bit longer
 				if (prob(effective_force/8))
-					visible_message("<span class='danger'>[src] [species.knockout_message]</span>")
+					src.visible_message("<span class='danger'>[src] [species.knockout_message]</span>", "<span class='userdanger'>You are knocked out!</span>")
 					Paralyse(7/(blocked+1))
 			else
 				//Easier to score a stun but lasts less time
 				if (prob(effective_force/5))
-					visible_message("<span class='danger'>[src] has been knocked down!</span>")
+					src.visible_message("<span class='danger'>[src] has been knocked down!</span>", "<span class='userdanger'>You are knocked down!</span>")
 					apply_effect(1, WEAKEN, blocked)
 
 	if (prob(I.force * (hit_zone == "mouth" ? 5 : 0)) && O) //Will the teeth fly out?
 		if (O.knock_out_teeth(get_dir(user, src), round(rand(28, 38) * ((I.force*1.5)/100))))
-			visible_message("<span class='danger'>Some of [src]'s teeth sail off in an arc!</span>", \
-								"<span class='userdanger'>Some of [src]'s teeth sail off in an arc!</span>")
+			user.visible_message("<span class='danger'>Some of [src]'s teeth sail off in an arc!</span>", \
+								"<span class='userdanger'>Some of your teeth sail off in an arc!</span>")
 		//Apply blood
 		if (!(I.flags & NOBLOODY))
 			I.add_blood(src)
@@ -758,19 +790,19 @@ bullet_act
 		if (istype(user, /mob/living/human))
 			var/mob/living/human/HH = user
 			if (prob(6*HH.getStatCoeff("dexterity")))
-				visible_message("<span class='danger'>[src] has been knocked down!</span>")
+				src.visible_message("<span class='danger'>[src] has been knocked down!</span>", "<span class='danger'><h4>You are knocked down!</h4></span>")
 				Weaken(2)
 		else
 			if (prob(6))
-				visible_message("<span class='danger'>[src] has been knocked down!</span>")
+				src.visible_message("<span class='danger'>[src] has been knocked down!</span>", "<span class='danger'><h4>You are knocked down!</h4></span>")
 				Weaken(2)
 	instadeath_check()
 
-/mob/living/human/proc/attack_joint(var/obj/item/organ/external/organ, var/obj/item/W, var/blocked)
+/mob/living/human/proc/attack_joint(var/obj/item/organ/external/organ, var/obj/item/W, mob/living/user, var/blocked)
 	if (!organ || (organ.dislocated == 2) || (organ.dislocated == -1) || blocked >= 2)
 		return FALSE
 	if (prob(W.force / (blocked+1)))
-		visible_message("<span class='danger'><b>[src]'s [organ.joint] [pick("gives way","caves in","crumbles","collapses")]!</b></span>")
+		user.visible_message("<span class='danger'><b>[src]'s [organ.joint] [pick("gives way","caves in","crumbles","collapses","dislocates")]!</b></span>", "<span class='danger'><b>Your [organ.joint] [pick("gives way","caves in","crumbles","collapses","dislocates")]!")
 		organ.dislocate(1)
 		return TRUE
 	return FALSE
@@ -861,7 +893,7 @@ bullet_act
 				pillory = P
 			if (pillory && pillory.hanging == src)
 				adjust_hygiene(-20)
-				mood -= 15
+				mood -= 8
 				spawn(2)
 					qdel(O)
 				visible_message("<b><span class = 'red'>[src] has been hit in the [hit_area] by [O].</span></b>")
@@ -871,7 +903,7 @@ bullet_act
 				pillory = P
 			if (pillory && pillory.hanging == src)
 				adjust_hygiene(-5)
-				mood -= 5
+				mood -= 3
 				spawn(2)
 					qdel(O)
 				visible_message("<b><span class = 'red'>[src] has been hit in the [hit_area] by [O].</span></b>")
@@ -881,7 +913,7 @@ bullet_act
 				pillory = P
 			if (pillory && pillory.hanging == src)
 				adjust_hygiene(-3)
-				mood -= 3
+				mood -= 2
 				spawn(2)
 					qdel(O)
 				visible_message("<b><span class = 'red'>[src] has been hit in the [hit_area] by [O].</span></b>")
@@ -1032,7 +1064,7 @@ bullet_act
 	var/too_high_message = "You can't reach that high."
 	var/obj/item/organ/external/affecting = get_organ(hit_zone)
 	if(!affecting || affecting.is_stump())
-		user << "<span class='danger'>They are missing that limb!</span>"
+		to_chat(user, SPAN_DANGER("They are missing that limb!"))
 		return
 
 	var/armour = run_armor_check(hit_zone, "melee")
@@ -1049,21 +1081,21 @@ bullet_act
 						break
 				src.throw_at(target, rand(1,3), src.throw_speed)
 			if(user.lying)
-				user << "[too_high_message]"
+				to_chat(user, "[too_high_message]")
 				return
 
-		if("mouth")//If we aim for the mouth then we kick their teeth out.
+		if("mouth") // If we aim for the mouth then we kick their teeth out.
 			if(lying)
 				if(istype(affecting, /obj/item/organ/external/head) && prob(95))
 					var/obj/item/organ/external/head/U = affecting
-					U.knock_out_teeth(get_dir(user, src), rand(1,3))//Knocking out one tooth at a time.
+					U.knock_out_teeth(get_dir(user, src), rand(1,3))//Knocking out one-three tooth at a time.
 			else
-				user << "[too_high_message]"
+				to_chat(user, "[too_high_message]")
 				return
 
 		if("head")
 			if(!lying)
-				user << "[too_high_message]"
+				to_chat(user, "[too_high_message]")
 				return
 
 	var/kickdam = rand(0,15)
@@ -1071,8 +1103,8 @@ bullet_act
 	if(kickdam)
 		playsound(user.loc, 'sound/weapons/kick.ogg', 50, 0)
 		apply_damage(kickdam, BRUTE, hit_zone, armour)
-		user.visible_message("<span class=danger>[user] kicks [src] in the [affecting.name]!<span>")
+		user.visible_message("<span class= 'danger'>[user] kicks [src] in the [affecting.name]!</span>", "<span class = 'danger'>You kicked [src] in the [affecting.name]!</span>")
 		admin_attack_log(user, src, "Has kicked [src]", "Has been kicked by [user].")
 	else
-		user.visible_message("<span class=danger>[user] tried to kick [src] in the [affecting.name], but missed!<span>")
+		user.visible_message("<span class= 'danger'>[user] tried to kick [src] in the [affecting.name], but missed!</span>", "<span class = 'danger'>You tried to kick [src] in the [affecting.name], but missed!</span>")
 		playsound(loc, 'sound/weapons/punchmiss.ogg', 50, 1)

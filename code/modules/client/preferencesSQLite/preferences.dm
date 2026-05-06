@@ -70,7 +70,7 @@ var/list/preferences_datums = list()
 
 	var/list/preferences_enabled = list("CHAT_OVERLAY","CHAT_TIPS","SOUND_MIDI", "SOUND_LOBBY", "SOUND_AMBIENCE",
 		"CHAT_GHOSTEARS", "CHAT_GHOSTSIGHT", "CHAT_GHOSTRADIO", "CHAT_SHOWICONS",
-		"SHOW_TYPING", "CHAT_OOC", "CHAT_LOOC", "CHAT_DEAD", "SHOW_PROGRESS",
+		"SHOW_TYPING", "SHOW_DYN_CROSS", "CHAT_OOC", "CHAT_LOOC", "CHAT_DEAD", "SHOW_PROGRESS",
 		"FIT_VIEWPORT", "CHAT_DEBUGLOGS", "CHAT_PRAYER", "SOUND_ADMINHELP")
 
 	var/list/preferences_disabled = list("CHAT_TTS")
@@ -115,7 +115,7 @@ var/list/preferences_datums = list()
 	<body><center><big><b>PREFERENCES<br><br>
 	"}
 	dat += player_setup.header()
-	dat += "</big></b><br><HR></center>"
+	dat += "</b></big><br><HR></center>"
 	dat += player_setup.content(user)
 
 	var/datlist = splittext(dat, "<br>")

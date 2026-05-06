@@ -15,19 +15,19 @@
 		U = src
 	else
 		return
-	if (map.nomads == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.nomads == TRUE || map.ID == MAP_TRIBES || map.ID == MAP_THREE_TRIBES || map.ID == MAP_FOUR_KINGDOMS || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.religion != "none")
-			usr << "<span class='danger'>You are already member of a religion. Abandon it first.</span>"
+			to_chat(usr, SPAN_DANGER("You are already member of a religion. Abandon it first."))
 			return
 		else
 			if (U.getStatCoeff("philosophy") < 2.49)
-				usr << "<span class='danger'>Your philosophy skill is too low. You need 2.5 or more to create a religion.</span>"
+				to_chat(usr, SPAN_DANGER("Your philosophy skill is too low. You need 2.5 or more to create a religion."))
 				return
 			var/choosename = input(src, "Choose a name for the new religion:") as text|null
 			create_religion_pr(choosename)
 			return
 	else
-		usr << "<span class='danger'>You cannot create a religion in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot create a religion in this map."))
 		return
 
 /mob/living/human/proc/create_religion_pr(var/newname = "none")
@@ -36,7 +36,7 @@
 	var/mob/living/human/H = src
 	for(var/i = 1, i <= map.custom_religion_nr.len, i++)
 		if (map.custom_religion_nr[i] == newname)
-			usr << "<span class='danger'>That religion already exists. Choose another name.</span>"
+			to_chat(usr, SPAN_DANGER("That religion already exists. Choose another name."))
 			return
 	if (newname != null && newname != "none")
 		var/choosetype = "Knowledge"
@@ -63,7 +63,7 @@
 		if (choosecolor1 == null || choosecolor1 == "")
 			return
 
-		choosecolor2 = input(H, "Choose the secondary/background color:", "Color" , "#FFFFFF", "color")
+		choosecolor2 = WWinput(H, "Choose the secondary/background color:", "Color" , "#FFFFFF", "color")
 		if (choosecolor2 == null || choosecolor2 == "")
 			return
 
@@ -76,7 +76,7 @@
 		//////////////////////////////////////creator, type, points, symbol, color1, color2, clergy style
 		var/newnamev = list("[newname]" = list(H,choosetype,0, choosesymbol,choosecolor1,choosecolor2,chooseclergy))
 		map.custom_religions += newnamev
-		usr << "<big>You are now the leader of the <b>[newname]</b> religion.</big>"
+		to_chat(usr, "<big>You are now the leader of the <b>[newname]</b> religion.</big>")
 		switch(chooseclergy)
 			if ("Shamans")
 				if (H.gender == "male")
@@ -107,12 +107,12 @@
 		U = src
 	else
 		return
-	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA)
+	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.religion == "none")
-			usr << "<span class='danger'>You are not part of any religion.</span>"
+			to_chat(usr, SPAN_DANGER("You are not part of any religion."))
 			return
 		else if (U.religious_leader || U.religious_clergy != FALSE)
-			usr << "<span class='danger'>You cannot leave a religion while part of its clergy!</span>"
+			to_chat(usr, SPAN_DANGER("You cannot leave a religion while part of its clergy!"))
 			return
 		else
 			if (map.custom_religions[U.religion][1] != null)
@@ -122,9 +122,9 @@
 			U.religion_type = "none"
 			U.religion_style = "none"
 			U.religious_leader = FALSE
-			usr << "You left your religion. You are now an atheist."
+			to_chat(usr, "You left your religion. You are now an atheist.")
 	else
-		usr << "<span class='danger'>You cannot leave your religion in this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot leave your religion in this map."))
 		return
 
 /mob/living/human/proc/clergy()
@@ -136,19 +136,19 @@
 		U = src
 	else
 		return
-	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
+	if (map.nomads == TRUE || map.ID == MAP_NATIONSRP || map.ID == MAP_NATIONSRP_TRIPLE || map.ID == MAP_NATIONSRPMED || map.ID == MAP_NATIONSRP_WW2 || map.ID == MAP_NATIONSRP_COLDWAR || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 		if (U.religion == "none")
-			usr << "<span class='danger'>You are not part of any religion.</span>"
+			to_chat(usr, SPAN_DANGER("You are not part of any religion."))
 			return
 		else if (U.religious_leader || U.religious_clergy != FALSE)
-			usr << "<span class='danger'>You are already part of the clergy!</span>"
+			to_chat(usr, SPAN_DANGER("You are already part of the clergy!"))
 			return
 		else if (WWinput(src, "Are you sure you want to join the clergy? The membership is for life.", "", "Cancel", list("Join the clergy", "Cancel")) == "Join the clergy")
 			switch(map.custom_religions[U.religion][7])
 
 				if ("Shamans")
 					U.religious_clergy = "Shamans"
-					U << "<big>You become a Shaman for the [U.religion]!</big>"
+					to_chat(U, "<big>You become a Shaman for the [U.religion]!</big>")
 					if (U.gender == "male")
 						U.fully_replace_character_name(U.real_name,"Shaman [U.name]")
 					else
@@ -198,7 +198,7 @@
 					U.religious_clergy = "Cultists"
 					U << "<big>You become a Cultist of the [U.religion]!</big>"
 	else
-		usr << "<span class='danger'>You cannot join the clergy on this map.</span>"
+		to_chat(usr, SPAN_DANGER("You cannot join the clergy on this map."))
 		return
 /mob/living/human/proc/religion_check()
 	for (var/obj/item/clothing/CT in contents)
@@ -239,13 +239,13 @@
 
 /obj/item/weapon/book/holybook/attack_self(var/mob/living/human/user as mob)
 	if (user.religion == religion && religion != "none")
-		user << "You stare at the glorious holy book of your religion."
+		to_chat(user, "You stare at the glorious holy book of your religion.")
 	else if (user.religion != religion && religion != "none" && !user.religious_leader && user.religious_clergy == FALSE)
 		if (user.religion != "none")
 			if (map.custom_religions[user.religion][7] == "Clerics")
-				user << "You can't abandon a Clerical religion!"
+				to_chat(user, ("You can't abandon a Clerical religion!"))
 				return
-		user << "You start reading the [title]..."
+		to_chat(user, "You start reading the [title]...")
 		if (do_after(user, 900, src))
 			var/choice = WWinput(user, "After reading the [title], you feel attracted to the [religion] religion. Do you want to convert?", "[title]", "Yes", list("Yes","No"))
 			if (choice == "No")
@@ -255,7 +255,7 @@
 				user.religious_leader = FALSE
 				user.religion_type = religion_type
 				user.religion_style = map.custom_religions[religion][7]
-				user << "<big>You convert to the [religion] religion!</big>"
+				to_chat(user, ("<big>You convert to the [religion] religion!</big>"))
 				if (map.custom_religions[religion][7] == "Clerics")
 					map.custom_religions[religion][3] += 15
 				return
@@ -292,6 +292,7 @@
 	var/color2 = "#FFFFFF"
 	flammable = TRUE
 	layer = 3.2
+
 /obj/structure/poster/religious/New()
 	..()
 	invisibility = 101
@@ -311,11 +312,12 @@
 		transform = matrixangle(rand(-9,9))
 		update_icon()
 		invisibility = 0
+
 /obj/structure/poster/religious/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if (W.sharp)
-		user << "You start ripping off the [src]..."
+		user.visible_message("<span class ='danger'>[user] starts ripping off \the [src]!</span>", "<span class ='danger'>You start ripping off \the [src]!</span>")
 		if (do_after(user, 70, src))
-			visible_message("[user] rips the [src]!")
+			user.visible_message("<span class ='warning'>[user] rips \the [src]!</span>", "<span class = 'warning'>You rip off \the [src]!</span>")
 			overlays.Cut()
 			icon_state = "poster_ripped"
 			color = color2
@@ -360,18 +362,18 @@ obj/structure/altar
 		if (istype(W, /obj/item/clothing/accessory/armband/talisman))
 			var/obj/item/clothing/accessory/armband/talisman/T = W
 			if (T.religion != religion)
-				user << "You start destroying \the [W] in the name of your religion, [religion]..."
+				to_chat(user, "You start destroying \the [W] in the name of your religion, [religion]...")
 				if (do_after(user, 100, src))
-					user << "You destroy \the [W]!"
+					to_chat(user, "You destroy \the [W]!")
 					map.custom_religions[religion][3] += 3
 					qdel(W)
 					return
 		else if (istype(W, /obj/item/weapon/book/holybook))
 			var/obj/item/weapon/book/holybook/T = W
 			if (T.religion != religion)
-				user << "You start destroying \the [W] in the name of your religion, [religion]..."
+				to_chat(user, "You start destroying \the [W] in the name of your religion, [religion]...")
 				if (do_after(user, 100, src))
-					user << "You destroy \the [W]!"
+					to_chat(user, "You destroy \the [W]!")
 					map.custom_religions[religion][3] += 10
 					qdel(W)
 					return
@@ -391,7 +393,7 @@ obj/structure/altar
 
 /obj/structure/altar/proc/try_destroy()
 	if (health <= 0)
-		visible_message("<span class='danger'>[src] is broken into pieces!</span>")
+		visible_message(SPAN_DANGER("[src] is broken into pieces!"))
 		qdel(src)
 		return
 
@@ -435,15 +437,15 @@ obj/structure/altar/attack_hand(mob/living/human/H as mob)
 					var/mob/living/human/choice2 = choice3
 					var/answer = WWinput(choice2, "[H] asks you to convert to his religion, [H.religion]. Will you accept?", null, "Yes", list("Yes","No"))
 					if (answer == "Yes")
-						usr << "[choice2] accepts your offer. They are worshipping [H.religion]."
-						src << "You accept [H]'s offer. You are now worshipping [H.religion]."
+						to_chat(usr, ("[choice2] accepts your offer. They are worshipping [H.religion]."))
+						to_chat(src, ("You accept [H]'s offer. You are now worshipping [H.religion]."))
 						choice2.religion = H.religion
 						choice2.religious_leader = FALSE
 						choice2.religion_type = H.religion_type
 						choice2.religion_style = H.religion_style
 						return
 					else if (answer == "No")
-						usr << "[closemobs] has rejected your offer."
+						to_chat(usr, ("[closemobs] has rejected your offer."))
 						return
 					else
 						return
@@ -540,9 +542,9 @@ obj/structure/altar/iron
 
 /obj/structure/banner/religious/attackby(obj/item/weapon/W as obj, mob/user as mob)
 	if (W.sharp)
-		user << "You start ripping off the [src]..."
+		user.visible_message("<span class ='danger'>[user] starts ripping off \the [src]!</span>", "<span class ='danger'>You start ripping off \the [src]!</span>")
 		if (do_after(user, 130, src))
-			visible_message("[user] rips the [src]!")
+			user.visible_message("<span class ='warning'>[user] rips \the [src]!</span>", "<span class = 'warning'>You rip off \the [src]!</span>")
 			qdel(src)
 	else
 		..()

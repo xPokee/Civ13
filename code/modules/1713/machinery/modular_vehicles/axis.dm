@@ -1,13 +1,15 @@
-var/global/list/tank_names_german = list("Lute", "Greta", "Erika", "Sieg", "Teufel", "Charlotte", "Hundertmark", "Tigerkind", "Eisenschwein")
-var/global/list/tank_names_soviet = list("Slavianka", "Katya", "Rodina", "Vernyi", "Krasavets", "Grom")
-var/global/list/tank_names_japanese = list("Banzai", "Satsu-Jin", "Koroshite", "Sakura", "Chibi Chi-to", "I-Go")
-var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "Echo", "Zipper-maker", "Uncle Sam", "Steel Coffin", "Crusader")
+var/global/list/tank_names_german = list("Lute", "Greta", "Erika", "Sieg", "Teufel", "Charlotte", "Hundertmark", "Tigerkind", "Eisenschwein","Sturmgeist","Schattenblitz","Ritter","Blitzwachter")
+var/global/list/tank_names_soviet = list("Slavianka", "Katya", "Rodina", "Vernyi", "Krasavets", "Grom","Gvozdika","Tyulpan","Krokodil","Grach","Bereza","Zhuravl","Topol","Bogatyr","Yenot","Orel","Natasha","Molodets","Rusalka","Volga","Molot","Serp","Zubr","Kazak")
+var/global/list/tank_names_japanese = list("Banzai", "Satsu-Jin", "Koroshite", "Sakura", "Chibi Chi-to", "I-Go","Bushido","Hinomaru","Shuriken")
+var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "Echo", "Zipper-maker", "Uncle Sam", "Steel Coffin", "Crusader","Iron Maiden","Thunderbolt","Hellcat","Black Baron","Raging Bull","Bulldog","Whiskey","Fury","Warthog","Sentinel","Cobra","Raptor","Steel Phantom")
+var/global/list/tank_names_nato = list("Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu", "Avalanche", "Bandit", "Cyclone", "Defender", "Eagle", "Falcon", "Guardian", "Havoc", "Ironclad", "Jaguar", "Kodiak", "Lightning", "Maverick", "Nomad", "Panther", "Phantom", "Quicksilver", "Renegade", "Specter", "Sentinel", "Thunderbolt", "Viper", "Warlock", "Xenoh", "Yeti", "Zephyr")
 
 ////////AXIS: MOVEMENT LOOP/////////
 /obj/structure/vehicleparts/axis
 	var/maxdist = 5 //the highest of length and width
 	var/turntimer = 15
 	var/doorcode = 0
+	var/movement_processes = 0
 /obj/structure/vehicleparts/axis/ex_act(severity)
 	switch(severity)
 		if (1.0)
@@ -21,7 +23,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 	for(var/obj/structure/vehicleparts/frame/F in components)
 		F.axis = null
 	wheel = null
-	visible_message("<span class='danger'>The [name] axis gets wrecked!</span>")
+	visible_message(SPAN_DANGER("The [name] axis gets wrecked!"))
 	qdel(src)
 */
 /obj/structure/vehicleparts/axis/proc/startmovementloop()
@@ -45,12 +47,14 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 			movementsound()
 
 /obj/structure/vehicleparts/axis/proc/movementloop()
-	if (moving == TRUE)
+	if (moving && !movement_processes)
 		get_weight()
+		movement_processes++
 		if (do_vehicle_check() && currentspeed > 0)
 			for (var/obj/structure/vehicleparts/movement/W in wheels)
 				if (W.broken)
 					moving = FALSE
+					movement_processes--
 					stopmovementloop()
 					return
 				else
@@ -59,9 +63,11 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 		else
 			currentspeed = 0
 			moving = FALSE
+			movement_processes--
 			stopmovementloop()
 			return
 		spawn(vehicle_m_delay+1)
+			movement_processes--
 			movementloop()
 			return
 	else
@@ -88,7 +94,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 			return FALSE
 		for(var/obj/structure/vehicleparts/movement/MV in wheels)
 			if (MV.broken)
-				visible_message("<span class = 'warning'>\The [name] can't move, a [MV.ntype] is broken!</span>")
+				visible_message(SPAN_WARNING("\The [name] can't move, a [MV.ntype] is broken!"))
 				moving = FALSE
 				stopmovementloop()
 				return FALSE
@@ -107,12 +113,12 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 			var/area/A = get_area(T)
 			if (map && A && map.caribbean_blocking_area_types.Find(A.type))
 				if (!map.faction1_can_cross_blocks() && !map.faction2_can_cross_blocks())
-					visible_message("<span class = 'danger'>You cannot cross the grace wall yet!</span>")
+					visible_message(SPAN_DANGER("You cannot cross the grace wall yet!"))
 					moving = FALSE
 					stopmovementloop()
 					return FALSE
 			if (map && map.check_caribbean_block(driver,T))
-				visible_message("<span class = 'danger'>You cannot cross the grace wall yet!</span>")
+				visible_message(SPAN_DANGER("You cannot cross the grace wall yet!"))
 				moving = FALSE
 				stopmovementloop()
 				return FALSE
@@ -127,7 +133,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					MAT.trigger(FR)
 				else
 					qdel(MAT)
-					visible_message("<span class='warning'>\the [src] crushes \the [MAT]!</span>","<span class='warning'>You crush \the [MAT]!</span>")
+					visible_message(SPAN_WARNING("\The [src] crushes \the [MAT]!"),SPAN_WARNING("You crush \the [MAT]!"))
 			for (var/obj/item/mine/boobytrap/MAT in T)
 				if (MAT.anchored)
 					qdel(MAT)
@@ -155,7 +161,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					protec = TRUE
 				if (!protec)
 					if (current_weight >= 800)
-						visible_message("<span class='warning'>\the [src] runs over \the [L]!</span>","<span class='warning'>You run over \the [L]!</span>")
+						visible_message(SPAN_WARNING("\The [src] runs over \the [L]!"),SPAN_WARNING("You run over \the [L]!"))
 						for(var/obj/item/I in L)
 							qdel(I)
 						L.crush()
@@ -166,16 +172,16 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 							var/mob/living/human/HH = L
 							HH.adjustBruteLoss(rand(7,16)*abs(currentspeed))
 							HH.Weaken(rand(2,5))
-							visible_message("<span class='warning'>\the [src] hits \the [L]!</span>","<span class='warning'>You hit \the [L]!</span>")
+							visible_message(SPAN_WARNING("\The [src] hits \the [L]!"),SPAN_WARNING("You hit \the [L]!"))
 							L.forceMove(get_turf(get_step(TT,dir)))
 						else if (istype(L,/mob/living/simple_animal))
 							var/mob/living/simple_animal/SA = L
 							SA.adjustBruteLoss(rand(7,16)*abs(currentspeed))
 							if (SA.mob_size >= 30)
-								visible_message("<span class='warning'>\the [src] hits \the [SA]!</span>","<span class='warning'>You hit \the [SA]!</span>")
+								visible_message(SPAN_WARNING("\The [src] hits \the [SA]!"),SPAN_WARNING("You hit \the [SA]!"))
 								L.forceMove(get_turf(get_step(TT,dir)))
 							else
-								visible_message("<span class='warning'>\the [src] runs over \the [SA]!</span>","<span class='warning'>You run over \the [SA]!</span>")
+								visible_message(SPAN_WARNING("\The [src] runs over \the [SA]!"),SPAN_WARNING("You run over \the [SA]!"))
 								for(var/obj/item/I in SA)
 									qdel(I)
 								SA.crush()
@@ -185,35 +191,34 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 				for (var/obj/structure/vehicleparts/frame/FM in O.loc)
 					done = TRUE
 					if (FM.axis != src)
-						visible_message("<span class='warning'>\the [src] hits \the [O]!</span>","<span class='warning'>You hit \the [O]!</span>")
+						visible_message(SPAN_WARNING("\The [src] hits \the [O]!"),SPAN_WARNING("You hit \the [O]!"))
 						moving = FALSE
 						stopmovementloop()
 						return FALSE
 				if (!done)
-					if (O.density == TRUE && !(O in transporting))
-						if (current_weight >= 400 && !istype(O, /obj/structure/redmailbox) && !istype(O, /obj/structure/barricade/antitank) && !istype(O, /obj/structure/vehicleparts/frame)&& !istype(O, /obj/structure/vehicleparts/movement)&& !istype(O, /obj/structure/barricade/stone_h)&& !istype(O, /obj/structure/barricade/stone_v)&& !istype(O, /obj/structure/barricade/jap_h) && !istype(O, /obj/structure/barricade/jap_v)&& !istype(O, /obj/structure/barricade/jap_h_l)&& !istype(O, /obj/structure/barricade/jap_h_r)&& !istype(O, /obj/structure/barricade/jap_v_b)&& !istype(O, /obj/structure/barricade/jap_v_t)&& !istype(O, /obj/structure/barricade/sandstone_h)&& !istype(O, /obj/structure/barricade/sandstone_v)&& !istype(O, /obj/structure/barricade/sandstone_v/crenelated)&& !istype(O, /obj/structure/barricade/sandstone_h/crenelated)&& !istype(O, /obj/structure/barricade/stone_v/crenelated) && !istype(O, /obj/structure/gate) && !istype(O, /obj/structure/billboard))
-							visible_message("<span class='warning'>\the [src] crushes \the [O]!</span>","<span class='warning'>You crush \the [O]!</span>")
+					if (O.density && !(O in transporting))
+						if (O.crushable && istype(src, /obj/structure/vehicleparts/axis/heavy))
+							visible_message(SPAN_WARNING("\The [src] crushes \the [O]!"),SPAN_WARNING("You crush \the [O]!"))
 							qdel(O)
 						else
-							visible_message("<span class='warning'>\the [src] hits \the [O]!</span>","<span class='warning'>You hit \the [O]!</span>")
+							visible_message(SPAN_WARNING("\The [src] hits \the [O]!"),SPAN_WARNING("You hit \the [O]!"))
 							return FALSE
-					else if (O.density == FALSE && !(O in transporting))
-						if (!istype(O, /obj/structure/sign/traffic/zebracrossing) && !istype(O, /obj/structure/sign/traffic/central) && !istype(O, /obj/structure/sign/traffic/side) && !istype(O, /obj/structure/sign/traffic/side) && !istype(O, /obj/structure/rails) && !istype(O, /obj/structure/cable) && !istype(O, /obj/structure/gate) && !istype(O, /obj/structure/lamp/lamppost_small/) && !istype(O, /obj/structure/lamp/lamp_big/alwayson) && !istype(O, /obj/structure/lamp/lamp_small/alwayson))
-	//						visible_message("<span class='warning'>\the [src] crushes \the [O]!</span>","<span class='warning'>You crush \the [O]!</span>")
+					else if (!O.density && !(O in transporting))
+						if (O.crushable)
+	//						visible_message(SPAN_WARNING("\the [src] crushes \the [O]!"),SPAN_WARNING("You crush \the [O]!"))
 							qdel(O)
 
-			if (T.density == TRUE)
-				visible_message("<span class='warning'>\the [src] hits \the [T]!</span>","<span class='warning'>You hit \the [T]!</span>")
+			if (T.density)
+				visible_message(SPAN_WARNING("\The [src] hits \the [T]!"),SPAN_WARNING("You hit \the [T]!"))
 				moving = FALSE
 				stopmovementloop()
 				return FALSE
-			for(var/obj/covers/CV in TT && !(CV in transporting))
-				if (current_weight < 600)
-					if (CV.density || CV.wall)
-						visible_message("<span class='warning'>\the [src] hits \the [CV]!</span>","<span class='warning'>You hit \the [CV]!</span>")
-						moving = FALSE
-						stopmovementloop()
-						return FALSE
+			for(var/obj/covers/CV in T)
+				if (CV.density)
+					visible_message(SPAN_WARNING("\the [src] hits \the [CV]!"),SPAN_WARNING("You hit \the [CV]!"))
+					moving = FALSE
+					stopmovementloop()
+					return FALSE
 			for(var/obj/item/ammo_casing/AC in T)
 				if(!AC.BB)
 					qdel(AC) //to prevent the "empty empty empty empty"... spam
@@ -223,7 +228,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 				qdel(BO)
 			var/canpass = FALSE
 			for(var/obj/covers/CVV in T)
-				if (CVV.density == FALSE)
+				if (!CVV.density)
 					canpass = TRUE
 			if ((!istype(T, /turf/floor/beach/water/deep) ||  istype(T, /turf/floor/beach/water/deep) && canpass == TRUE) && T.density == FALSE  || istype(T, /turf/floor/trench/flooded))
 				canpass = TRUE
@@ -236,6 +241,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 		moving = FALSE
 		stopmovementloop()
 		return FALSE
+
 /obj/structure/vehicleparts/axis/proc/check_engine()
 	if (!engine)
 		return FALSE
@@ -243,7 +249,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 		engine.on = FALSE
 		return FALSE
 	else if (get_weight() > engine.maxpower*2 || get_weight() > maxpower)
-		visible_message("<span class='warning'>\The [engine] struggles and stalls!</span>")
+		visible_message(SPAN_WARNING("\The [engine] struggles and stalls!"))
 		return FALSE
 	else
 		if (engine && engine.fueltank && engine.fueltank.reagents && engine.fueltank.reagents.total_volume <= 0)
@@ -277,11 +283,14 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 				MV.dir = OPPOSITE_DIR(dir)
 			else
 				MV.dir = dir
-			MV.forceMove(get_step(MV.loc, MV.dir))
+			MV.forceMove(get_step(MV.loc, m_dir))
 			MV.update_icon()
 		if (istype(M, /mob/living))
 			var/mob/living/ML = M
 			ML.forceMove(get_step(ML.loc, m_dir))
+			if(ML.using_object && istype(ML.using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+				var/obj/item/weapon/gun/projectile/automatic/stationary/HMG = ML.using_object
+				HMG.update_pixels(ML)
 	for (var/obj/F in components)
 		F.dir = dir
 		F.forceMove(get_step(F.loc, m_dir))
@@ -302,17 +311,17 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					MAT.trigger(F)
 				else
 					qdel(MAT)
-					visible_message("<span class='warning'>\the [src] crushes \the [MAT]!</span>","<span class='warning'>You crush \the [MAT]!</span>")
+					visible_message(SPAN_WARNING("\The [src] crushes \the [MAT]!"),SPAN_WARNING("You crush \the [MAT]!"))
 			if (istype(M, /obj/item/mine/boobytrap))
 				var/obj/item/mine/boobytrap/BAT = M
 				if (BAT.anchored)
 					qdel(BAT)
-					visible_message("<span class='warning'>\the [src] crushes \the [BAT]!</span>","<span class='warning'>You crush \the [BAT]!</span>")
+					visible_message(SPAN_WARNING("\The [src] crushes \the [BAT]!"),SPAN_WARNING("You crush \the [BAT]!"))
 			if (istype(M, /obj/item/mine/ap))
 				var/obj/item/mine/ap/BAT = M
 				if (BAT.anchored)
 					qdel(BAT)
-					visible_message("<span class='warning'>\the [src] crushes \the [BAT]!</span>","<span class='warning'>You crush \the [BAT]!</span>")
+					visible_message(SPAN_WARNING("\The [src] crushes \the [BAT]!"),SPAN_WARNING("You crush \the [BAT]!"))
 			if ((istype(M, /mob/living) || istype(M, /obj/structure) || istype(M, /obj/item)) && !(M in transporting))
 				if (!istype(M, /obj/structure/sign/traffic/zebracrossing) && !istype(M, /obj/structure/sign/traffic/side) && !istype(M, /obj/structure/sign/traffic/central) && !istype(M, /obj/structure/rails) && !istype(M, /obj/structure/cable) && !istype(M, /obj/structure/redmailbox) && !istype(M, /obj/structure/gate) && !istype(M, /obj/structure/lamp/lamppost_small/) && !istype(M, /obj/structure/lamp/lamp_big/alwayson) && !istype(M, /obj/structure/lamp/lamp_small/alwayson) && !istype(M, /obj/structure/billboard))
 					transporting += M
@@ -396,6 +405,7 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 				matrix["[disx+1],[disy+1]"] = list(PV, disy+1, disx+1,"[disy+1],[disx+1]")
 
 	return TRUE
+
 /obj/structure/vehicleparts/axis/proc/check_corners()
 	corners = list(null, null, null, null) //Front-Right, Front-Left, Back-Right,Back-Left; FR, FL, BR, BL
 	for (var/obj/structure/vehicleparts/frame/F in components)
@@ -408,41 +418,45 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					sides = "[sides][i]"
 		if (length(sides) == 2)
 			if (findtext(sides,"1") && findtext(sides,"4")) //SW corner
-				if (dir == SOUTH) //FR
-					corners[1] = F
-				else if (dir == NORTH) //BL
-					corners[4] = F
-				else if  (dir == WEST) //FL
-					corners[2] = F
-				else if (dir == EAST) // BR
-					corners[3] = F
+				switch(dir)
+					if (SOUTH) //FR
+						corners[1] = F
+					if (NORTH) //BL
+						corners[4] = F
+					if (WEST) //FL
+						corners[2] = F
+					if (EAST) // BR
+						corners[3] = F
 			if (findtext(sides,"1") && findtext(sides,"8")) //SE corner
-				if (dir == SOUTH) //FL
-					corners[2] = F
-				else if (dir == NORTH) //BR
-					corners[3] = F
-				else if  (dir == WEST) //BL
-					corners[4] = F
-				else if (dir == EAST) // FR
-					corners[1] = F
+				switch(dir)
+					if (SOUTH) //FL
+						corners[2] = F
+					if (NORTH) //BR
+						corners[3] = F
+					if (WEST) //BL
+						corners[4] = F
+					if (EAST) // FR
+						corners[1] = F
 			if (findtext(sides,"2") && findtext(sides,"4")) //NW corner
-				if (dir == SOUTH) //BR
-					corners[3] = F
-				else if (dir == NORTH) //FL
-					corners[2] = F
-				else if  (dir == WEST) //FR
-					corners[1] = F
-				else if (dir == EAST) // BL
-					corners[4] = F
+				switch(dir)
+					if (SOUTH) //BR
+						corners[3] = F
+					if (NORTH) //FL
+						corners[2] = F
+					if (WEST) //FR
+						corners[1] = F
+					if (EAST) // BL
+						corners[4] = F
 			if (findtext(sides,"2") && findtext(sides,"8")) //NE corner
-				if (dir == SOUTH) //BL
-					corners[4] = F
-				else if (dir == NORTH) //FR
-					corners[1] = F
-				else if  (dir == WEST) //BR
-					corners[3] = F
-				else if (dir == EAST) // FL
-					corners[2] = F
+				switch(dir)
+					if (SOUTH) //BL
+						corners[4] = F
+					if (NORTH) //FR
+						corners[1] = F
+					if (WEST) //BR
+						corners[3] = F
+					if (EAST) // FL
+						corners[2] = F
 	maxdist=1+max(abs(corners[1].x-corners[2].x),abs(corners[1].y-corners[3].y),abs(corners[1].y-corners[2].y),abs(corners[1].x-corners[3].x))
 	for(var/obj/structure/vehicleparts/frame/FM in components)
 		for(var/obj/structure/vehicleparts/movement/MV in wheels)
@@ -450,32 +464,30 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 				MV.axis = src
 				MV.connected = FM
 				FM.mwheel = MV
+	
 	for(var/obj/structure/vehicleparts/movement/MV in wheels)
 		//Front-Right, Front-Left, Back-Right,Back-Left; FR, FL, BR, BL
 		if (MV.connected == corners[1])
 			MV.reversed = FALSE
 		else if (MV.connected == corners[2])
-			if (MV.ntype == "wheel")
-				MV.reversed = TRUE
-			else
-				MV.reversed = FALSE
+			MV.reversed = FALSE
 		else if (MV.connected == corners[3])
 			if (MV.ntype == "wheel")
-				MV.reversed = TRUE
-			else
 				MV.reversed = FALSE
+			else
+				MV.reversed = TRUE
 		else if (MV.connected == corners[4])
 			if (MV.ntype == "wheel")
-				MV.reversed = TRUE
+				MV.reversed = FALSE
 			else
 				MV.reversed = TRUE
-		else
-			return
-
+		
+		// Immediately sync the direction
 		if (MV.reversed)
 			MV.dir = OPPOSITE_DIR(dir)
 		else
 			MV.dir = dir
+		MV.update_icon()
 	if (corners[1] != null && corners[2] != null && corners[3] != null && corners[4] != null)
 		return TRUE
 	else
@@ -505,24 +517,45 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 		check_matrix()
 	matrix_current_locs = list()
 
-	//first we need to generate the matrix of the current locations, based on our frame matrix, so we dont teleport stuff on top of other stuff.
+	var/turf/axis_turf = get_turf(loc)
+	var/dx=1
+	var/dy=1
+	switch(dir)
+		if(NORTH)
+			dy = -1
+		if(SOUTH)
+			dx = -1
+		if(EAST)
+			dx = -1
+			dy = -1
+
+	var/i = 0
+	var/j = 0
 	for (var/locx=1; locx<=maxdist; locx++)
 		for (var/locy=1; locy<=maxdist; locy++)
 			var/loc2textv = "[locx],[locy]"
-			if (matrix[loc2textv][1])
-				var/turf/currloc = get_turf(matrix[loc2textv][1])
-				var/list/tmplist = list()
-				for (var/atom/movable/MV in currloc)
-					if ((istype(MV, /mob/living) || istype(MV, /obj/structure) || istype(MV, /obj/item) || istype(MV, /obj/effect/pseudovehicle)))
-						tmplist += MV
-				matrix_current_locs += list(matrix[loc2textv][4] = list(currloc,tmplist, matrix[loc2textv][4]))
+			var/turf/currloc = locate(axis_turf.x + i, axis_turf.y+j, axis_turf.z)
+			var/list/tmplist = list()
+			for (var/atom/movable/MV in currloc)
+				if ((istype(MV, /mob/living) || istype(MV, /obj/structure) || istype(MV, /obj/item) || istype(MV, /obj/effect/pseudovehicle)))
+					tmplist += MV
+			matrix_current_locs += list(matrix[loc2textv][4] = list(currloc,tmplist, matrix[loc2textv][4]))
+			if(dir == NORTH || dir == SOUTH)
+				i+=dx
+			else
+				j+=dy
+
+		if(dir == NORTH || dir == SOUTH)
+			j+=dy
+			i = 0
+		else
+			i+=dx
+			j = 0
 
 	//check if there are no other vehicles/obstacles in the destination areas
 	for (var/locx=1; locx<=maxdist; locx++)
 		for (var/locy=1; locy<=maxdist; locy++)
 			var/loc2textv = "[locx],[locy]"
-			if (!matrix_current_locs[loc2textv] || !matrix_current_locs[loc2textv].len)
-				continue
 			var/dlocfinding
 			switch(maxdist)
 				if (1)
@@ -535,25 +568,45 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					dlocfinding = rotation_matrixes4[tdir][loc2textv][1]
 				if (5)
 					dlocfinding = rotation_matrixes5[tdir][loc2textv][1]
-			if (!dlocfinding)
-				continue
 			var/turf/T = matrix_current_locs[dlocfinding][1]
+			if (!T)
+				continue
 			var/list/todestroy = list()
-			if (!matrix_current_locs[loc2textv][1] || !matrix_current_locs[dlocfinding][1])
-				if (user)
-					user << "<span class = 'warning'>You can't turn in that direction, the way is blocked!</span>"
-				return FALSE
-				if (!T || T.density)
-					if (user)
-						user << "<span class = 'warning'>You can't turn in that direction, the way is blocked!</span>"
-					return FALSE
 			for (var/obj/O in T)
 				if ((!locate(O) in transporting) && (!locate(O) in components) && (!locate(O) in wheels))
+					if (istype(O, /obj/structure/vehicleparts/frame/ship))
+						var/obj/structure/vehicleparts/frame/ship/FRM = O
+						if (FRM.axis != src)
+							if (user)
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked by [FRM]!"))
+							return FALSE
 					if (istype(O, /obj/structure/vehicleparts/frame))
 						var/obj/structure/vehicleparts/frame/FRM = O
 						if (FRM.axis != src)
 							if (user)
-								user << "<span class = 'warning'>You can't turn in that direction, the way is blocked!</span>"
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked by [FRM]!"))
+							return FALSE
+					else if (istype(O, /obj/structure/barricade))
+						var/obj/structure/barricade/B = O
+						if(B.density > 0 && B.health > 600)
+							if (user)
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked by [B]!"))
+							return FALSE
+					else if (istype(O, /obj/covers))
+						if(O.density)
+							if (user)
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked by [O]!"))
+							return 
+					else if (istype(O, /obj/structure/barricade))
+						var/obj/structure/barricade/B = O
+						if(B.density > 0 && B.health > 600)
+							if (user)
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked!"))
+							return FALSE
+					else if (istype(O, /obj/covers))
+						if(O.density)
+							if (user)
+								to_chat(user, SPAN_WARNING("You can't turn in that direction, the way is blocked!"))
 							return FALSE
 					else
 						todestroy += O
@@ -581,8 +634,6 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 					dlocfind = rotation_matrixes4[tdir][loc2textv][1]
 				if (5)
 					dlocfind = rotation_matrixes5[tdir][loc2textv][1]
-			if (!matrix_current_locs[loc2textv][1] || !matrix_current_locs[dlocfind][1])
-				return FALSE
 //			world.log << "LOG: currloc: [loc2textv] ([matrix_current_locs[loc2textv][1].x],[matrix_current_locs[loc2textv][1].y]), moving to: [rotation_matrixes5[tdir][loc2textv][1]] ([matrix_current_locs[dlocfind][1].x],[matrix_current_locs[dlocfind][1].y])"
 			if (islist(matrix_current_locs[loc2textv][2]))
 				for (var/obj/effect/pseudovehicle/PV in matrix_current_locs[dlocfind][1])
@@ -597,6 +648,9 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 							ST.Destroy()
 				for (var/atom/movable/M in matrix_current_locs[loc2textv][2])
 					if (!istype(M, /obj/structure/sign/traffic/zebracrossing) && !istype(M, /obj/structure/sign/traffic/side) && !istype(M, /obj/structure/sign/traffic/central) && !istype(M, /obj/structure/rails) && !istype(M,/obj/covers) && !istype(M,/obj/structure/cable) && !istype(M,/obj/structure/gate) && !istype(M, /obj/structure/lamp/lamppost_small/) && !istype(M, /obj/structure/lamp/lamp_big/alwayson) && !istype(M, /obj/structure/lamp/lamp_small/alwayson) && !istype(M, /obj/structure/billboard))
+						if (istype(M, /obj/structure/turret/course))
+							var/obj/structure/turret/course/C = M
+							C.turn_to_dir(tdir)
 						M.forceMove(matrix_current_locs[dlocfind][1])
 						if (istype(M, /obj))
 							var/obj/O = M
@@ -640,17 +694,17 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 	if (!ishuman(H))
 		return
 	for(var/obj/structure/vehicleparts/frame/F1 in get_turf(get_step(src, WEST)))
-		H << "<span class='notice'>The axis needs to be placed at the <b>TOP LEFT</b> corner!</span>"
+		to_chat(H, SPAN_NOTICE("The axis needs to be placed at the <b>TOP LEFT</b> corner!"))
 		return
 	for(var/obj/structure/vehicleparts/frame/F2 in get_turf(get_step(src, NORTH)))
-		H << "<span class='notice'>The axis needs to be placed at the <b>TOP LEFT</b> corner!</span>"
+		to_chat(H, SPAN_NOTICE("The axis needs to be placed at the <b>TOP LEFT</b> corner!"))
 		return
 	for(var/obj/structure/vehicleparts/frame/ship/SH in range(4,src))
 		var/turf/TT = get_turf(SH)
 		if (!istype(TT, /turf/floor/beach/water) && !istype(TT, /turf/floor/trench/flooded))
-			H << "<span class='notice'>All ship parts must be in a water tile.</span>"
+			to_chat(H, SPAN_WARNING("All ship parts must be on a water tile."))
 			return
-	var/inp = WWinput(H, "Are you sure you wan't to assemble a vehicle here? This has to be the top left corner.", "Vehicle Assembly", "No", list("No", "Yes"))
+	var/inp = WWinput(H, "Are you sure that you want to assemble a vehicle here? This has to be the <b>top-left</b> corner of the vehicle.", "Vehicle Assembly", "No", list("No", "Yes"))
 	if (inp == "No")
 		return
 	for(var/obj/structure/vehicleparts/frame/F in loc)
@@ -677,10 +731,10 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 			list("blugoslavian blue","#8383C2"),)
 
 		var/colors // Colors you can make your vehicle
-		if (map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-			if (H.faction_text == PIRATES)
+		if (map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CMP)
+			if (H.faction_text == REDFACTION)
 				colors = list("redmenian red")
-			else if (H.faction_text == CIVILIAN)
+			else if (H.faction_text == BLUEFACTION)
 				colors = list("blugoslavian blue")
 		else
 			colors = list("light gray", "medium gray", "dark gray", "green", "pale green", "Feldgrau (WW1)", "Feldgrau (WW2)", "light khaki", "dark khaki", "olive drab")
@@ -702,10 +756,11 @@ var/global/list/tank_names_usa = list("Charlie", "Alpha", "Foxtrot", "Tango", "E
 			var/chooseturret = WWinput(H, "Choose this vehicle's turret type:", "Vehicle Turret", "tank", turrets)
 			if (chooseturret)
 				chooseturret += "_turret"
-				turret_type = chooseturret
 		dir = 1
 		new/obj/effect/autoassembler(locate(x+2,y-2,z))
-		H << "<span class='warning'>Vehicle assembled.</span>"
+		check_corners()
+		check_matrix()
+		to_chat(H, SPAN_NOTICE("Vehicle assembled."))
 		for (var/obj/O in components)
 			O.update_icon()
 		return

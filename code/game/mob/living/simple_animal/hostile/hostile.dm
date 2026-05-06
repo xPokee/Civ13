@@ -3,12 +3,20 @@
 	stop_automated_movement_when_pulled = FALSE
 	a_intent = I_HARM
 	behaviour = "hunt"
+	var/atom/target
+//These vars are related to how mobs locate and target
+	var/robust_searching = 0 //By default, mobs have a simple searching method, set this to 1 for the more scrutinous searching (stat_attack, stat_exclusive, etc), should be disabled on most mobs
+	var/search_objects = 0 //If we want to consider objects when searching around, set this to 1. If you want to search for objects while also ignoring mobs until hurt, set it to 2. To completely ignore mobs, even when attacked, set it to 3
+	var/list/wanted_objects = list() //A list of objects that will be checked against to attack, should we have search_objects enabled
+	var/stat_attack = 0 //Mobs with stat_attack to 1 will attempt to attack things that are unconscious, Mobs with stat_attack set to 2 will attempt to attack the dead.
+	var/stat_exclusive = 0 //Mobs with this set to 1 will exclusively attack things defined by stat_attack, stat_attack 2 means they will only attack corpses
+	var/attack_same = 0 //Set us to 1 to allow us to attack our own faction, or 2, to only ever attack our own faction
 
 /mob/living/simple_animal/proc/FindTarget()
 	var/atom/T = null
 	if(!istype(src,/mob/living/simple_animal/hostile/human))
 		stop_automated_movement = FALSE
-	var/list/the_targets = ListTargets(7) // range that simple_animal will look for targets
+	var/list/the_targets = ListTargets(idle_vision_range) // range that simple_animal will look for targets
 	if (behaviour == "hostile")
 		stance = HOSTILE_STANCE_ATTACK
 		for(var/mob/living/ML in the_targets)
@@ -40,6 +48,8 @@
 						T = RH
 						break
 			else
+				if (istype(L, /mob/living/simple_animal/civilian) && istype(src, /mob/living/simple_animal/hostile/human/redmenian_ng))
+					continue
 				if (L.faction == faction)
 					continue
 				else if (L in friends)
@@ -65,17 +75,18 @@
 /mob/living/simple_animal/proc/MoveToTarget()
 	if (!target_mob || !SA_attackable(target_mob))
 		stance = HOSTILE_STANCE_IDLE
-	if (target_mob in ListTargets(8))
+		return
+	if (target_mob in view(aggro_vision_range, src))
 		stance = HOSTILE_STANCE_ATTACK
 		walk_to(src, target_mob, TRUE, move_to_delay)
-	else if (target_mob in ListTargets(10))
+	else if (target_mob in view(idle_vision_range, src))
 		walk_to(src, target_mob, TRUE, move_to_delay)
 
 /mob/living/simple_animal/proc/AttackTarget()
 	if (!target_mob || !SA_attackable(target_mob))
 		LoseTarget()
 		return FALSE
-	if (!(target_mob in ListTargets(8)))
+	if (!(target_mob in view(aggro_vision_range, src)))
 		LostTarget()
 		return FALSE
 	if (get_dist(src, target_mob) <= 1)	//Attacking
@@ -105,7 +116,9 @@
 			if (prob(3*dmod))
 				H.disease = TRUE
 				H.disease_type = "plague"
-
+//		if(robust_searching)
+//			if(L.stat > stat_attack || L.stat != stat_attack && stat_exclusive == 1)
+//				return 0
 		if (prob(95) || !can_bite_limbs_off)
 			H.apply_damage(damage, BRUTE, affecting, H.run_armor_check(affecting, "melee"), sharp=1, edge=1)
 		else
@@ -134,8 +147,8 @@
 	walk(src, FALSE)
 
 
-/mob/living/simple_animal/proc/ListTargets(var/dist = 8)
-	var/list/L = hearers(dist,src)
+/mob/living/simple_animal/proc/ListTargets(var/dist = 7)
+	var/list/L = view(dist, src)
 	return L
 
 /mob/living/simple_animal/proc/DestroySurroundings()
@@ -151,3 +164,6 @@
 			else if (istype(obstacle, /obj/structure/simple_door))
 				var/obj/structure/simple_door/SD = obstacle
 				SD.Bumped(src)
+
+/mob/living/simple_animal/hostile/proc/Found(var/atom/A)//This is here as a potential override to pick a specific target if available
+	return

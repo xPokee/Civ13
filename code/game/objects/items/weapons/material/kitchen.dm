@@ -54,7 +54,7 @@
 				user << "<span class='danger'>You cannot force any more food to go down [M]'s throat.</span>"
 				return
 			M.visible_message("<span class='notice'>\The [user] feeds some [loaded] to \the [M] with \the [src].</span>")
-		playsound(M.loc,'sound/items/eatfood.ogg', rand(10,40), TRUE)
+		playsound(M.loc,"eat", rand(20,45), TRUE)
 		overlays.Cut()
 		return
 	else
@@ -100,7 +100,6 @@
 	var/suicide = FALSE // for the hari kiri action
 
 /obj/item/weapon/material/kitchen/utensil/knife/proc/handle_suicide(mob/living/user)
-	..()
 	if (!ishuman(user))
 		return
 	var/mob/living/human/M = user
@@ -156,7 +155,7 @@
 		return
 
 /obj/item/weapon/material/kitchen/utensil/knife/razorblade/attack(mob/living/human/M as mob, mob/living/user as mob)
-	if (user.a_intent == I_DISARM && user.targeted_organ == "head" && (M in range(user,1) || M == user) && ishuman(M) && ishuman(user))
+	if (user.a_intent == I_DISARM && user.targeted_organ == "head" && ((M in range(user,1)) || M == user) && ishuman(M) && ishuman(user))
 		visible_message("[user] starts cutting [M]'s hair...","You start cutting [M]'s hair...")
 		if (do_after(user, 80, M))
 			var/list/hairlist = M.generate_valid_hairstyles(1,1)
@@ -185,7 +184,7 @@
 
 /obj/item/weapon/material/kitchen/utensil/knife/shank
 	name = "shank"
-	desc = "A small self-made knife used a lot in jail."
+	desc = "A small self-made knife."
 	icon = 'icons/obj/weapons.dmi'
 	icon_state = "steelshank"
 	item_state = "knife"
@@ -229,7 +228,7 @@
 
 /obj/item/weapon/material/kitchen/utensil/knife/dagger
 	name = "dagger"
-	desc = "A long, sharp, swordlike knife that is used for close quarter combat."
+	desc = "A dagger with two sharp edges alongside a very sharp point."
 	icon = 'icons/obj/weapons.dmi'
 	icon_state = "dagger"
 	item_state = "knife"
@@ -531,7 +530,7 @@
 	icon_state = "tanto"
 	item_state = "tanto"
 	block_chance = 10
-	force_divisor = 0.4 // 42 when wielded with hardnes 60 (steel)
+	force_divisor = 0.4 // 42 when wielded with hardness 60 (steel)
 	thrown_force_divisor = 0.8 // 10 when thrown with weight 20 (steel)
 	value = 60
 	cooldownw = 6

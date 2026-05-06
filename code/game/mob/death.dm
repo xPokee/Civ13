@@ -32,16 +32,9 @@
 				qdel(animation)
 			if (client)
 				client.movement_busy = FALSE
-				if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-					src << browse(null, "window=memory")
-					stop_ambience(src)
-					client.screen.Cut()
-					var/mob/new_player/M = new /mob/new_player()
-					M.key = key
+				if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NATIONSRP_COLDWAR_CMP || map.ID == CAMPAIGN_MAP_LIST_MAPID_OR)
 					spawn(5)
-						M << "<font size=6>You have died!</font>"
-					if (M.mind)
-						M.mind.reset()
+						to_chat(client, "<font size=6>You have died!</font>")
 				else
 					ghostize()
 			if (src)
@@ -83,16 +76,9 @@
 				qdel(src)
 			if (client)
 				client.movement_busy = FALSE
-				if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-					src << browse(null, "window=memory")
-					stop_ambience(src)
-					client.screen.Cut()
-					var/mob/new_player/M = new /mob/new_player()
-					M.key = key
+				if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NATIONSRP_COLDWAR_CMP || map.ID == CAMPAIGN_MAP_LIST_MAPID_OR)
 					spawn(5)
-						M << "<font size=6>You have died!</font>"
-					if (M.mind)
-						M.mind.reset()
+						to_chat(client, "<font size=6>You have died!</font>")
 				else
 					ghostize()
 			if (src)
@@ -100,7 +86,7 @@
 /mob/proc/maim()
 	crush()
 
-/mob/proc/death(gibbed,deathmessage="seizes up and falls limp...")
+/mob/proc/death(gibbed, deathmessage="seizes up and falls limp...")
 
 	if (stat == DEAD)
 		return FALSE
@@ -144,16 +130,9 @@
 
 	if (client)
 		client.movement_busy = FALSE
-		if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
-			src << browse(null, "window=memory")
-			stop_ambience(src)
-			client.screen.Cut()
-			var/mob/new_player/M = new /mob/new_player()
-			M.key = key
+		if (map.ID == MAP_CAMPAIGN || map.ID == MAP_NATIONSRP_COLDWAR_CMP || map.ID == CAMPAIGN_MAP_LIST_MAPID_OR)
 			spawn(5)
-				M << "<font size=6>You have died!</font>"
-			if (M.mind)
-				M.mind.reset()
+				to_chat(client, "<font size=6>You have died!</font>")
 		else
 			ghostize()
 	announce_ghost_joinleave(client, FALSE)

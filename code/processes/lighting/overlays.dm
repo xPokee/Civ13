@@ -10,16 +10,25 @@
 	processes.lighting_overlays = src
 
 /process/lighting_overlays/fire()
+	var/queue_length = lighting_update_overlays.len
+	var/max_updates_per_tick = 1000
 
-	for (current in lighting_update_overlays)
-		if (!isDeleted(current))
-			var/atom/movable/lighting_overlay/L = current
+	// Scale max_updates_per_tick based on queue length
+	if (queue_length > 1000)
+		//log_debug("lighting_overlays: Warning - queue length is [queue_length], scaling processing rate")
+		max_updates_per_tick = min(queue_length, max_updates_per_tick * 2)
+
+	var/count = 0
+	var/list/update_list = lighting_update_overlays.Copy()
+	for (var/atom/movable/lighting_overlay/L in update_list)
+		if (count++ >= max_updates_per_tick)
+			break
+
+		if (!isDeleted(L))
 			L.update_overlay()
 			L.needs_update = FALSE
-			lighting_update_overlays -= L
-		else
-			catchBadType(current)
-			lighting_update_overlays -= current
+
+		lighting_update_overlays -= L
 
 		PROCESS_TICK_CHECK
 

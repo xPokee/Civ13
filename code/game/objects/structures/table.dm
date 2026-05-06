@@ -29,7 +29,7 @@
 	var/buildstackamount = TRUE
 	var/framestackamount = 2
 	var/deconstructable = TRUE
-	var/flipped = FALSE // WIP?
+	var/flipped = FALSE // WIP? - 4.17.2024 - yes heavy WIP.
 	var/health = 100
 	throwpass = TRUE
 	not_movable = FALSE
@@ -62,12 +62,30 @@
 
 	if (!istype(usr, /mob/living))
 		return
+	if (istype(src, /obj/structure/table/rack))
+		to_chat(usr, SPAN_WARNING("You can't flip this."))
+		return
 	if (istype(src, /obj/structure/table/modern/billiard))
-		usr << "You can't flip the table, it's too heavy."
+		to_chat(usr, SPAN_WARNING("You can't flip the table, it's too heavy."))
 		return
 	else
-		usr << "You start flipping the table..."
+		for (var/obj/I in get_turf(src))
+			if (istype(I, /obj/structure/table))
+				var/obj/structure/table/table = I
+				if (table != src) // Check to make sure we aren't trying to flip a table onto the same table in the same flip dir.
+					if (table.dir == usr.dir && table.flipped)
+						to_chat(usr, SPAN_WARNING("You can't flip the table towards this direction. \A [table] is already flipped that way."))
+						return
+
+		to_chat(usr, SPAN_NOTICE("You start flipping the table..."))
 		if (do_after(usr, 12, src))
+			for (var/obj/O in get_turf(src))
+				if (istype(O, /obj/structure/table))
+					var/obj/structure/table/table = O
+					if(table != src) // Re-check to make sure we aren't trying to flip a table onto the same table in the same flip dir.
+						if (table.dir == usr.dir && table.flipped)
+							to_chat(usr, SPAN_WARNING("You can't flip the table towards this direction. \A [table] is already flipped that way."))
+							return
 			flipped = !flipped
 			if (flipped)
 				visible_message("<span class='warning'>[usr] flips the table!</span>")
@@ -75,9 +93,82 @@
 					var/mob/living/L = usr
 					dir = L.dir
 			else
-				visible_message("[usr] puts the table back up.")
 				layer = 2.8
+				visible_message("<span class='warning'>[usr] puts the table back up.</span>")
 			update_icon()
+
+/obj/structure/table/do_climb(var/mob/living/user)
+	if (!can_climb(user))
+		return
+	if (map.check_caribbean_block(user, get_turf(src)))
+		return
+
+	var/turf/T = get_step(get_turf(src), dir) // Target-Turf
+
+	var/climb_dir = src.dir  // Direction of the table that the user is trying to climb
+	var/opposite_dir = reverse_direction(climb_dir)  // Reverse the direction to simulate a table in the opposite direction facing towards us.
+
+	// Check if the user is not directly in front of or behind the barrier
+	var/turf/next_turf = get_step(src, climb_dir) 
+	if (flipped)  // If the table is flipped
+		if (user.loc != next_turf)  // If the user's location is not in front of the barrier
+			next_turf = get_turf(src)
+			if (user.loc != next_turf)  
+				to_chat(user, SPAN_WARNING("You can't vault this barrier. You must be directly next to it."))
+				return
+
+	// Check if there's a barrier with opposite direction facing the climbing direction
+	for (var/obj/I in T)
+		if (I.dir == opposite_dir && istype(I, /obj/structure/window/barrier))
+			to_chat(user, SPAN_WARNING("You can't vault this table. \A [I.name] is blocking the way."))
+			return
+		else if(istype(I, /obj/structure/table)) // You should be able to flip tables against sandbags, just not noclip thru the balance of opposite barriers.
+			var/obj/structure/table/table = I
+			if (table.flipped && table.dir == opposite_dir)
+				to_chat(user, SPAN_WARNING("You can't vault over this table. Another table is blocking the way."))
+				return
+
+	if (!neighbor_turf_passable())
+		to_chat(user, SPAN_DANGER("You can't climb there, the way is blocked."))
+		climbers -= user
+		return
+
+	// Descriptive text for the visible_msgs.
+	var/climb_desc = null
+	if (flipped) // If the table is flipped, we climb over it.
+		climb_desc = "over"
+		user.face_atom(T) // Face target-turf (movingto)
+	else // Else, we climb "onto" it.
+		climb_desc = "onto"
+		user.face_atom(src) //Face directly onto the table if not flipped on side.
+
+	// Display a message and mark the user as climbing
+	user.visible_message(SPAN_WARNING("[user] starts climbing [climb_desc] \the [src]!</span>"), SPAN_WARNING("You start climbing [climb_desc] \the [src]!"))
+	climbers |= user
+
+	if (!do_after(user,(issmall(user) ? 20 : 34)))
+		climbers -= user
+		return
+
+	if (!can_climb(user, post_climb_check=1))
+		climbers -= user
+		return
+
+	// Move the user to the appropriate turf based on whether the table is flipped
+	if(flipped)
+		if (get_turf(user) == get_turf(src))
+			user.forceMove(get_step(src, dir)) // move user to dir turf of table.
+		else
+			user.forceMove(get_turf(src)) // move user to turf of flipped table.
+	else
+		user.forceMove(get_turf(src)) // Climb onto it normally if it is not flipped.
+
+	if (get_turf(user) == T)
+		user.visible_message(SPAN_WARNING("[user] climbs [climb_desc] \the [src]!"), SPAN_WARNING("You climb [climb_desc] \the [src]!"))
+		if (istype(src, /obj/structure/table/glass))
+			var/obj/structure/table/glass/G = src
+			G.shatter()
+	climbers -= user
 
 /obj/structure/table/verb/rotate_left()
 	set name = "Rotate Left"
@@ -158,22 +249,22 @@
 								dir_sum += 128
 
 			var/table_type = 0 //stand_alone table
-			if (dir_sum%16 in cardinal)
+			if ((dir_sum%16) in cardinal)
 				table_type = 1 //endtable
 				dir_sum %= 16
-			if (dir_sum%16 in list(3,12))
+			if ((dir_sum%16) in list(3,12))
 				table_type = 2 //1 tile thick, streight table
 				if (dir_sum%16 == 3) //3 doesn't exist as a dir
 					dir_sum = 2
 				if (dir_sum%16 == 12) //12 doesn't exist as a dir.
 					dir_sum = 4
-			if (dir_sum%16 in list(5,6,9,10))
+			if ((dir_sum%16) in list(5,6,9,10))
 				if (locate(/obj/structure/table,get_step(loc,dir_sum%16)))
 					table_type = 3 //full table (not the TRUE tile thick one, but one of the 'tabledir' tables)
 				else
 					table_type = 2 //1 tile thick, corner table (treated the same as streight tables in code later on)
 				dir_sum %= 16
-			if (dir_sum%16 in list(13,14,7,11)) //Three-way intersection
+			if ((dir_sum%16) in list(13,14,7,11)) //Three-way intersection
 				table_type = 5 //full table as three-way intersections are not sprited, would require 64 sprites to handle all combinations.  TOO BAD -- SkyMarshal
 				switch(dir_sum%16)	//Begin computation of the special type tables.  --SkyMarshal
 					if (7)
@@ -256,6 +347,10 @@
 /obj/structure/table/bullet_act(var/obj/item/projectile/P)
 	return
 /obj/structure/table/CanPass(atom/movable/mover, turf/target)
+	if (istype(mover, /obj/structure/drone))
+		var/obj/structure/drone/D = mover
+		if (D.flying)
+			return TRUE
 	if (istype(mover,/obj/item/projectile))
 		return (check_cover(mover,target))
 	if (flipped == TRUE)
@@ -272,9 +367,9 @@
 //checks if projectile 'P' from turf 'from' can hit whatever is behind the table. Returns TRUE if it can, FALSE if bullet stops.
 /obj/structure/table/proc/check_cover(obj/item/projectile/P, turf/from)
 	var/turf/cover
-	if (flipped==1)
+	if (flipped)
 		cover = get_turf(src)
-	else if (flipped==0)
+	else
 		cover = get_step(loc, get_dir(from, loc))
 	if (!cover)
 		return TRUE
@@ -303,15 +398,18 @@
 	return TRUE
 
 /obj/structure/table/CheckExit(atom/movable/O as mob|obj, target as turf)
+	if (istype(O, /obj/structure/drone))
+		var/obj/structure/drone/D = O
+		if (D.flying)
+			return TRUE
 	if (istype(O) && O.checkpass(PASSTABLE))
 		return TRUE
-	if (flipped==1)
+	if (flipped)
 		if (get_dir(loc, target) == dir)
 			return !density
 		else
 			return TRUE
 	return TRUE
-
 
 /obj/structure/table/MouseDrop_T(atom/movable/O, mob/user)
 	..()
@@ -359,25 +457,30 @@
 		return TRUE
 	qdel(I)
 
-/obj/structure/table/attackby(var/obj/item/I, mob/user, params)
+/obj/structure/table/attackby(obj/item/I as obj, mob/user as mob, params)
 	if (istype(I, /obj/item/weapon/grab))
 		tablepush(I, user)
 		return
-
+	
 	if (istype(I, /obj/item/weapon/hammer) || istype(I, /obj/item/weapon/wrench))
-		..()
-		return
-	else
-		user.drop_item(loc)
-		playsound(loc, I.dropsound, 100, TRUE)
-
-		//Center the icon where the user clicked if we can.
-		var/list/click_params = params2list(params)
-		if (!click_params || !click_params["icon-x"] || !click_params["icon-y"])
+		if (user.a_intent == I_HARM)
+			..()
+			return TRUE // Resolves the attack so we don't get invisible wrenches/hammers.
+		else
+			user.drop_item(loc)
+			playsound(loc, I.dropsound, 100, TRUE)
 			return
-		//Clamp it so that the icon never moves more than 16 pixels in either direction (thus leaving the table turf)
-		I.pixel_x = Clamp(text2num(click_params["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
-		I.pixel_y = Clamp(text2num(click_params["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	
+	user.drop_item(loc)
+	playsound(loc, I.dropsound, 100, TRUE)
+	
+	// Center the icon where the user clicked if we can.
+	var/list/click_params = params2list(params)
+	if (!click_params || !click_params["icon-x"] || !click_params["icon-y"])
+		return 
+	// Clamp it so that the icon never moves more than 16 pixels in either direction (thus leaving the table turf)
+	I.pixel_x = Clamp(text2num(click_params["icon-x"]) - 16, -(world.icon_size/2), world.icon_size/2)
+	I.pixel_y = Clamp(text2num(click_params["icon-y"]) - 16, -(world.icon_size/2), world.icon_size/2)
 
 /*
  * TABLE DESTRUCTION/DECONSTRUCTION
@@ -512,8 +615,8 @@
 	icon_state = "woodtable"
 	flipped_icon = "woodtable-flipped"
 	frame = /obj/structure/table_frame/wood
-	framestack = /obj/item/stack/material/wood
-	buildstack = /obj/item/stack/material/wood
+	framestack = /obj/item/stack/material/woodplank
+	buildstack = /obj/item/stack/material/woodplank
 	flammable = TRUE
 
 /obj/structure/table/modern/table/flipped
@@ -546,7 +649,7 @@
 	icon = 'icons/obj/modern_structures.dmi'
 	icon_state = "billard"
 	frame = /obj/structure/table_frame/wood
-	framestack = /obj/item/stack/material/wood
+	framestack = /obj/item/stack/material/woodplank
 	buildstack = /obj/item/stack/material/cloth
 	flammable = TRUE
 	flipped = FALSE

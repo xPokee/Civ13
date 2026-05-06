@@ -1,7 +1,7 @@
 /obj/map_metadata/football
 	ID = MAP_FOOTBALL
 	title = "Football Match"
-	lobby_icon = "icons/lobby/football.png"
+	lobby_icon = 'icons/lobby/football.png'
 	caribbean_blocking_area_types = list(/area/caribbean/football/midfield, /area/caribbean/football/nopass)
 	respawn_delay = 0
 	no_winner ="The game is still going on."
@@ -19,7 +19,7 @@
 	ambience = list('sound/ambience/football.ogg')
 	faction1 = CIVILIAN
 	songs = list(
-		"Forever Blowing Bubbles:1" = "sound/music/forever_blowing_bubbles.ogg",)
+		"Forever Blowing Bubbles:1" = 'sound/music/forever_blowing_bubbles.ogg',)
 	is_singlefaction = TRUE
 	var/team1 = "Unga Utd."
 	var/team2 = "Chad Town F.C."
@@ -39,7 +39,7 @@
 	New()
 		..()
 		load_teams()
-		spawn(600)
+		spawn(600) // 1 minute
 			points_check()
 			for (var/obj/structure/banner/faction/team/team1/T1 in world)
 				T1.team = team1
@@ -326,10 +326,10 @@
 	return TRUE
 
 // Campaign
-/obj/map_metadata/football_campaign
-	ID = MAP_FOOTBALL_CAMPAIGN
+/obj/map_metadata/football_cmp
+	ID = MAP_FOOTBALL_CMP
 	title = "Football Match"
-	lobby_icon = "icons/lobby/football.png"
+	lobby_icon = 'icons/lobby/football.png'
 	caribbean_blocking_area_types = list(/area/caribbean/football/midfield, /area/caribbean/football/nopass)
 	respawn_delay = 0
 	no_winner ="The game is still going on."
@@ -347,7 +347,7 @@
 	ambience = list('sound/ambience/football.ogg')
 	faction1 = CIVILIAN
 	songs = list(
-		"Forever Blowing Bubbles:1" = "sound/music/forever_blowing_bubbles.ogg",)
+		"Forever Blowing Bubbles:1" = 'sound/music/forever_blowing_bubbles.ogg',)
 	is_singlefaction = TRUE
 	var/team1 = "Redmenia Utd."
 	var/team2 = "Blugoslavia F.C."
@@ -366,7 +366,7 @@
 	var/list/player_count_blue = list(1,2,3,4,5,6,7,8,9,10,11)
 	New()
 		..()
-		spawn(600)
+		spawn(600) // 1 minute
 			points_check()
 			for (var/obj/structure/banner/faction/team/team1/T1 in world)
 				T1.team = team1
@@ -375,7 +375,7 @@
 				T2.team = team2
 				T2.assign_team(team2)
 
-/obj/map_metadata/football_campaign/proc/assign_teams(client/triggerer = null)
+/obj/map_metadata/football_cmp/proc/assign_teams(client/triggerer = null)
 	load_teams()
 	var/list/teamlist = list()
 	for (var/i in teams)
@@ -424,7 +424,7 @@
 			GR.assign()
 		for (var/obj/effect/step_trigger/goal/blue/GB in world)
 			GB.assign()	
-/obj/map_metadata/football_campaign/proc/save_teams()
+/obj/map_metadata/football_cmp/proc/save_teams()
 	var/F = file("SQL/sports_teams.txt")
 	if (fexists(F))
 		fdel(F)
@@ -432,7 +432,7 @@
 		var/txtexport = "[teams[i]["name"]]|||[list2params(teams[i]["main_uniform"])]===[list2params(teams[i]["secondary_uniform"])]===[list2params(teams[i]["goalkeeper_uniform"])]"
 		text2file(txtexport,F)
 	return
-/obj/map_metadata/football_campaign/proc/load_teams()
+/obj/map_metadata/football_cmp/proc/load_teams()
 	var/F = file("SQL/sports_teams.txt")
 	var/list/teamlist = list()
 	if (fexists(F))
@@ -450,7 +450,7 @@
 				teamlist += temp_stats2[1]
 				world.log << "Finished loading teams."
 	return
-/obj/map_metadata/football_campaign/job_enabled_specialcheck(var/datum/job/J)
+/obj/map_metadata/football_cmp/job_enabled_specialcheck(var/datum/job/J)
 	..()
 	if (istype(J, /datum/job/civilian/football_red_campaign) || istype(J, /datum/job/civilian/football_red_campaign/goalkeeper))
 		. = TRUE
@@ -459,13 +459,13 @@
 	else
 		. = FALSE
 
-/obj/map_metadata/football_campaign/proc/points_check()
+/obj/map_metadata/football_cmp/proc/points_check()
 	world << "<font size=4 color='yellow'><b>Current Score:</font></b>"
 	world << "<font size=3 color=[teams[team1][team1_kit]["shirt_color"]]><b>[teams[team1][1]]</font><font size=3 color='#FFF'> [teams[team1][2]] - [teams[team2][2]] </font><font size=3 color=[teams[team2][team2_kit]["shirt_color"]]>[teams[team2][1]]</b></font>"
 	spawn(300)
 		points_check()
 
-/obj/map_metadata/football_campaign/proc/scorers_check()
+/obj/map_metadata/football_cmp/proc/scorers_check()
 	if (scorers.len)
 		var/list/tmplistc = sortTim(scorers, /proc/cmp_numeric_dsc,TRUE)
 		for (var/i in tmplistc)
@@ -473,7 +473,7 @@
 				world << "<font size=3>[i]: <b>[tmplistc[i]]</b> goals</font>"
 			else
 				world << "<font size=3>[i]: <b>[tmplistc[i]]</b> goal</font>"
-/obj/map_metadata/football_campaign/update_win_condition()
+/obj/map_metadata/football_cmp/update_win_condition()
 
 	if (processes.ticker.playtime_elapsed >= 17 MINUTES || world.time >= next_win && next_win != -1)
 		if (win_condition_spam_check)
@@ -506,19 +506,19 @@
 		last_win_condition = win_condition.hash
 		return TRUE
 
-/obj/map_metadata/football_campaign/faction1_can_cross_blocks()
+/obj/map_metadata/football_cmp/faction1_can_cross_blocks()
 	return ((processes.ticker.playtime_elapsed >= 1200 || admin_ended_all_grace_periods) && !stopped)
 
-/obj/map_metadata/football_campaign/cross_message(faction)
+/obj/map_metadata/football_cmp/cross_message(faction)
 	var/warning_sound = sound('sound/effects/football_whistle.ogg', repeat = FALSE, wait = TRUE, channel = 777)
 	for (var/mob/M in player_list)
 		M.client << warning_sound
 	return "<font size=4>The match has started!</font>"
 
-/obj/map_metadata/football_campaign/reverse_cross_message(faction)
+/obj/map_metadata/football_cmp/reverse_cross_message(faction)
 	return ""
 
-/obj/map_metadata/football_campaign/proc/reset_ball()
+/obj/map_metadata/football_cmp/proc/reset_ball()
 	stopped = TRUE
 	for (var/mob/living/human/H in player_list)
 		var/turf/spawnpoint = null
@@ -549,8 +549,8 @@
 
 /datum/job/civilian/football_red_campaign/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
-	if (map && istype(map, /obj/map_metadata/football_campaign))
-		var/obj/map_metadata/football_campaign/FM = map
+	if (map && istype(map, /obj/map_metadata/football_cmp))
+		var/obj/map_metadata/football_cmp/FM = map
 		H.team = FM.team1
 		H.civilization = FM.team1
 		var/obj/item/clothing/under/football/custom/FR = new /obj/item/clothing/under/football/custom(H)
@@ -574,8 +574,8 @@
 
 /datum/job/civilian/football_red_campaign/goalkeeper/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
-	if (map && istype(map, /obj/map_metadata/football_campaign))
-		var/obj/map_metadata/football_campaign/FM = map
+	if (map && istype(map, /obj/map_metadata/football_cmp))
+		var/obj/map_metadata/football_cmp/FM = map
 		H.team = FM.team1
 		H.civilization = FM.team1
 		var/obj/item/clothing/under/football/custom/FR = new /obj/item/clothing/under/football/custom(H)
@@ -604,8 +604,8 @@
 
 /datum/job/civilian/football_blue_campaign/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
-	if (map && istype(map, /obj/map_metadata/football_campaign))
-		var/obj/map_metadata/football_campaign/FM = map
+	if (map && istype(map, /obj/map_metadata/football_cmp))
+		var/obj/map_metadata/football_cmp/FM = map
 		H.team = FM.team2
 		H.civilization = FM.team2
 		var/obj/item/clothing/under/football/custom/FB = new /obj/item/clothing/under/football/custom(H)
@@ -631,8 +631,8 @@
 
 /datum/job/civilian/football_blue_campaign/goalkeeper/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
-	if (map && istype(map, /obj/map_metadata/football_campaign))
-		var/obj/map_metadata/football_campaign/FM = map
+	if (map && istype(map, /obj/map_metadata/football_cmp))
+		var/obj/map_metadata/football_cmp/FM = map
 		H.team = FM.team2
 		H.civilization = FM.team2
 		var/obj/item/clothing/under/football/custom/FB = new /obj/item/clothing/under/football/custom(H)

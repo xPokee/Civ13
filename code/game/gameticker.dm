@@ -44,6 +44,12 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 
 	var/restarting_is_very_bad = FALSE
 
+	//station_explosion used to be a variable for every mob's hud. Which was a waste!
+	//Now we have a general cinematic centrally held within the gameticker....far more efficient!
+	var/obj/screen/cinematic = null
+
+	//Plus it provides an easy way to make cinematics for other events. Just use this as a template :)
+
 /datum/controller/gameticker/proc/pregame()
 
 	spawn (0)
@@ -59,8 +65,8 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 			pregame_timeleft = GAMETICKER_PREGAME_TIME
 			maytip = TRUE
 
-			world << "<b><span style = 'notice'>Welcome to the pre-game lobby!</span></b>"
-			world << "The game will start in [pregame_timeleft] seconds."
+			to_chat(world, SPAN_NOTICE("<b>Welcome to the pre-game lobby!</b>"))
+			to_chat(world, "The game will start in [pregame_timeleft] seconds.")
 
 			while (current_state == GAME_STATE_PREGAME)
 				for (var/i=0, i<10, i++)
@@ -77,11 +83,11 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 								vote.process()
 				if (pregame_timeleft == 20)
 					if (tip)
-						world << "<span class = 'notice'><b>Tip of the round:</b> [tip]</span>"
+						to_chat(world, SPAN_NOTICE("<b>Tip of the round:</b> [tip]"))
 					else
 						var/list/tips = file2list("config/tips.txt")
 						if (tips.len)
-							world << "<span class = 'notice'><b>Tip of the round:</b> [pick(tips)]</span>"
+							to_chat(world, SPAN_NOTICE("<b>Tip of the round:</b> [pick(tips)]"))
 							qdel_list(tips)
 					maytip = FALSE
 				if (pregame_timeleft <= 0)
@@ -89,11 +95,11 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 					/* if we were force started, still show the tip */
 					if (maytip)
 						if (tip)
-							world << "<span class = 'notice'><b>Tip of the round:</b> [tip]</span>"
+							to_chat(world, SPAN_NOTICE("<b>Tip of the round:</b> [tip]"))
 						else
 							var/list/tips = file2list("config/tips.txt")
 							if (tips.len)
-								world << "<span class = 'notice'><b>Tip of the round:</b> [pick(tips)]</span>"
+								to_chat(world, SPAN_NOTICE("<b>Tip of the round:</b> [pick(tips)]"))
 								qdel_list(tips)
 		while (!setup())
 
@@ -105,7 +111,7 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 	job_master.ResetOccupations()
 
 	if (!map || !map.can_start() && !admin_started)
-		world << "<b>Unable to start the game.</b> Not enough players, [map.required_players] active players needed. Reverting to the pre-game lobby."
+		to_chat(world, "<b>Unable to start the game.</b> Not enough players, [map.required_players] active players needed. Reverting to the pre-game lobby.")
 		current_state = GAME_STATE_PREGAME
 		job_master.ResetOccupations()
 		return FALSE
@@ -121,11 +127,9 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 
 	callHook("roundstart")
 
-	// shuttle_controller.initialize_shuttles()
-
 	spawn(0)//Forking here so we dont have to wait for this to finish
 
-	//	world << "<span class = 'notice'><b>Enjoy the game!</b></FONT>"
+	//	to_chat(world, SPAN_NOTICE("<b>Enjoy the game!</b>")
 		//Holiday Round-start stuff	~Carn
 
 		// todo: make these hooks. Apparently they all fail on /hook/roundstart
@@ -198,7 +202,7 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 						restart_after = 1200 - n
 
 			if (!delay_end)
-				world << "<span class='notice'><big>Restarting in <b>90</b> seconds. Next map: <b>TBD</b></big></span>"
+				to_chat(world, SPAN_NOTICE("<big>Restarting in <b>90</b> seconds. Next map: <b>TBD</b></big>"))
 				if (restart_after > restart_timeout)
 					restarting_is_very_bad = TRUE
 					spawn (restart_after - restart_timeout)
@@ -209,8 +213,107 @@ var/global/datum/lobby_music_player/lobby_music_player = null
 				if (!delay_end)
 					world.Reboot()
 				else
-					world << "<span class='notice'><b>An admin has delayed the round end.</b></span>"
+					to_chat(world, SPAN_NOTICE("<b>An admin has delayed the round end.</b>"))
 			else
-				world << "<span class='notice'><b>An admin has delayed the round end.</b></span>"
+				to_chat(world, SPAN_NOTICE("<b>An admin has delayed the round end.</b>"))
 
 	return TRUE
+
+/datum/controller/gameticker/proc/station_explosion_cinematic(var/station_missed=0, var/override = null)
+	if(cinematic)
+		return	//already a cinematic in progress!
+
+	//initialise our cinematic screen object
+	cinematic = new(src)
+	cinematic.icon = null // 'icons/effects/station_explosion.dmi'
+	cinematic.icon_state = "start"
+	cinematic.layer = 21
+	cinematic.mouse_opacity = 0
+	//cinematic.screen_loc = "1,0"
+	cinematic.screen_loc = "CENTER-7,CENTER-7"
+
+	var/obj/structure/bed/temp_buckle = new(src)
+	//Incredibly hackish. It creates a bed within the gameticker (lol) to stop mobs running around
+	if(station_missed)
+		for(var/mob/living/M in living_mob_list)
+			M.buckled = temp_buckle				//buckles the mob so it can't do anything
+			if(M.client)
+				M.client.screen += cinematic	//show every client the cinematic
+	else	//nuke kills everyone on z-level of a ship to prevent "hurr-durr I survived"
+		for(var/mob/living/M in living_mob_list)
+			M.buckled = temp_buckle
+			if(M.client)
+				M.client.screen += cinematic
+
+			if(M.z == 0)	//inside a crate or something
+				var/turf/T = get_turf(M)
+				if(T) // && !(T.z in vessel_z))				//we don't use M.death(0) because it calls a for(/mob) loop and
+					M.health = 0
+					M.stat = DEAD
+
+	//Now animate the cinematic
+	switch(station_missed)
+		if(1)	//nuke was nearby but (mostly) missed
+			if(map.gamemode && !override)
+				override = map.gamemode
+			switch(override)
+				if("nuclear emergency") //Nuke wasn't on station when it blew up
+					flick("start_nuke",cinematic)
+					sleep(35)
+//					world << sound('sound/effects/nuke/nukee.ogg')
+					flick("explode",cinematic)
+					cinematic.icon_state = "loss_nuke"
+				else
+					flick("start_nuke",cinematic)
+					sleep(35)
+//					world << sound('sound/effects/nuke/nukee.ogg')
+					flick("explode",cinematic)
+					cinematic.icon_state = "loss_nuke"
+
+		if(2)	//nuke was nowhere nearby	//TODO: a really distant explosion animation
+			sleep(50)
+//			world << sound('sound/effects/nuke/nukee.ogg')
+
+		else	//station was destroyed
+			if(map.gamemode && !override)
+				override = map.gamemode
+			switch(override)
+				if("nuclear emergency") //Nuke Ops successfully bombed the station
+					flick("intro_nuke",cinematic)
+					sleep(35)
+					flick("station_intact",cinematic)
+//					world << sound('sound/effects/explosionfar.ogg')
+					cinematic.icon_state = "station_intact"
+				if("AI malfunction") //Malf (screen,explosion,summary)
+					flick("start_nuke",cinematic)
+					sleep(35)
+//					world << sound('sound/effects/nuke/nukee.ogg')
+					flick("explode",cinematic)
+					cinematic.icon_state = "loss_nuke"
+				if("blob") //Station nuked (nuke,explosion,summary)
+					flick("start_nuke",cinematic)
+					sleep(35)
+//					world << sound('sound/effects/nuke/nukee.ogg')
+					flick("explode",cinematic)
+					cinematic.icon_state = "loss_nuke"
+				else //Station nuked (nuke,explosion,summary)
+					flick("start_nuke",cinematic)
+					sleep(35)
+//					world << sound('sound/effects/nuke/nukee.ogg')
+					flick("explode",cinematic)
+					cinematic.icon_state = "loss_nuke"
+			for(var/mob/living/M in living_mob_list)
+				var/area/A = get_area(M)
+				if(!A.nukesafe)
+					M.death()
+					// M.client.ChromieWinorLoose(M.client, -1)
+	//No mercy
+	//If its actually the end of the round, wait for it to end.
+	//Otherwise if its a verb it will continue on afterwards.
+	sleep(300)
+
+	if(cinematic)
+		qdel(cinematic)	//end the cinematic
+	if(temp_buckle)
+		qdel(temp_buckle)	//release everybody
+	return

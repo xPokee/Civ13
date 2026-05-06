@@ -35,7 +35,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Captain of the Spanish Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Spanish Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the ship.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -76,7 +76,7 @@
 	H.equip_to_slot_or_del(new /obj/item/clothing/head/tricorne_spanish(H), slot_head)
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Quartermaster of the Spanish Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Quartermaster of the Spanish Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the ship's supply allocation. You are also the second in command, after the <b>Capitan</b>.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -119,7 +119,7 @@
 
 	H.equip_to_slot_or_del(new /obj/item/weapon/attachment/scope/adjustable/binoculars(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/material/sword/spadroon(H), slot_belt)
-	world << "<b><big>[H.real_name] is the Boatswain of the Spanish Navy ship!</big></b>"
+	world << "<big><b>[H.real_name] is the Boatswain of the Spanish Navy ship!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the crew and their job allocation. The whole ship relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -457,7 +457,7 @@
 	var/obj/item/clothing/accessory/armband/spanish/white = new /obj/item/clothing/accessory/armband/spanish(null)
 	uniform.attackby(white, H)
 	give_random_name(H)
-	world << "<b><big>[H.real_name] is the General of the Nationalist Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the General of the Nationalist Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -548,7 +548,7 @@
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/mauser(H), slot_l_hand)
 	H.equip_to_slot_or_del(new /obj/item/ammo_magazine/mauser(H), slot_r_store)
 
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adrian/m26medic(H), slot_head)
+	H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adrianm26medic(H), slot_head)
 	H.equip_to_slot_or_del(new /obj/item/weapon/storage/firstaid/adv(H), slot_back)
 	H.equip_to_slot_or_del(new /obj/item/weapon/storage/firstaid/combat(H), slot_belt)
 
@@ -592,7 +592,7 @@
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/spain/nationalist(H), slot_w_uniform)
 //head
 	if (prob(40))
-		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adrian/m26(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww/adrianm26(H), slot_head)
 	else if (prob(45))
 		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww2/gerhelm(H), slot_head)
 	else

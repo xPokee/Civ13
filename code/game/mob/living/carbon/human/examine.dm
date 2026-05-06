@@ -4,7 +4,7 @@
 	if (ishuman(user))
 		var/mob/living/human/H = user
 		if (!H.next_look_at.Find(getRoundUID(TRUE)) || H.next_look_at[getRoundUID(TRUE)] <= world.time)
-			H.visible_message("<small>[H] looks at [src].</small>")
+			H.visible_message("<small>[user.name] looks at \the [src].</small>", "<small>You look at \the [src].</small>")
 			H.next_look_at[getRoundUID(TRUE)] = world.time + 100
 
 	var/skipgloves = FALSE
@@ -219,7 +219,7 @@
 
 	if (health_percentage <= 75 && health_percentage > 50)//Is the person a little hurt?
 		msg += "<span class='warning'><b>[T.He] looks somewhat wounded.\n</b></span>"
-
+	
 	if (health_percentage <= 50 && health_percentage > 25)//Hurt.
 		msg += "<span class='warning'><b>[T.He] looks wounded.</b></span>\n"
 
@@ -354,7 +354,7 @@
 					else
 						msg += "<br><font color='red'><i>[T.He] is a citizen of the <b>[civname_b]</b>.</font></i>"
 
-			if (map.ID == MAP_NOMADS_PERSISTENCE_BETA || map.ID == MAP_NATIONSRP_COLDWAR_CAMPAIGN)
+			if (map.ID == MAP_NATIONSRP_COLDWAR_CMP)
 				if (H.original_job_title == original_job_title)
 					if (original_job_title == "Redmenian Civilian")
 						msg += "<br><i><font color='green'>You recognize [T.him] as a citizen of your nation, <b>[civname_a]</b>.</i></font>"
@@ -430,7 +430,7 @@
 	for (var/v in TRUE to embedded.len)
 		msg += "<a href='?src=\ref[user];remove_embedded=[v]'>Remove [embedded[v]]</a>"
 
-	user << msg
+	to_chat(user, msg)
 
 /mob/living/human/Topic(href, href_list[], hsrc)
 
@@ -440,9 +440,9 @@
 		var/v = href_list["remove_embedded"]
 		var/user = hsrc
 		var/obj/embedded_obj = embedded[v]
-		visible_message("<span class = 'danger'>[user] starts to pull [embedded_obj] out of [src].</span>")
+		visible_message("<span class = 'danger'>[user] starts to pull \the [embedded_obj] out of [src].</span>")
 		if (do_after(user, 15 * embedded_obj.w_class, src))
-			visible_message("<span class = 'danger'>[user] pulls [embedded_obj] out of [src]!</span>")
+			visible_message("<span class = 'danger'>[user] pulls \the [embedded_obj] out of [src]!</span>")
 			emote("painscream")
 			adjustBruteLoss(rand(10,15))
 		embedded -= embedded_obj

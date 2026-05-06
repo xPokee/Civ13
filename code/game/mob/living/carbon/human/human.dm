@@ -10,6 +10,7 @@
 	var/look_amount = 3
 	var/can_defib = TRUE //Horrible damage (like beheadings) will prevent defibbing organics.
 	var/spawned_at_fob = FALSE // For spawning in at an FOB or your normal job spawnpoint
+	var/immune_to_barbwire = FALSE
 	var/voice_pitch = 100
 
 /mob/living/human/New(var/new_loc, var/new_species = null)
@@ -61,7 +62,7 @@
 
 	make_blood()
 	if (map)
-		if (map.civilizations == TRUE)
+		if (map.civilizations == TRUE && map.ID != MAP_PEPELSIBIRSK)
 			nutrition = rand(max_nutrition * 0.45, max_nutrition * 0.55) // 180 to 220
 			water = round(rand(max_water * 0.45, max_water * 0.55)) // 157 to 192
 		if (map.ID == MAP_GULAG13)
@@ -69,9 +70,9 @@
 				if (istype(original_job, /datum/job/civilian/prisoner))
 					nutrition = max_nutrition*0.1
 					water = max_water*0.2
-				else
-					nutrition = max_nutrition
-					water = max_water
+		else
+			nutrition = max_nutrition
+			water = max_water
 	else
 		nutrition = max_nutrition
 		water = max_water
@@ -107,14 +108,14 @@ var/list/coefflist = list()
 		// the loc.density short circuits 95% of the time and bypasses an expensive typecheck - Kachnov
 		if (client.status_tabs && statpanel("Character"))
 			stat("")
-			stat(stat_header("Character"))
+			stat("Character")
 			stat("")
 			stat("Attack Intent:", a_intent)
 			stat("Move Mode:", m_intent)
 			if (stats["stamina"] && stats["stamina"][2] > 0)
 				stat("Stamina: ", "[round((getStat("stamina")/stats["stamina"][2]) * 100)]%")
 			stat("")
-			stat(stat_header("Factions"))
+			stat("Factions")
 			stat("")
 			stat("Religion:", religion)
 			stat("Civilization:", civilization)
@@ -159,7 +160,7 @@ var/list/coefflist = list()
 					stat("Military Research:", "[map.custom_civs[civilization][2]]/[civmax_research[2]]")
 					stat("Health Research:",  "[map.custom_civs[civilization][3]]/[civmax_research[3]]")
 			stat("")
-			stat(stat_header("Stats"))
+			stat("Stats")
 			stat("")
 
 			for (var/statname in stats)
@@ -427,7 +428,7 @@ var/list/coefflist = list()
 	if (species.has_fine_manipulation)
 		return TRUE
 	if (!silent)
-		src << "<span class='warning'>You don't have the dexterity to use that!</span>"
+		to_chat(src, SPAN_WARNING("You don't have the dexterity to use that!"))
 	return FALSE
 
 /mob/living/human/abiotic(var/full_body = FALSE)
@@ -476,7 +477,7 @@ var/list/coefflist = list()
 				adjust_hygiene(-25)
 				nutrition -= 40
 				adjustToxLoss(-3)
-				mood -= 5
+				mood -= 3
 				spawn(1200)	//wait 2 minutes before next volley
 					lastpuke = FALSE
 
@@ -529,6 +530,7 @@ var/list/coefflist = list()
 	// This will ignore any prosthetics in the prefs currently.
 	species.create_organs(src)
 
+	never_set_faction_huds = TRUE
 	losebreath = FALSE
 	rotting_stage = 0
 	shock_stage = 0
@@ -578,19 +580,19 @@ var/list/coefflist = list()
 		if (prob(round(damage/10)*20))
 			germs++
 		if (germs == 100)
-			world << "Reached stage TRUE in [ticks] ticks"
+			to_chat(world, "Reached stage TRUE in [ticks] ticks")
 		if (germs > 100)
 			if (prob(10))
 				damage++
 				germs++
 		if (germs == 1000)
-			world << "Reached stage 2 in [ticks] ticks"
+			to_chat(world, "Reached stage 2 in [ticks] ticks")
 		if (germs > 1000)
 			damage++
 			germs++
 		if (germs == 2500)
-			world << "Reached stage 3 in [ticks] ticks"
-	world << "Mob took [tdamage] tox damage"
+			to_chat(world, "Reached stage 3 in [ticks] ticks")
+	to_chat(world, "Mob took [tdamage] tox damage")
 */
 //returns TRUE if made bloody, returns FALSE otherwise
 
@@ -639,19 +641,19 @@ var/list/coefflist = list()
 		"You begin counting your pulse.")
 
 	if (pulse())
-		usr << "<span class='notice'>[self ? "You have a" : "[src] has a"] pulse! Counting...</span>"
+		to_chat(usr, SPAN_NOTICE("[self ? "You have a" : "[src] has a"] pulse! Counting..."))
 	else
-		usr << "<span class='danger'>[src] has no pulse!</span>"	//it is REALLY UNLIKELY that a dead person would check his own pulse
+		to_chat(usr, SPAN_DANGER("[src] has no pulse!"))	//it is REALLY UNLIKELY that a dead person would check his own pulse
 		return
 
-	usr << "You must[self ? "" : " both"] remain still until counting is finished."
+	to_chat(usr, "You must[self ? "" : " both"] remain still until counting is finished.")
 	if (do_after(usr, 60, usr.loc))
 		usr << "<span class='notice'>[self ? "Your" : "[src]'s"] pulse is [get_pulse(GETPULSE_HAND)].</span>"
 	else
 		usr << "<span class='warning'>You failed to check the pulse. Try again.</span>"
 
 /mob/living/human/proc/set_species(var/new_species, var/default_colour)
-//	world << "set species"
+//	to_chat(world, "set species")
 	if (!dna)
 		if (!new_species)
 			new_species = "Human"
@@ -809,7 +811,8 @@ var/list/coefflist = list()
 	if (!. && error_msg && user)
 		if (!fail_msg)
 			fail_msg = "There is no exposed flesh or thin material [target_zone == "head" ? "on their head" : "on their body"] to inject into."
-		user << "<span class='alert'>[fail_msg]</span>"
+		to_chat(user, "<span class='alert'>[fail_msg]</span>")
+		
 
 /mob/living/human/proc/exam_self()
 	var/organpain = FALSE
@@ -870,9 +873,8 @@ var/list/coefflist = list()
 				if (status == "")
 					status = " OK"
 
-				src << output(text("\t [] []:[][]",status==" OK"?"<span class = 'notice'>":"<span class = 'warning'> ", capitalize(org.name), status, "</span>"), TRUE)
-
-
+				var/prefix = (status == " OK") ? "<span class='notice'>" : "<span class='warning'>"
+				src << "\t[prefix] [capitalize(org.name)]:[status] </span>"
 
 
 /mob/living/human/print_flavor_text(var/shrink = TRUE)
@@ -1067,13 +1069,12 @@ var/list/coefflist = list()
 	else
 		return H.pulse
 
-
 /mob/living/human/proc/make_adrenaline(amount)
 	if(stat == CONSCIOUS)
 		reagents.add_reagent("adrenaline", amount)
 
 /mob/living/human/proc/using_look() //May not be nessecary
-	if(using_MG)
+	if(using_object && istype(using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
 		return TRUE
 	if(stat == CONSCIOUS)
 		if (client && actions.len)
@@ -1099,6 +1100,8 @@ var/list/coefflist = list()
 					var/obj/screen/movable/action_button/A = O
 					if (A.name == "Look into Distance ([src])" || (A.owner && istype(A.owner, /datum/action/toggle_scope)))
 						continue
+				if (istype(O, /obj/screen/aiming_cross))
+					continue
 				O.scoped_invisible = TRUE
 				O.invisibility = 100
 		else
@@ -1109,22 +1112,22 @@ var/list/coefflist = list()
 
 /mob/living/human/proc/can_look(mob/living/user)//Largely copied from zoom.dm
 	var/mob/living/human/H = user
-
+	if (H.using_drone)	return FALSE
 	if(user.stat || !ishuman(user))
-		user << "<span class = 'warning'>You are unable to look into the distance right now.</span>"
+		to_chat(user, SPAN_WARNING("You are unable to look into the distance right now."))
 		return FALSE
 	else if (H.wear_mask && istype(H.wear_mask, /obj/item/clothing/mask))
 		var/obj/item/clothing/mask/currmask = H.wear_mask
 		if (currmask.blocks_scope)
-			user << "You can't see any farther while wearing \the [currmask]!"
+			to_chat(user, "You can't see any farther whilst wearing \the [currmask]!")
 			return FALSE
 	else if (global_hud.darkMask[1] in user.client.screen)
-		user << "Your visor gets in the way of seeing further."
+		to_chat(user, "Your visor gets in the way of seeing farther.")
 		return FALSE
 	else
 		var/obj/item/organ/eyes/E = H.internal_organs_by_name["eyes"]
 		if (E.is_bruised() || E.is_broken() || H.eye_blind > 0)
-			if (!silent) user << "<span class = 'danger'>Your eyes are injured! You can't see any farther.</span>"
+			if (!silent) to_chat(user, SPAN_DANGER("Your eyes are injured! You can't see any farther!"))
 			return FALSE
 	return TRUE
 
@@ -1133,20 +1136,24 @@ var/list/coefflist = list()
 /mob/living/human/proc/look_into_distance(mob/living/user, forced_look, var/bypass_can_look =  FALSE)//Largely copied from zoom.dm but made for zooming without weapons in hand
 	var/obj/item/weapon/attachment/scope/adjustable/W = null
 	var/obj/item/weapon/gun/G = null
+	var/obj/item/turret_controls/C = null
 	var/obj/item/weapon/gun/projectile/automatic/stationary/S = null
-	if(user.using_MG)
-		S = user.using_MG
+	if(user.using_object && istype(user.using_object, /obj/item/weapon/gun/projectile/automatic/stationary))
+		S = user.using_object
 		look_amount = S.zoom_amount
 	else if(istype(get_active_hand(), /obj/item/weapon/attachment/scope/adjustable))
 		W = get_active_hand()
 		look_amount = W.zoom_amt//May cause issues
+	else if(istype(get_active_hand(), /obj/item/turret_controls))
+		C = get_active_hand()
+		look_amount = C.get_zoom_amt()
 	else if(istype(get_active_hand(), /obj/item/weapon/gun))
 		G = get_active_hand()
 		if(G.attachments && G.attachments.len)
-			var/list/LA = list()
+			var/list/AL = list()
 			for(var/obj/item/weapon/attachment/scope/A in G.attachments)//Looks through the attachments of the gun in hand
-				LA.Add(A.zoom_amt)
-			look_amount = max(LA)//look_amount is set to the maximum zoom_amt of gun's attachments, maybe could be written different instead of a for loop
+				AL += A.zoom_amt
+			look_amount = max(AL)//look_amount is set to the maximum zoom_amt of gun's attachments, maybe could be written different instead of a for loop
 
 	if(!user || !user.client)
 		return
@@ -1194,7 +1201,7 @@ var/list/coefflist = list()
 				animate(user.client, pixel_x = world.icon_size*_x, pixel_y = world.icon_size*_y, time = 3, easing = SINE_EASING)
 				user.client.pixel_x = world.icon_size*_x
 				user.client.pixel_y = world.icon_size*_y
-			user.visible_message("[user] looks into the distance.")
+			user.visible_message("[user] looks into the distance.", "You look into the distance.")
 			handle_ui_visibility()
 			user.dizzycheck = TRUE
 	else//Resets
@@ -1202,7 +1209,7 @@ var/list/coefflist = list()
 		user.client.pixel_x = 0
 		user.client.pixel_y = 0
 		user.client.view = world.view
-		look_amount = 3
+		look_amount = initial(look_amount)
 		handle_ui_visibility()
 		user.dizzycheck = FALSE
 
@@ -1249,11 +1256,10 @@ var/list/coefflist = list()
 			if (looking)
 		/*		if (G.accuracy)
 					G.accuracy = G.scoped_accuracy + zoom_offset*/
-				if (G.recoil)
-					G.recoil = round(G.recoil*(W.zoom_amt/5)+1) //recoil is worse when looking through a scope
+				if (G.shake_strength)
+					G.shake_strength = round(G.shake_strength*(W.zoom_amt/5)+1) //shake_strength is worse when looking through a scope
 			else
-				G.accuracy = initial(G.accuracy)
-				G.recoil = initial(G.recoil)
+				G.shake_strength = initial(G.shake_strength)
 
 
 
@@ -1295,10 +1301,10 @@ var/list/coefflist = list()
 			if(src.looking && m_intent=="run")
 				shake_camera(src, 2, rand(1,3))
 
-	for (var/obj/item/weapon/gun/projectile/automatic/stationary/M in range(2, src))
-		if (M.last_user == src && loc != get_turf(M))
-			M.stopped_using(src)
-			M.last_user = null
+	for (var/obj/item/weapon/gun/projectile/automatic/stationary/HMG in range(2, src))
+		if (HMG.used_by_mob == src && loc != get_turf(HMG))
+			HMG.stopped_using(src)
+			HMG.used_by_mob = null
 // reset all zooms - called from Life(), Weaken(), ghosting and more
 
 /mob/living/human/proc/handle_look_stuff(var/forced = FALSE)
@@ -1311,8 +1317,8 @@ var/list/coefflist = list()
 					H.look_into_distance(src, FALSE)
 					return
 
-	for (var/obj/item/weapon/gun/projectile/automatic/stationary/M in range(2, src))
-		if (M.last_user == src && (loc != get_turf(M) || forced))
-			M.stopped_using(src)
-			M.last_user = null
+	for (var/obj/item/weapon/gun/projectile/automatic/stationary/HMG in range(2, src))
+		if (HMG.used_by_mob == src && (loc != get_turf(HMG) || forced))
+			HMG.stopped_using(src)
+			HMG.used_by_mob = null
 			return

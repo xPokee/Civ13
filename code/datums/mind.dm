@@ -75,7 +75,7 @@
 		world.log << "## DEBUG: transfer_to(): Some idiot has tried to transfer_to() a non mob/living mob. Please inform the coders."
 	if (current)					//remove ourself from our old body's mind variable
 		current.mind = null
-		nanomanager.user_transferred(current, new_character) // transfer active NanoUI instances to new user
+		GLOB.nanomanager.user_transferred(current, new_character) // transfer active NanoUI instances to new user
 
 	if (new_character.mind)		//remove any mind currently in our new body's mind variable
 		new_character.mind.current = null
@@ -106,6 +106,11 @@
 	memory += "[new_text]<BR>"
 
 /datum/mind/proc/show_memory(mob/recipient)
+	if (!recipient)
+		return
+	var/client/C = recipient.client
+	if(!C)
+		return
 	var/output = "<b>You are <span style = 'font-size: 1.25em; color: #E1E1FF'>[current.real_name]</span></b><hr>"
 	for (var/title in notes)
 		output += "<br><br>"

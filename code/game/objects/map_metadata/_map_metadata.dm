@@ -12,7 +12,7 @@ var/civmax_research = list(230,230,230)
 	var/ID = null // MUST be text, or aspects will break
 	var/no_winner = "Neither side has captured the other side's base."
 	var/title = null
-	var/lobby_icon = "icons/lobby/civ13.gif"
+	var/lobby_icon = ""
 	var/list/caribbean_blocking_area_types = list()
 	var/list/allow_bullets_through_blocks = list()
 	var/last_crossing_block_status[3]
@@ -39,13 +39,13 @@ var/civmax_research = list(230,230,230)
 		list(BRITISH) = /area/caribbean/british)
 	var/list/ambience = list('sound/ambience/ship1.ogg')
 	var/list/songs = list(
-		"Nassau Shores:1" = "sound/music/nassau_shores.ogg",)
+		"Nassau Shores:1" = 'sound/music/nassau_shores.ogg',)
 	var/mission_start_message = "Round will start soon!"
 	var/is_RP = FALSE
 	var/mosinonly = FALSE
 	var/squads = 1
 	var/fob_spawns = FALSE
-	var/list/faction1_squads = list(
+	var/list/faction1_squads = alist(
 		1 = list(),
 		2 = list(),
 		3 = list(),
@@ -54,7 +54,7 @@ var/civmax_research = list(230,230,230)
 		6 = list(),
 		7 = list(),
 	)
-	var/list/faction2_squads = list(
+	var/list/faction2_squads = alist(
 		1 = list(),
 		2 = list(),
 		3 = list(),
@@ -63,7 +63,7 @@ var/civmax_research = list(230,230,230)
 		6 = list(),
 		7 = list(),
 	)
-	var/list/faction1_squad_leaders = list(
+	var/list/faction1_squad_leaders = alist(
 		1 = null,
 		2 = null,
 		3 = null,
@@ -72,7 +72,7 @@ var/civmax_research = list(230,230,230)
 		6 = null,
 		7 = null,
 	)
-	var/list/faction2_squad_leaders = list(
+	var/list/faction2_squad_leaders = alist(
 		1 = null,
 		2 = null,
 		3 = null,
@@ -96,6 +96,7 @@ var/civmax_research = list(230,230,230)
 	var/current_loser = null
 	var/next_win = -1
 	var/win_condition_spam_check = FALSE
+	var/can_spawn_on_base_capture = FALSE
 	var/list/awards = list()
 	var/list/scores = list()
 	var/list/warrants = list()
@@ -157,10 +158,11 @@ var/civmax_research = list(230,230,230)
 	var/perschadplus = FALSE
 	var/is_wasteland = FALSE
 	var/hasnukes = FALSE
+	var/disablehud = FALSE //Faction hud
 
 	//autoresearch
 	var/autoresearch = FALSE //if autoresearch is active
-	var/autoresearch_mult = 0.4 // the amount research goes up per minute. Can be edited by admins.
+	var/autoresearch_mult = 0.03 // the amount research goes up per minute. Can be editted by admins.
 	var/resourceresearch = FALSE
 
 	var/age1_lim = 75
@@ -238,6 +240,8 @@ var/civmax_research = list(230,230,230)
 	var/list/lizard = list()
 	var/list/wolfman = list()
 	var/list/crab = list()
+	var/list/goblin = list()
+	var/list/droid = list()
 
 	var/list/berryeffects = list(list("neutral","neutral","water"), list("tinto","neutral","water"), list("amar","neutral","water"), list("majo","neutral","water"), list("narco","neutral","water"), list("azul","neutral","water"), list("zelenyy","neutral","water"), list("marron","neutral","water"), list("corcairghorm","neutral","water"))
 
@@ -253,6 +257,8 @@ var/civmax_research = list(230,230,230)
 	var/ar_to_close_timeleft = 0
 
 	var/no_hardcore = FALSE
+	var/is_campaign_map = FALSE
+
 /obj/map_metadata/New()
 	..()
 	map = src
@@ -272,8 +278,8 @@ var/civmax_research = list(230,230,230)
 				i[3] = pick("peyote", "psilocybin","mindbreaker")
 			else if (i[2] == "healing")
 				i[3] = pick("paracetamol", "penicillin", "opium", "cocaine", "sal_acid")
-	spawn(5000)
-		pollution()
+//	spawn(5000)
+//		pollution()
 	spawn(2400)
 		wind()
 	spawn(2000)
@@ -360,9 +366,9 @@ var/civmax_research = list(230,230,230)
 			windspeed = "a gale"
 			winddesc = "A [winddirection]ern gale."
 	if (windspeedvar != oldspeed)
-		world << "<big>The wind changes strength. It is now <b>[windspeed]</b>.</big>"
+		to_chat(world, "<big>The wind changes strength. It is now <b>[windspeed]</b>.</big>")
 	if (winddirection != oldwind)
-		world << "<big>The wind changes direction. It is now blowing from the <b>[winddirection]</b>.</big>"
+		to_chat(world, "<big>The wind changes direction. It is now blowing from the <b>[winddirection]</b>.</big>")
 	spawn(rand(3600,6000))
 		wind()
 
@@ -370,8 +376,11 @@ var/civmax_research = list(230,230,230)
 
 	if (global_pollution >= 2000)
 		change_weather(WEATHER_SMOG)
-		world << SPAN_NOTICE("<font size = 3>The air gets smoggy...</font>")
+		to_chat(world, SPAN_NOTICE("<font size = 3>The air gets smoggy...</font>"))
 	if (global_pollution < 0)
+		if (weather == WEATHER_SMOG)
+			to_chat(world, SPAN_NOTICE("<font size = 3>The smog clears...</font>"))
+			weather = WEATHER_NONE
 		set_global_pollution(0)
 	else
 		change_global_pollution(-80)
@@ -416,7 +425,7 @@ var/civmax_research = list(230,230,230)
 
 /obj/map_metadata/proc/autoresearch_proc()
 	if (autoresearch && default_research < 230)
-		spawn(600) //1 minute = 0.4 points (by default)
+		spawn(600) //1 minute = 0.03 points (by default)
 			default_research += autoresearch_mult
 			if (map.ID == MAP_CIVILIZATIONS)
 				civa_research = list(default_research,default_research,default_research,null,0)
@@ -438,16 +447,16 @@ var/civmax_research = list(230,230,230)
 		ar_to_close_timeleft--
 	if (last_crossing_block_status[faction1] == FALSE)
 		if (faction1_can_cross_blocks() && cross_message(faction1) != "")
-			world << cross_message(faction1)
+			to_chat(world, cross_message(faction1))
 
 	else if (last_crossing_block_status[faction1] == TRUE)
 		if (!faction1_can_cross_blocks() && reverse_cross_message(faction1) != "")
-			world << reverse_cross_message(faction1)
+			to_chat(world, reverse_cross_message(faction1))
 
 
 	if (last_crossing_block_status[faction2] == FALSE)
 		if (faction2_can_cross_blocks() && cross_message(faction2) != "")
-			world << cross_message(faction2)
+			to_chat(world, cross_message(faction2))
 			if (battleroyale)
 				var/warning_sound = sound('sound/effects/siren.ogg', repeat = FALSE, wait = TRUE, channel = 777)
 				for (var/mob/M in player_list)
@@ -455,7 +464,7 @@ var/civmax_research = list(230,230,230)
 
 	else if (last_crossing_block_status[faction2] == TRUE)
 		if (!faction2_can_cross_blocks() && reverse_cross_message(faction2) != "")
-			world << reverse_cross_message(faction2)
+			to_chat(world, reverse_cross_message(faction2))
 
 	last_crossing_block_status[faction2] = faction2_can_cross_blocks()
 	last_crossing_block_status[faction1] = faction1_can_cross_blocks()
@@ -482,7 +491,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age1_lim && world.time > 36000)
-					world << "<big>The world has advanced into the Bronze Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Bronze Age!</big>")
 					age = "313 B.C."
 					set_ordinal_age()
 					age1_done = TRUE
@@ -496,7 +505,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age2_lim && world.time >= age2_timer)
-					world << "<big>The world has advanced into the Medieval Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Medieval Age!</big>")
 					age = "1013"
 					set_ordinal_age()
 					age2_done = TRUE
@@ -510,7 +519,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age3_lim && world.time >= age3_timer)
-					world << "<big>The world has advanced into the Imperial Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Imperial Age!</big>")
 					age = "1713"
 					set_ordinal_age()
 					age3_done = TRUE
@@ -523,7 +532,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age4_lim && world.time >= age4_timer)
-					world << "<big>The world has advanced into the Industrial Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Industrial Age!</big>")
 					age = "1873"
 					set_ordinal_age()
 					age4_done = TRUE
@@ -535,7 +544,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age5_lim && world.time >= age5_timer)
-					world << "<big>The world has advanced into the Early Modern Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Early Modern Age!</big>")
 					age = "1903"
 					set_ordinal_age()
 					age5_done = TRUE
@@ -547,7 +556,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age6_lim && world.time >= age6_timer)
-					world << "<big>The world has advanced into the Second World War!</big>"
+					to_chat(world, "<big>The world has advanced into the Second World War!</big>")
 					age = "1943"
 					set_ordinal_age()
 					age6_done = TRUE
@@ -559,7 +568,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age7_lim && world.time >= age7_timer)
-					world << "<big>The world has advanced into the Cold War!</big>"
+					to_chat(world, "<big>The world has advanced into the Cold War!</big>")
 					age = "1969"
 					set_ordinal_age()
 					age7_done = TRUE
@@ -571,7 +580,7 @@ var/civmax_research = list(230,230,230)
 			for(var/i = 1, i <= custom_faction_nr.len, i++)
 				count = custom_civs[custom_faction_nr[i]][1]+custom_civs[custom_faction_nr[i]][2]+custom_civs[custom_faction_nr[i]][3]
 				if (count > age8_lim && world.time >= age8_timer)
-					world << "<big>The world has advanced into the Modern Age!</big>"
+					to_chat(world, "<big>The world has advanced into the Modern Age!</big>")
 					age = "2013"
 					set_ordinal_age()
 					age8_done = TRUE
@@ -651,7 +660,7 @@ var/civmax_research = list(230,230,230)
 				only_client_is_host = TRUE
 
 	if (playercount >= required_players || only_client_is_host)
-		world << mission_start_message
+		to_chat(world, mission_start_message)
 		return TRUE
 
 	return FALSE
@@ -669,10 +678,10 @@ var/civmax_research = list(230,230,230)
 			message = "The round has ended!"
 		if (current_winner && current_loser)
 			message = "The battle is over! The [current_winner] was victorious over the [current_loser][battle_name ? " in the [battle_name]" : ""]!"
-		world << "<font size = 4><span class = 'notice'>[message]</span></font>"
+		to_chat(world, SPAN_NOTICE("<font size = 4>[message]</font>"))
 		win_condition_spam_check = TRUE
 		return FALSE
-	if (!nomads && !is_singlefaction && map.ID != MAP_NOMADS_PERSISTENCE_BETA && map.ID != MAP_NATIONSRP_COLDWAR_CAMPAIGN)
+	if (!nomads && !is_singlefaction && map.ID != MAP_NOMADS_PERSISTENCE_BETA && map.ID != MAP_NATIONSRP_COLDWAR_CMP)
 		// German major
 		if (win_condition.check(typesof(roundend_condition_sides[roundend_condition_sides[2]]), roundend_condition_sides[1], roundend_condition_sides[2], 1.33, TRUE))
 			if (!win_condition.check(typesof(roundend_condition_sides[roundend_condition_sides[1]]), roundend_condition_sides[2], roundend_condition_sides[1], 1.33))
@@ -711,7 +720,7 @@ var/civmax_research = list(230,230,230)
 					current_loser = roundend_condition_def2army(roundend_condition_sides[1][1])
 		else
 			if (current_win_condition != no_winner && current_winner && current_loser)
-				world << "<font size = 3>The [current_winner] has lost control of the [army2name(current_loser)] base!</font>"
+				to_chat(world, "<font size = 3>The [current_winner] has lost control of the [army2name(current_loser)] base!</font>")
 				current_winner = null
 				current_loser = null
 			next_win = -1
@@ -735,6 +744,7 @@ var/civmax_research = list(230,230,230)
 		INDIANS = 0,
 		PIRATES = 0,
 		DUTCH = 0,
+		ITALIAN = 0,
 		ROMAN = 0,
 		GREEK = 0,
 		ARAB = 0,
@@ -750,7 +760,12 @@ var/civmax_research = list(230,230,230)
 		AMERICAN = 0,
 		VIETNAMESE = 0,
 		CHINESE = 0,
-		FILIPINO = 0,)
+		FILIPINO = 0,
+		BLUEFACTION = 0,
+		REDFACTION = 0,
+		CAFR = 0,
+		TSFSR = 0,
+		)
 
 	if (!(side in soldiers))
 		soldiers[side] = 0
@@ -801,7 +816,7 @@ var/civmax_research = list(230,230,230)
 	return .
 
 /obj/map_metadata/proc/announce_current_win_condition()
-	world << "<font size = 3>[current_stat_message()]</font>"
+	to_chat(world, "<font size = 3>[current_stat_message()]</font>")
 
 /obj/map_metadata/proc/short_win_time(faction)
 	if (!(alive_n_of_side(faction1)) || !(alive_n_of_side(faction2)))
@@ -826,12 +841,8 @@ var/civmax_research = list(230,230,230)
 		if (BRITISH)
 			return "British"
 		if (PIRATES)
-			if (map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT)
-				return "Redmenian"
 			return "Pirate"
 		if (CIVILIAN)
-			if (map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT)
-				return "Blugoslavian"
 			return "Colonist"
 		if (INDIANS)
 			return "Native"
@@ -843,6 +854,8 @@ var/civmax_research = list(230,230,230)
 			return "Spanish"
 		if (DUTCH)
 			return "Dutch"
+		if (ITALIAN)
+			return "Italian"
 		if (ROMAN)
 			if(map.ID == MAP_WHITERUN)
 				return "Empire"
@@ -878,6 +891,11 @@ var/civmax_research = list(230,230,230)
 			return "Filipino"
 		if (POLISH)
 			return "Polish"
+		if (BLUEFACTION)
+			return "Blugoslavia"
+		if (REDFACTION)
+			return "Redmenia"
+
 /obj/map_metadata/proc/roundend_condition_def2army(define)
 	switch (define)
 		if (BRITISH)
@@ -886,14 +904,8 @@ var/civmax_research = list(230,230,230)
 			else
 				return "British Empire"
 		if (PIRATES)
-			if (map.ID == MAP_CAMPAIGN)
-				return "Redmenia Defence Force"
-			else if (map.ID == MAP_ROTSTADT)
-				return "Rotstadt People's Republic"
 			return "Pirate crew"
 		if (CIVILIAN)
-			if (map.ID == MAP_CAMPAIGN || map.ID == MAP_ROTSTADT)
-				return "Blugoslavian Armed Forces"
 			return "Colonists"
 		if (INDIANS)
 			return "Native Tribe"
@@ -908,6 +920,8 @@ var/civmax_research = list(230,230,230)
 			return "Spanish Empire"
 		if (DUTCH)
 			return "Dutch Republic"
+		if (ITALIAN)
+			return "Italian Royal Army"
 		if (ROMAN)
 			if (map.ID == MAP_WHITERUN)
 				return "Imperial Army"
@@ -943,16 +957,23 @@ var/civmax_research = list(230,230,230)
 			return "Philippine Revolutionary Army"
 		if (POLISH)
 			return "Polish Home Army"
+		if (BLUEFACTION)
+			return "Blugoslavian Armed Forces"
+		if (REDFACTION)
+			if (map.ID == MAP_ROTSTADT)
+				return "Rotstadt People's Republic"
+			else
+				return "Redmenia Defence Force"
+		if (CAFR)
+			return "CAFR Armed Forces"
+		if (TSFSR)
+			return "Turkestan Red Army"
 /obj/map_metadata/proc/army2name(army)
 	switch (army)
 		if ("British Empire")
 			return "British"
 		if ("Pirate crew")
 			return "Pirate"
-		if ("Redmenia Defence Force")
-			return "Redmenian"
-		if ("Blugoslavian Armed Forces")
-			return "Blugoslavian"
 		if ("Colonists")
 			return "Colonist"
 		if ("Native Tribe")
@@ -965,6 +986,8 @@ var/civmax_research = list(230,230,230)
 			return "Spanish"
 		if ("Dutch Republic")
 			return "Dutch"
+		if ("Italian Royal Army")
+			return "Italian"
 		if ("Roman Republic")
 			return "Roman"
 		if ("Imperial Army")
@@ -989,6 +1012,15 @@ var/civmax_research = list(230,230,230)
 			return "Filipino"
 		if ("Polish Home Army")
 			return "Polish"
+		if ("Blugoslavian Armed Forces")
+			return "Blugoslavian"
+		if ("Redmenia Defence Force")
+			return "Redmenian"
+		if ("CAFR Armed Forces")
+			return "Central Asian"
+		if ("Turkestan Red Army")
+			return "Turkestani"
+
 /obj/map_metadata/proc/special_relocate(var/mob/M)
 	return FALSE
 
@@ -997,7 +1029,7 @@ var/civmax_research = list(230,230,230)
 	if (force || config.seasons_on)
 		if (season == "FALL")
 			season = "WINTER"
-			world << "<big>The <b>Winter</b> has started. In the hot climates, the wet season has started.</big>"
+			to_chat(world, "<big>The <b>Winter</b> has started. In the hot climates, the wet season has started.</big>")
 			change_weather_somehow()
 			spawn(1200)
 				for (var/obj/structure/wild/tree/live_tree/TREES in world)
@@ -1034,16 +1066,18 @@ var/civmax_research = list(230,230,230)
 					BDD2.ChangeTurf(/turf/floor/dirt/jungledirt)
 			for (var/turf/floor/dirt/DT in get_area_turfs(/area/caribbean/nomads/forest))
 				if (!istype(DT, /turf/floor/dirt/underground))
-					if (get_area(DT).climate == "temperate")
+					var/area/A = get_area(DT)
+					if (A.climate == "temperate")
 						if (prob(75))
 							DT.ChangeTurf(/turf/floor/dirt/winter)
-					else if (get_area(DT).climate == "tundra" || get_area(DT).climate == "taiga")
+					else if (A.climate == "tundra" || A.climate == "taiga")
 						DT.ChangeTurf(/turf/floor/dirt/winter)
 			for (var/turf/floor/grass/GT in get_area_turfs(/area/caribbean/nomads/forest))
-				if (get_area(GT).climate == "temperate")
+				var/area/A = get_area(GT)
+				if (A.climate == "temperate")
 					if (prob(80))
 						GT.ChangeTurf(/turf/floor/winter/grass)
-				else if (get_area(GT).climate == "tundra" || get_area(GT).climate == "taiga")
+				else if (A.climate == "tundra" || A.climate == "taiga")
 					GT.ChangeTurf(/turf/floor/winter/grass)
 			for (var/turf/floor/dirt/DTT in get_area_turfs(/area/caribbean/nomads/snow))
 				if (!istype(DTT, /turf/floor/dirt/underground))
@@ -1053,7 +1087,7 @@ var/civmax_research = list(230,230,230)
 
 		else if (season == "SPRING")
 			season = "SUMMER"
-			world << "<big>The <b>Summer</b> has started. In the hot climates, the dry season has started.</big>"
+			to_chat(world, "<big>The <b>Summer</b> has started. In the hot climates, the dry season has started.</big>")
 			change_weather_somehow()
 			spawn(300)
 				for (var/obj/structure/wild/tree/live_tree/TREES in world)
@@ -1072,10 +1106,12 @@ var/civmax_research = list(230,230,230)
 				if (DF.z > 1)
 					DF.ChangeTurf(/turf/floor/dirt/flooded)
 			for (var/turf/floor/dirt/winter/DT in get_area_turfs(/area/caribbean/nomads/forest))
-				if (get_area(DT).climate == "temperate")
+				var/area/A = get_area(DT)
+				if (A.climate == "temperate")
 					DT.ChangeTurf(/turf/floor/dirt)
 			for (var/turf/floor/winter/grass/GT in get_area_turfs(/area/caribbean/nomads/forest))
-				if (get_area(GT).climate == "temperate")
+				var/area/A = get_area(GT)
+				if (A.climate == "temperate")
 					GT.ChangeTurf(/turf/floor/grass)
 			for (var/turf/floor/winter/WT in get_area_turfs(/area/caribbean/roofed))
 				WT.ChangeTurf(/turf/floor/dirt)
@@ -1083,62 +1119,73 @@ var/civmax_research = list(230,230,230)
 				WT.ChangeTurf(/turf/floor/dirt)
 		else if (season == "WINTER")
 			season = "SPRING"
-			world << "<big>The weather is getting warmer. It is now <b>Spring</b>. In the hot climates, the wet season continues.</big>"
+			to_chat(world, "<big>The weather is getting warmer. It is now <b>Spring</b>. In the hot climates, the wet season continues.</big>")
 			spawn(900)
 				for (var/obj/structure/wild/tree/live_tree/TREES in world)
 					TREES.change_season()
 			for (var/turf/floor/dirt/winter/D in get_area_turfs(/area/caribbean/nomads/forest))
-				if (get_area(D).climate == "temperate")
+				var/area/A = get_area(D)
+				if (A.climate == "temperate")
 					if (prob(60))
 						if (prob(40))
 							D.ChangeTurf(/turf/floor/grass)
 						else
 							D.ChangeTurf(/turf/floor/dirt)
 			for (var/turf/floor/winter/grass/G in get_area_turfs(/area/caribbean/nomads/forest))
-				if (get_area(G).climate == "temperate")
+				var/area/A = get_area(G)
+				if (A.climate == "temperate")
 					if (prob(60))
 						G.ChangeTurf(/turf/floor/grass)
 			spawn(150)
 				change_weather(WEATHER_NONE)
 				for (var/obj/structure/window/barrier/snowwall/SW1 in world)
-					if (get_area(get_turf(SW1)).climate != "tundra" && get_area(get_turf(SW1)).climate != "taiga")
+					var/area/A = get_area(SW1)
+					if (A.climate != "tundra" && A.climate != "taiga")
 						if (prob(60))
 							qdel(SW1)
 				for (var/obj/covers/snow_wall/SW2 in world)
-					if (get_area(get_turf(SW2)).climate != "tundra" && get_area(get_turf(SW2)).climate != "taiga")
+					var/area/A = get_area(SW2)
+					if (A.climate != "tundra" && A.climate != "taiga")
 						if (prob(60))
 							qdel(SW2)
 				for (var/obj/item/weapon/snowwall/SW3 in world)
-					if (get_area(get_turf(SW3)).climate != "tundra" && get_area(get_turf(SW3)).climate != "taiga")
+					var/area/A = get_area(SW3)
+					if (A.climate != "tundra" && A.climate != "taiga")
 						if (prob(60))
 							qdel(SW3)
 			spawn(3000)
 				for (var/turf/floor/dirt/winter/D in get_area_turfs(/area/caribbean/nomads/forest))
-					if (get_area(D).climate == "temperate")
+					var/area/A = get_area(D)
+					if (A.climate == "temperate")
 						if (prob(40))
 							D.ChangeTurf(/turf/floor/grass)
 						else
 							D.ChangeTurf(/turf/floor/dirt)
 				for (var/turf/floor/winter/grass/G in get_area_turfs(/area/caribbean/nomads/forest))
-					if (get_area(G).climate == "temperate")
+					var/area/A = get_area(G)
+					if (A.climate == "temperate")
 						G.ChangeTurf(/turf/floor/grass)
 				for (var/turf/floor/dirt/D in get_area_turfs(/area/caribbean/nomads/semiarid))
-					if (get_area(D).climate == "semiarid" && !istype(D, /turf/floor/dirt/dust) && !istype(D, /turf/floor/dirt/underground))
+					var/area/A = get_area(D)
+					if (A.climate == "semiarid" && !istype(D, /turf/floor/dirt/dust) && !istype(D, /turf/floor/dirt/underground))
 						if (prob(40))
 							D.ChangeTurf(/turf/floor/grass)
 
 				for (var/obj/structure/window/barrier/snowwall/SW1 in world)
-					if (get_area(get_turf(SW1)).climate != "tundra" && get_area(get_turf(SW1)).climate != "taiga")
+					var/area/A = get_area(get_turf(SW1))
+					if (A.climate != "tundra" && A.climate != "taiga")
 						qdel(SW1)
 				for (var/obj/covers/snow_wall/SW2 in world)
-					if (get_area(get_turf(SW2)).climate != "tundra" && get_area(get_turf(SW2)).climate != "taiga")
+					var/area/A = get_area(get_turf(SW2))
+					if (A.climate != "tundra" &&A.climate != "taiga")
 						qdel(SW2)
 				for (var/obj/item/weapon/snowwall/SW3 in world)
-					if (get_area(get_turf(SW3)).climate != "tundra" && get_area(get_turf(SW3)).climate != "taiga")
+					var/area/A = get_area(get_turf(SW3))
+					if (A.climate != "tundra" && A.climate != "taiga")
 						qdel(SW3)
 		else if (season == "SUMMER")
 			season = "FALL"
-			world << "<big>The leaves start to fall and the weather gets colder. It is now <b>Fall</b>. In the hot climates, the dry season continues.</big>"
+			to_chat(world, "<big>The leaves start to fall and the weather gets colder. It is now <b>Fall</b>. In the hot climates, the dry season continues.</big>")
 			spawn(900)
 				for (var/obj/structure/wild/tree/live_tree/TREES in world)
 					TREES.change_season()
@@ -1154,19 +1201,23 @@ var/civmax_research = list(230,230,230)
 			spawn(15000)
 				change_weather(WEATHER_WET)
 				for (var/turf/floor/dirt/D in get_area_turfs(/area/caribbean/nomads/forest))
-					if (z == world.maxz && prob(40) && !istype(D, /turf/floor/dirt/underground) && !istype(D, /turf/floor/dirt/dust) && !(get_area(D).climate == "jungle"))
+					var/area/A = get_area(D)
+					if (z == world.maxz && prob(40) && !istype(D, /turf/floor/dirt/underground) && !istype(D, /turf/floor/dirt/dust) && !(A.climate == "jungle"))
 						D.ChangeTurf(/turf/floor/dirt/winter)
 				for (var/turf/floor/grass/G in get_area_turfs(/area/caribbean/nomads/forest))
-					if (get_area(G).climate == "temperate")
+					var/area/A = get_area(G)
+					if (A.climate == "temperate")
 						if (prob(40))
 							G.ChangeTurf(/turf/floor/winter/grass)
 				spawn(1200)
 					for (var/turf/floor/dirt/D in get_area_turfs(/area/caribbean/nomads/forest))
-						if (!istype(D,/turf/floor/dirt/winter) && (get_area(D).climate == "temperate"))
+						var/area/A = get_area(D)
+						if (!istype(D,/turf/floor/dirt/winter) && (A.climate == "temperate"))
 							if (D.z == world.maxz && prob(50) && !istype(D,/turf/floor/dirt/underground))
 								D.ChangeTurf(/turf/floor/dirt/winter)
 					for (var/turf/floor/grass/G in get_area_turfs(/area/caribbean/nomads/forest))
-						if (get_area(G).climate == "temperate")
+						var/area/A = get_area(G)
+						if (A.climate == "temperate")
 							if (prob(50))
 								G.ChangeTurf(/turf/floor/winter/grass)
 	if (looping)

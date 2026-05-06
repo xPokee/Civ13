@@ -305,6 +305,72 @@ mob/living/human/corpse/british_sailor
 		spawn (50) // must be here or they won't spawn, it seems - Kachnov
 			death()
 
+/mob/living/human/corpse/ww2_jap_seaman
+	gender = MALE
+
+/mob/living/human/corpse/ww2_jap_seaman/New()
+	..()
+	icon_state = "human_m_s"
+	var/spawntime = 0
+	invisibility = 101
+	if (!job_master)
+		spawntime = 5
+	spawn (spawntime)
+		if (!job_master)
+			qdel(src)
+			return
+		job_master.EquipRank(src, "Santosuihei")
+		dir = pick(NORTH,SOUTH,EAST,WEST)
+		adjustBruteLoss(rand(6,7))
+		name = "Japanese Seaman"
+		invisibility = 0
+		spawn (50) // must be here or they won't spawn, it seems - Kachnov
+			death()
+
+/mob/living/human/corpse/ww2_jap_seaman_po
+	gender = MALE
+
+/mob/living/human/corpse/ww2_jap_seaman_po/New()
+	..()
+	icon_state = "human_m_s"
+	var/spawntime = 0
+	invisibility = 101
+	if (!job_master)
+		spawntime = 5
+	spawn (spawntime)
+		if (!job_master)
+			qdel(src)
+			return
+		job_master.EquipRank(src, "Kaigun Nitoheiso")
+		dir = pick(NORTH,SOUTH,EAST,WEST)
+		adjustBruteLoss(rand(6,7))
+		name = "Japanese Petty Officer"
+		invisibility = 0
+		spawn (50) // must be here or they won't spawn, it seems - Kachnov
+			death()
+
+/mob/living/human/corpse/ww2_jap_seaman_officer
+	gender = MALE
+
+/mob/living/human/corpse/ww2_jap_seaman_officer/New()
+	..()
+	icon_state = "human_m_s"
+	var/spawntime = 0
+	invisibility = 101
+	if (!job_master)
+		spawntime = 5
+	spawn (spawntime)
+		if (!job_master)
+			qdel(src)
+			return
+		job_master.EquipRank(src, "Kaigun-Dai-i")
+		dir = pick(NORTH,SOUTH,EAST,WEST)
+		adjustBruteLoss(rand(6,7))
+		name = "Japanese Naval Officer"
+		invisibility = 0
+		spawn (50) // must be here or they won't spawn, it seems - Kachnov
+			death()
+
 /mob/living/human/corpse/ww2_jap_medic
 	gender = MALE
 
@@ -429,7 +495,7 @@ mob/living/human/corpse/british_sailor
 	invisibility = 101
 	dir = pick(NORTH,SOUTH,EAST,WEST)
 	invisibility = 0
-	equip_to_slot_or_del(new /obj/item/clothing/shoes/workboots(src), slot_shoes)
+	equip_to_slot_or_del(new /obj/item/clothing/shoes/jackboots(src), slot_shoes)
 	equip_to_slot_or_del(new /obj/item/clothing/under/reporter(src), slot_w_uniform)
 	equip_to_slot_or_del(new /obj/item/clothing/head/helmet/kevlarhelmet/press(src), slot_head)
 	equip_to_slot_or_del(new /obj/item/clothing/suit/storage/hazard/yellow(src), slot_r_store)
@@ -642,6 +708,31 @@ mob/living/human/corpse/russian_soviet_tanker
 		invisibility = 0
 		spawn (50) // must be here or they won't spawn, it seems - Kachnov
 			death()
+
+
+/mob/living/human/corpse/police
+	gender = MALE
+	h_style = "Fade"
+
+/mob/living/human/corpse/police/New()
+	..()
+	icon_state = "human_m_s"
+	var/spawntime = 0
+	invisibility = 101
+	if (!job_master)
+		spawntime = 5
+	spawn (spawntime)
+		if (!job_master)
+			qdel(src)
+			return
+		job_master.EquipRank(src, "Police Officer")
+		dir = pick(NORTH,SOUTH,EAST,WEST)
+		adjustBruteLoss(rand(30,45))
+		name = "Police Officer"
+		invisibility = 0
+		spawn (50) // must be here or they won't spawn, it seems - Kachnov
+			death()
+
 
 /mob/living/human/corpse/pmc
 	gender = MALE

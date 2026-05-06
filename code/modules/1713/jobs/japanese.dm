@@ -54,7 +54,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the Captain of the Japanese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Japanese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -105,7 +105,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the 1st Lieutenant of the Japanese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 1st Lieutenant of the Japanese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. The whole operation relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -156,7 +156,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the 2nd Lieutenant of the Japanese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 2nd Lieutenant of the Japanese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. Second to 1st Lieutenant. The whole operation relies on you and your orders!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -453,7 +453,7 @@
 /datum/job/japanese/ija_captain/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2(H), slot_shoes)
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japoffuni(H), slot_w_uniform)
 //head
@@ -478,7 +478,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the Captain of the Japanese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Captain of the Japanese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -510,7 +510,7 @@
 /datum/job/japanese/ija_lieutenant/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2(H), slot_shoes)
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japoffuni(H), slot_w_uniform)
 //head
@@ -535,7 +535,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the 1st Lieutenant of the Japanese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 1st Lieutenant of the Japanese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. The whole operation relies on you!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -567,7 +567,7 @@
 /datum/job/japanese/ija_lieutenant2/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2(H), slot_shoes)
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japoffuni(H), slot_w_uniform)
 //head
@@ -592,7 +592,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the 2nd Lieutenant of the Japanese forces!</big></b>"
+	world << "<big><b>[H.real_name] is the 2nd Lieutenant of the Japanese forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, an officer in charge of the troops and their orders. Second to 1st Lieutenant. The whole operation relies on you and your orders!")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -1281,7 +1281,7 @@
 	KC.attackby(G2,H)
 	H.equip_to_slot_or_del(KC, slot_wear_id)
 	give_random_name(H)
-	world << "<b><big>[H.real_name] is the Camp Director of the Japanese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Camp Director of the Japanese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the guards and organize the POWs.")
 	H.setStat("strength", STAT_MAX)
 	H.setStat("crafting", STAT_NORMAL)
@@ -1465,12 +1465,17 @@
 
 /datum/job/japanese/ijn_captain/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy_officer(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_officer(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //weapons
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/ww2/nambu(H), slot_l_hand)
 	H.equip_to_slot_or_del(new /obj/item/weapon/key/japanese_officer(H), slot_r_store)
@@ -1485,8 +1490,8 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the Lieutenant of the Japanese Forces!</big></b>"
-	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the company.")
+	world << "<big><b>[H.real_name] is the Lieutenant of the Japanese Forces!</b></big>"
+	H.add_note("Role", "You are a <b>[title]</b>, the highest ranking officer present. Your job is to command the ship or company.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
 	H.setStat("rifle", STAT_NORMAL)
@@ -1517,12 +1522,17 @@
 
 /datum/job/japanese/ijn_lieutenant/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy_officer(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_officer(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //weapons
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/ww2/nambu(H), slot_l_hand)
 	H.equip_to_slot_or_del(new /obj/item/weapon/key/japanese_officer(H), slot_r_store)
@@ -1537,7 +1547,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the Sub-Lieutenant of the Japanese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Sub-Lieutenant of the Japanese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the 2nd highest ranking officer present. Your job is to command half of the forces.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -1569,12 +1579,17 @@
 
 /datum/job/japanese/ijn_lieutenant2/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy_officer(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_officer(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //weapons
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/ww2/nambu(H), slot_l_hand)
 	H.equip_to_slot_or_del(new /obj/item/weapon/key/japanese_officer(H), slot_r_store)
@@ -1589,7 +1604,7 @@
 	H.s_tone = rand(-32,-24)
 	if (H.f_style != "Shaved" && H.f_style != "Short Facial Hair" && H.f_style != "Goatee")
 		H.f_style = pick("Shaved","Short Facial Hair","Goatee")
-	world << "<b><big>[H.real_name] is the Ensign of the Japanese Forces!</big></b>"
+	world << "<big><b>[H.real_name] is the Ensign of the Japanese Forces!</b></big>"
 	H.add_note("Role", "You are a <b>[title]</b>, the 3rd highest ranking officer present. Your job is to command half of the forces.")
 	H.setStat("strength", STAT_MEDIUM_HIGH)
 	H.setStat("crafting", STAT_NORMAL)
@@ -1618,12 +1633,17 @@
 
 /datum/job/japanese/ijn_sergeant/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy_po(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_po(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //weapons
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/pistol/ww2/nambu(H), slot_l_store)
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/boltaction/arisaka99(H), slot_shoulder)
@@ -1667,12 +1687,17 @@
 
 /datum/job/japanese/ijn_doctor/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy_po(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_po(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform) // for now
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform) // for now
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //jacket
 	H.equip_to_slot_or_del(new /obj/item/clothing/suit/storage/jacket/doctor(H), slot_wear_suit)
 	H.equip_to_slot_or_del(new /obj/item/weapon/storage/firstaid/surgery(H), slot_l_hand)
@@ -1711,12 +1736,17 @@
 
 /datum/job/japanese/ijn_medic/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_cap(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform) // for now
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform) // for now
 //head
-	H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //back
 	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/boltaction/arisaka99(H), slot_shoulder)
 	H.equip_to_slot_or_del(new 	/obj/item/weapon/storage/belt/jap/ww2soldier(H), slot_belt)
@@ -1758,20 +1788,25 @@
 
 /datum/job/japanese/ijn_ww2infantry/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
+	if (map.ID == MAP_BATTLE_SHIPS)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_navy(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_navy_cap(H), slot_head)
+	else
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+		H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 
 //clothes
-	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
+		H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
 //head
-	var/randhead = rand(1,2)
-	if (randhead == 1)
-		H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww2/japhelm_snlf(H), slot_head)
-	else if (randhead == 2)
-		H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
+		var/randhead = rand(1,2)
+		if (randhead == 1)
+			H.equip_to_slot_or_del(new /obj/item/clothing/head/helmet/ww2/japhelm_snlf(H), slot_head)
+		else if (randhead == 2)
+			H.equip_to_slot_or_del(new /obj/item/clothing/head/ww2/japcap_snlf(H), slot_head)
 //back
-	H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/boltaction/arisaka99(H), slot_shoulder)
-	H.equip_to_slot_or_del(new 	/obj/item/weapon/storage/belt/jap/ww2soldier(H), slot_belt)
+		H.equip_to_slot_or_del(new /obj/item/weapon/gun/projectile/boltaction/arisaka99(H), slot_shoulder)
+		H.equip_to_slot_or_del(new 	/obj/item/weapon/storage/belt/jap/ww2soldier(H), slot_belt)
 	if (time_of_day == "Night" || time_of_day == "Evening" || time_of_day == "Early Morning")
 		if (prob(50))
 			H.equip_to_slot_or_del(new /obj/item/flashlight/japflashlight(H), slot_wear_id)
@@ -1807,7 +1842,7 @@
 /datum/job/japanese/ijn_machinegunner/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
@@ -1859,7 +1894,7 @@
 /datum/job/japanese/ijn_machinegunner_assistant/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)
@@ -1913,7 +1948,7 @@
 /datum/job/japanese/ijn_sniper/equip(var/mob/living/human/H)
 	if (!H)	return FALSE
 //shoes
-	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots(H), slot_shoes)
+	H.equip_to_slot_or_del(new /obj/item/clothing/shoes/heavyboots/wrappedboots/jap_ww2/navy/puttees(H), slot_shoes)
 
 //clothes
 	H.equip_to_slot_or_del(new /obj/item/clothing/under/ww2/japuni_snlf(H), slot_w_uniform)

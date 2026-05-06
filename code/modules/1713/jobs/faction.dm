@@ -34,8 +34,12 @@
 #define TEAM_DK 23
 #define TEAM_PO 24
 #define TEAM_IT 25
+#define TEAM_BLUE 26
+#define TEAM_RED 27
+#define TEAM_CAFR 28
+#define TEAM_TSFSR 29
 
-var/global/soldiers[24]
+var/global/soldiers[27]
 
 /datum/faction
 	// redefine these since they don't exist in /datum
@@ -251,6 +255,39 @@ var/global/soldiers[24]
 
 /datum/faction/polish/base_type()
 	return "/datum/faction/polish"
+
+/datum/faction/bluefaction
+	icon_state = "blugoslavia"
+	title = "Blugoslavian Soldier"
+	team = TEAM_BLUE
+
+/datum/faction/bluefaction/base_type()
+	return "/datum/faction/bluefaction"
+
+/datum/faction/cafr
+	icon_state = ""
+	title = "CAFR Soldier"
+	team = TEAM_CAFR
+
+/datum/faction/cafr/base_type()
+	return "/datum/faction/cafr"
+
+/datum/faction/redfaction
+	icon_state = "redmenia"
+	title = "Redmenian Soldier"
+	team = TEAM_RED
+
+/datum/faction/redfaction/base_type()
+	return "/datum/faction/redfaction"
+
+/datum/faction/tsfsr
+	icon_state = "sov_basic"
+	title = "TSFSR Soldier"
+	team = TEAM_TSFSR
+
+/datum/faction/tsfsr/base_type()
+	return "/datum/faction/tsfsr"
+
 // CODE
 /datum/faction/New(var/mob/living/human/H, var/datum/job/J)
 
@@ -321,5 +358,17 @@ var/global/soldiers[24]
 	else if (istype(J, /datum/job/polish))
 		if ("[type]" == "/datum/faction/polish")
 			soldiers[POLISH]++
+	else if (istype(J, /datum/job/bluefaction))
+		if ("[type]" == "/datum/faction/bluefaction")
+			soldiers[BLUEFACTION]++
+	else if (istype(J, /datum/job/redfaction))
+		if ("[type]" == "/datum/faction/redfaction")
+			soldiers[REDFACTION]++
+	else if (istype(J, /datum/job/cafr))
+		if ("[type]" == "/datum/faction/cafr")
+			soldiers[CAFR]++
+	else if (istype(J, /datum/job/tsfsr))
+		if ("[type]" == "/datum/faction/tsfsr")
+			soldiers[TSFSR]++
 	H.all_factions += src
 	..()

@@ -37,6 +37,21 @@
 /turf/floor/wood/alt/eleven
 	icon_state = "woodalt11"
 
+/turf/floor/gravel
+	name = "gravel"
+	icon_state = "gravel"
+
+/turf/floor/gravel/New()
+	dir = pick(SOUTH, NORTH, EAST, WEST)
+
+/turf/floor/gravel/alt
+	icon_state = "gravel_alt"
+/turf/floor/gravel/dust
+	icon_state = "gravel_dust"
+
+/turf/floor/rocky
+	name = "rocky floor"
+	icon_state = "rockyfloor"
 
 /turf/floor/blackslateroof
 	name = "roof"
@@ -153,7 +168,7 @@
 	icon_state = "ironsand[rand(1,15)]"
 
 /turf/floor/grass/jungle
-	name = "jungle grass"
+	name = "jungle grass patch"
 	overlay_priority = 0
 	is_diggable = TRUE
 	may_become_muddy = TRUE
@@ -172,7 +187,7 @@
 	may_become_muddy = FALSE
 
 /turf/floor/grass/jungle/savanna
-	name = "dry grass"
+	name = "dry grass patch"
 	icon_state = "dry_grass"
 	initial_flooring = null
 
@@ -193,7 +208,7 @@
 	return
 
 /turf/floor/winter/grass
-	name = "snowy grass"
+	name = "snowy grass patch"
 	icon = 'icons/turf/snow.dmi'
 	icon_state = "grass2"
 	is_diggable = TRUE
@@ -274,7 +289,7 @@
 	spawn(1)
 		water_overlay = image(icon='icons/misc/beach.dmi')
 		water_overlay.icon_state= "[icon_state]_ov"
-		water_overlay.layer= 10
+		water_overlay.layer= 10.1
 
 /turf/floor/beach/water/coastwater
 	name = "coast water"
@@ -320,7 +335,7 @@
 	if(iscovered())
 		return
 	if (A)
-		if (!istype(A, /mob) && !istype(A, /obj/structure/vehicle) && !istype(A, /obj/structure/fishing_cage) && !istype(A, /obj/covers) && !istype(A, /obj/structure/barricade) && !istype(A, /obj/effect/sailing_effect))
+		if (!istype(A, /mob) && !istype(A,/obj/structure/vehicleparts/axis) && !istype(A, /obj/structure/vehicle) && !istype(A, /obj/structure/fishing_cage) && !istype(A, /obj/covers) && !istype(A, /obj/structure/barricade) && !istype(A, /obj/effect/sailing_effect))
 			spawn(60)
 				if (isobj(A))
 					var/obj/O = A
